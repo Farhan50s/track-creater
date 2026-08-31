@@ -1,0 +1,94 @@
+node_id: track-creator-test__foundations.concepts.general.data-structures
+name: Data Structures Overview
+classification: required
+recommended_depth: overview
+estimated_time_minutes: 10
+prerequisites:
+  - track-creator-test__foundations.programming.core.fundamentals
+
+one_sentence_definition: Fundamental collections used to organize, store, and access data efficiently in computer memory.
+why_it_matters: Selecting appropriate data structures directly influences algorithm performance, computational complexity, and memory efficiency.
+quick_overview: Data structures provide specialized formats for organizing and querying collections of elements. Arrays offer constant-time index access, linked lists facilitate dynamic insertion, while hash tables enable average constant-time key-value lookups. Understanding these tradeoffs allows engineers to choose the optimal storage format for specific application needs.
+deep_dive: null
+
+resources:
+  - title: Visualgo Data Structure Visualizations
+    url: https://visualgo.net/en
+    type: tutorial
+    tag: start_here
+    why: Interactive visual animations of common data structure operations.
+    order_index: 1
+  - title: GeeksforGeeks Data Structures Guide
+    url: https://www.geeksforgeeks.org/data-structures/
+    type: documentation
+    tag: reference
+    why: Comprehensive reference for structural complexity and operations.
+    order_index: 2
+
+quiz_pool:
+  - question: Which data structure provides O(1) average time complexity for key-value lookups?
+    options:
+      - Linked list
+      - Hash table
+      - Binary search tree
+      - Dynamic array
+    correct_index: 1
+  - question: What is the primary characteristic of an array data structure?
+    options:
+      - Elements are stored in contiguous memory locations with index-based access
+      - Elements are scattered across heap nodes connected only by pointers
+      - Duplicate items are automatically pruned on insertion
+      - Items are sorted alphabetically by default
+    correct_index: 0
+  - question: What access pattern defines a standard Queue data structure?
+    options:
+      - Last In, First Out (LIFO)
+      - First In, First Out (FIFO)
+      - Random order retrieval
+      - Highest priority element first
+    correct_index: 1
+  - question: What access pattern defines a standard Stack data structure?
+    options:
+      - First In, First Out (FIFO)
+      - Last In, First Out (LIFO)
+      - Sequential index traversal
+      - Hash key bucket lookup
+    correct_index: 1
+  - question: In a singly linked list, what does each node contain?
+    options:
+      - Data value and a reference to the next node
+      - Two distinct parent identifiers
+      - A persistent cryptographic hash of the entire list
+      - Complete mirror copies of all subsequent nodes
+    correct_index: 0
+  - question: What is a major tradeoff of inserting an element at the beginning of a contiguous array?
+    options:
+      - All subsequent elements must be shifted in memory, resulting in O(n) time
+      - Array memory is corrupted permanently
+      - The array is converted into a binary heap
+      - Insertion is always rejected by the compiler
+    correct_index: 0
+  - question: Which data structure is ideal for checking if an item exists with constant-time lookup and uniqueness?
+    options:
+      - Set (Hash Set)
+      - Singly Linked List
+      - Linear Stack
+      - Array Tuple
+    correct_index: 0
+  - question: In a binary search tree, where are values smaller than the root node positioned?
+    options:
+      - In the left subtree
+      - In the right subtree
+      - In a detached leaf array
+      - In the root pointer index
+    correct_index: 0
+  - question: What occurs during a hash collision in a hash map?
+    options:
+      - Two distinct keys produce the same hash bucket index
+      - The database server terminates immediately
+      - All stored keys are erased
+      - The CPU hardware raises an illegal instruction signal
+    correct_index: 0
+
+content_version: 1
+reviewed: true

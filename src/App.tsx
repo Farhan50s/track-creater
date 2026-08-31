@@ -1,13 +1,16 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { routes } from './routes';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { AuthProvider } from './features/auth/context/AuthContext';
 
 const router = createBrowserRouter(routes);
 
 export function App() {
   return (
     <ErrorBoundary>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </ErrorBoundary>
   );
 }

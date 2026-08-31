@@ -1,0 +1,104 @@
+node_id: track-creator-test__foundations.programming.core.fundamentals
+name: Programming Fundamentals
+classification: required
+recommended_depth: implementation
+estimated_time_minutes: 15
+prerequisites: []
+
+one_sentence_definition: The foundational syntax, data types, and execution model required to write computer programs.
+why_it_matters: Understanding programming fundamentals is essential for establishing reliable code structure and reasoning about program execution.
+quick_overview: Programming fundamentals cover variable declaration, primitive data types, memory representation, and basic arithmetic and boolean operations. Mastering these elements enables learners to construct predictable algorithms and prevents subtle runtime type errors across all application layers.
+deep_dive: |
+  At the core of software construction lies the accurate manipulation of primitive data types such as integers, floating-point numbers, booleans, and string sequences. Each type carries specific memory footprints and operational semantics.
+
+  Variables act as named references to memory locations, allowing dynamic assignment and retrieval of data throughout execution cycles. Scope determines the accessibility of variables across different lexical blocks.
+
+  Control flow executes instructions sequentially by default. Expressions evaluate to values through operators, adhering strictly to language precedence rules. Understanding type conversion—both implicit coercion and explicit casting—is critical for preventing logic defects.
+
+resources:
+  - title: MDN JavaScript Basics
+    url: https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/JavaScript_basics
+    type: documentation
+    tag: start_here
+    why: Comprehensive introduction to fundamental programming syntax.
+    order_index: 1
+  - title: Python Official Tutorial
+    url: https://docs.python.org/3/tutorial/introduction.html
+    type: tutorial
+    tag: alternative
+    why: Clear walkthrough of core programming mechanics in Python.
+    order_index: 2
+  - title: Basic Programming Exercises
+    url: https://exercism.org/tracks/javascript
+    type: practice
+    tag: practice
+    why: Hands-on syntax reinforcement exercises.
+    order_index: 3
+
+quiz_pool:
+  - question: What is the primary purpose of a variable in computer programming?
+    options:
+      - To store data values in named memory locations
+      - To compile source code directly into machine binaries
+      - To manage network socket connections
+      - To render graphical user interfaces
+    correct_index: 0
+  - question: Which data type is specifically designed to represent truth values (true or false)?
+    options:
+      - Integer
+      - Boolean
+      - String
+      - Floating-point
+    correct_index: 1
+  - question: What happens during explicit type casting in typed languages?
+    options:
+      - The compiler silently infers the target type without instruction
+      - The runtime halts execution permanently
+      - The programmer explicitly converts a value from one data type to another
+      - Variable memory addresses are swapped automatically
+    correct_index: 2
+  - question: In programming, what does the scope of a variable determine?
+    options:
+      - The maximum numeric limit of the variable
+      - The execution speed of arithmetic operations
+      - The region of code where the variable is accessible and valid
+      - The disk storage space occupied by the script
+    correct_index: 2
+  - question: Which of the following is an immutable primitive in most modern programming languages?
+    options:
+      - Fixed-size string literals
+      - Dynamic heap-allocated hash maps
+      - Linked list node instances
+      - Circular buffer containers
+    correct_index: 0
+  - question: What does operator precedence govern in arithmetic expressions?
+    options:
+      - The order in which operators are evaluated in complex expressions
+      - The amount of memory allocated for variables
+      - The network transmission priority of data
+      - The visual indentation of code blocks
+    correct_index: 0
+  - question: What is the result of an arithmetic division by zero in standard integer arithmetic?
+    options:
+      - It automatically wraps around to zero
+      - It raises a runtime error or exception
+      - It converts the result into an empty string
+      - It restarts the computer system
+    correct_index: 1
+  - question: What is the defining characteristic of strongly typed languages?
+    options:
+      - Code must always be compiled directly to C
+      - Variable types are enforced strictly and unintended type conversions are rejected
+      - All variables are stored in global scope
+      - Syntax errors are ignored during compilation
+    correct_index: 1
+  - question: Which component evaluates conditions to produce boolean outcomes in programs?
+    options:
+      - Relational and logical comparison operators
+      - Asset bundlers
+      - CSS style preprocessors
+      - Audio codec decoders
+    correct_index: 0
+
+content_version: 1
+reviewed: true

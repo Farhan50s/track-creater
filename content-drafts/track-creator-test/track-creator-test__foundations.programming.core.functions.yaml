@@ -1,0 +1,107 @@
+node_id: track-creator-test__foundations.programming.core.functions
+name: Functions & Control Flow
+classification: required
+recommended_depth: practical
+estimated_time_minutes: 20
+prerequisites:
+  - track-creator-test__foundations.programming.core.fundamentals
+
+one_sentence_definition: Reusable code blocks and branching mechanisms that structure program logic and direct execution pathways.
+why_it_matters: Functions and control flow allow developers to encapsulate logic into modular units and make conditional execution decisions dynamically.
+quick_overview: Functions package discrete computational tasks into callable units with input parameters and return values. Combined with conditional statements (if/else, switch) and iteration loops (for, while), control flow constructs guide the path of program execution based on runtime conditions.
+deep_dive: |
+  Functions encapsulate reusable routines, reducing duplication and improving testability. When a function is called, arguments are passed into parameters via pass-by-value or pass-by-reference semantics, and a stack frame is allocated on the call stack.
+
+  Control flow statements alter the linear execution order of code:
+  1. Conditional branches (if, else if, switch) evaluate predicates to select alternate execution paths.
+  2. Loops (while, do-while, for) repeat a block of code until a terminating condition is met.
+
+  Managing stack depth, early return patterns, and avoiding unbounded recursion are essential practices for building reliable software.
+
+resources:
+  - title: MDN JavaScript Functions Guide
+    url: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions
+    type: documentation
+    tag: start_here
+    why: Definitive reference for function syntax, arguments, and scope.
+    order_index: 1
+  - title: Control Flow in Python
+    url: https://docs.python.org/3/tutorial/controlflow.html
+    type: tutorial
+    tag: alternative
+    why: Clear overview of branching and iteration logic.
+    order_index: 2
+  - title: Logic & Loop Challenges
+    url: https://leetcode.com/problemset/all/
+    type: practice
+    tag: practice
+    why: Structured problems to practice conditionals and loops.
+    order_index: 3
+
+quiz_pool:
+  - question: What is the primary benefit of encapsulating logic within functions?
+    options:
+      - It reduces duplication and promotes code reusability
+      - It eliminates the need for unit testing
+      - It converts interpreted code into pure hardware circuitry
+      - It increases disk usage proportionally
+    correct_index: 0
+  - question: In a function definition, what is the term for the variables declared to receive inputs?
+    options:
+      - Return statements
+      - Parameters
+      - Macros
+      - Callbacks
+    correct_index: 1
+  - question: What control flow structure executes a block repeatedly while a boolean condition remains true?
+    options:
+      - While loop
+      - Try/catch block
+      - If/else branch
+      - Module export
+    correct_index: 0
+  - question: What occurs when a recursive function lacks a valid base case?
+    options:
+      - The program compiles faster
+      - A stack overflow error occurs due to unbounded call stack growth
+      - The function returns null immediately
+      - System memory is permanently erased
+    correct_index: 1
+  - question: What is the purpose of a return statement inside a function?
+    options:
+      - To terminate function execution and optionally pass a result back to the caller
+      - To restart the host operating system
+      - To delete the calling script from disk
+      - To declare a new global variable
+    correct_index: 0
+  - question: Which keyword is commonly used to prematurely exit a loop construct?
+    options:
+      - Continue
+      - Break
+      - Yield
+      - Catch
+    correct_index: 1
+  - question: How does an if-else branching structure evaluate multiple conditions?
+    options:
+      - It executes all branches simultaneously regardless of predicates
+      - It evaluates boolean conditions sequentially until a truthy condition is encountered
+      - It randomly selects one branch to execute
+      - It delays execution until user input is received
+    correct_index: 1
+  - question: What distinguishes arguments from parameters in function terminology?
+    options:
+      - Arguments are the actual values passed during a call; parameters are the placeholders in the definition
+      - Parameters are passed at runtime; arguments are compile-time constants only
+      - There is no difference; they are exact synonyms with identical meaning
+      - Arguments only exist in functional languages
+    correct_index: 0
+  - question: What is pure function behavior in computer science?
+    options:
+      - A function that produces identical output for identical inputs and causes no observable side effects
+      - A function that modifies global system state on every invocation
+      - A function with zero return values
+      - A function that executes only on GPU hardware
+    correct_index: 0
+
+content_version: 1
+reviewed: true

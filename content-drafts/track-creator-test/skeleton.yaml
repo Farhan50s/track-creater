@@ -1,0 +1,87 @@
+track_id: track-creator-test
+name: Track Creator Test Track
+description: A minimal, structurally complete test track for validating progression, prerequisites, quizzes, and UI flows.
+
+pillars:
+  - pillar_id: track-creator-test__foundations
+    name: Foundations
+    description: Core concepts and programming fundamentals.
+    order: 1
+    topics:
+      - topic_id: track-creator-test__foundations.programming
+        name: Programming
+        order: 1
+        subtopics:
+          - subtopic_id: track-creator-test__foundations.programming.core
+            name: Core Concepts
+            order: 1
+            skill_nodes:
+              - node_id: track-creator-test__foundations.programming.core.fundamentals
+                name: Programming Fundamentals
+                classification: required
+                recommended_depth: implementation
+                estimated_time_minutes: 15
+                order: 1
+                prerequisites: []
+              - node_id: track-creator-test__foundations.programming.core.functions
+                name: Functions & Control Flow
+                classification: required
+                recommended_depth: practical
+                estimated_time_minutes: 20
+                order: 2
+                prerequisites:
+                  - track-creator-test__foundations.programming.core.fundamentals
+      - topic_id: track-creator-test__foundations.concepts
+        name: Concepts
+        order: 2
+        subtopics:
+          - subtopic_id: track-creator-test__foundations.concepts.general
+            name: General Concepts
+            order: 1
+            skill_nodes:
+              - node_id: track-creator-test__foundations.concepts.general.data-structures
+                name: Data Structures Overview
+                classification: required
+                recommended_depth: overview
+                estimated_time_minutes: 10
+                order: 1
+                prerequisites:
+                  - track-creator-test__foundations.programming.core.fundamentals
+              - node_id: track-creator-test__foundations.concepts.general.optional-patterns
+                name: Design Patterns
+                classification: optional
+                recommended_depth: practical
+                estimated_time_minutes: 25
+                order: 2
+                prerequisites:
+                  - track-creator-test__foundations.concepts.general.data-structures
+
+  - pillar_id: track-creator-test__advanced
+    name: Advanced & Specialization
+    description: Specialized learning branches and advanced algorithmic concepts.
+    order: 2
+    topics:
+      - topic_id: track-creator-test__advanced.specialization
+        name: Specialization Topic
+        order: 1
+        subtopics:
+          - subtopic_id: track-creator-test__advanced.specialization.branch
+            name: Specialization Branch
+            order: 1
+            skill_nodes:
+              - node_id: track-creator-test__advanced.specialization.branch.advanced-algorithms
+                name: Advanced Algorithms
+                classification: specialization
+                recommended_depth: advanced
+                estimated_time_minutes: 45
+                order: 1
+                prerequisites:
+                  - track-creator-test__foundations.programming.core.functions
+              - node_id: track-creator-test__advanced.specialization.branch.recommended-tools
+                name: Algorithmic Tooling
+                classification: recommended
+                recommended_depth: practical
+                estimated_time_minutes: 30
+                order: 2
+                prerequisites:
+                  - track-creator-test__advanced.specialization.branch.advanced-algorithms

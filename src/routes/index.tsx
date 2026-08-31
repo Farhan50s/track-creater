@@ -1,6 +1,12 @@
 import { RouteObject } from 'react-router-dom';
 import { AppShell } from '../components/AppShell';
 import { RoutePlaceholder } from '../components/RoutePlaceholder';
+import { ProtectedRoute } from '../components/guards/ProtectedRoute';
+import { PublicOnlyRoute } from '../components/guards/PublicOnlyRoute';
+import { OnboardingGuard } from '../components/guards/OnboardingGuard';
+import { LoginForm } from '../features/auth/components/LoginForm';
+import { SignupForm } from '../features/auth/components/SignupForm';
+import { ForgotPasswordForm } from '../features/auth/components/ForgotPasswordForm';
 
 export const routes: RouteObject[] = [
   {
@@ -20,55 +26,56 @@ export const routes: RouteObject[] = [
       {
         path: 'signup',
         element: (
-          <RoutePlaceholder
-            screenName="Sign Up"
-            routePath="/signup"
-            description="User registration form for standalone authentication."
-          />
+          <PublicOnlyRoute>
+            <SignupForm />
+          </PublicOnlyRoute>
         ),
       },
       {
         path: 'login',
         element: (
-          <RoutePlaceholder
-            screenName="Login"
-            routePath="/login"
-            description="User authentication login form."
-          />
+          <PublicOnlyRoute>
+            <LoginForm />
+          </PublicOnlyRoute>
         ),
       },
       {
         path: 'forgot-password',
-        element: (
-          <RoutePlaceholder
-            screenName="Forgot Password"
-            routePath="/forgot-password"
-            description="Password reset request flow."
-          />
-        ),
+        element: <ForgotPasswordForm />,
       },
       {
-        path: 'onboarding/goal',
-        element: (
-          <RoutePlaceholder
-            screenName="Onboarding — Goal Selection"
-            routePath="/onboarding/goal"
-            description="Role template selection screen (2-3 curated templates)."
-          />
-        ),
-      },
-      {
-        path: 'onboarding/knowledge',
-        element: (
-          <RoutePlaceholder
-            screenName="Onboarding — Starting Knowledge"
-            routePath="/onboarding/knowledge"
-            description="Self-reported familiarity assessment per pillar."
-          />
-        ),
+        path: 'onboarding',
+        element: <ProtectedRoute />,
+        children: [
+          {
+            path: 'goal',
+            element: (
+              <RoutePlaceholder
+                screenName="Onboarding — Goal Selection"
+                routePath="/onboarding/goal"
+                description="Role template selection screen (2-3 curated templates)."
+              />
+            ),
+          },
+          {
+            path: 'knowledge',
+            element: (
+              <RoutePlaceholder
+                screenName="Onboarding — Starting Knowledge"
+                routePath="/onboarding/knowledge"
+                description="Self-reported familiarity assessment per pillar."
+              />
+            ),
+          },
+        ],
       },
       {
         path: 'app',
+        element: (
+          <ProtectedRoute>
+            <OnboardingGuard />
+          </ProtectedRoute>
+        ),
         children: [
           {
             index: true,

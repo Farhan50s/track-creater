@@ -1,0 +1,100 @@
+node_id: track-creator-test__foundations.concepts.general.optional-patterns
+name: Design Patterns
+classification: optional
+recommended_depth: practical
+estimated_time_minutes: 25
+prerequisites:
+  - track-creator-test__foundations.concepts.general.data-structures
+
+one_sentence_definition: Reusable, standardized architectural solutions to commonly occurring problems in software design.
+why_it_matters: Familiarity with software design patterns provides a shared vocabulary for teams and enables clean separation of concerns in evolving codebases.
+quick_overview: Design patterns offer formalized architectural blueprints for solving structural and behavioral challenges in applications. Common examples include the Singleton pattern for coordinated single-instance access, the Factory pattern for flexible object creation, and the Observer pattern for event-driven publish-subscribe communication.
+deep_dive: |
+  Software design patterns are categorized into three main families:
+  1. Creational patterns (e.g., Singleton, Factory, Builder) govern object instantiation mechanisms, increasing flexibility in how objects are composed.
+  2. Structural patterns (e.g., Adapter, Decorator, Facade) assemble objects and classes into larger, decoupled architectures while maintaining flexible interfaces.
+  3. Behavioral patterns (e.g., Observer, Strategy, Command) address algorithms, communication contracts, and the assignment of responsibilities between disparate components.
+
+  Applying patterns judiciously improves maintainability, whereas over-engineering with unnecessary patterns can lead to premature abstraction and cognitive overhead.
+
+resources:
+  - title: Refactoring Guru Design Patterns
+    url: https://refactoring.guru/design-patterns
+    type: documentation
+    tag: start_here
+    why: Clear catalog of creational, structural, and behavioral patterns with diagrams.
+    order_index: 1
+  - title: SourceMaking Design Patterns
+    url: https://sourcemaking.com/design_patterns
+    type: documentation
+    tag: reference
+    why: Architectural deep-dive into object-oriented pattern implementation.
+    order_index: 2
+
+quiz_pool:
+  - question: Which category of design patterns deals with object creation mechanisms?
+    options:
+      - Creational patterns
+      - Structural patterns
+      - Behavioral patterns
+      - Concurrency patterns
+    correct_index: 0
+  - question: What is the primary purpose of the Singleton pattern?
+    options:
+      - To ensure a class has only one instance and provide a global point of access to it
+      - To create a pool of interchangeable database worker threads
+      - To serialize objects into JSON format automatically
+      - To encrypt network packets before transmission
+    correct_index: 0
+  - question: Which design pattern defines a one-to-many dependency so that when one object changes state, all dependents are notified?
+    options:
+      - Observer pattern
+      - Singleton pattern
+      - Adapter pattern
+      - Proxy pattern
+    correct_index: 0
+  - question: What problem does the Adapter pattern solve?
+    options:
+      - It allows classes with incompatible interfaces to collaborate by converting the interface of one class into another
+      - It compresses images in the browser
+      - It limits memory consumption of recursive functions
+      - It converts relational databases to graph databases
+    correct_index: 0
+  - question: Which pattern encapsulates a family of algorithms, making them interchangeable at runtime?
+    options:
+      - Strategy pattern
+      - Factory pattern
+      - Prototype pattern
+      - Decorator pattern
+    correct_index: 0
+  - question: What is a potential downside of applying design patterns without a concrete need?
+    options:
+      - Unnecessary code complexity and cognitive overhead
+      - Complete compiler incompatibility
+      - Increased electrical power consumption of CPU
+      - Invalidation of SSL certificates
+    correct_index: 0
+  - question: Which pattern attaches additional responsibilities to an object dynamically without modifying its underlying class?
+    options:
+      - Decorator pattern
+      - Bridge pattern
+      - Composite pattern
+      - Flyweight pattern
+    correct_index: 0
+  - question: What does the Factory Method pattern delegate to subclasses?
+    options:
+      - The decision of which exact class to instantiate
+      - The calculation of network subnet masks
+      - The allocation of GPU video memory
+      - The registration of domain names
+    correct_index: 0
+  - question: In the Model-View-Controller (MVC) architectural pattern, what is the role of the Controller?
+    options:
+      - To handle user input and coordinate updates between the Model and the View
+      - To store raw database records permanently
+      - To render raw pixel vectors onto the monitor
+      - To manage hardware disk partitions
+    correct_index: 0
+
+content_version: 1
+reviewed: true

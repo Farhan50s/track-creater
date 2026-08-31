@@ -1,0 +1,104 @@
+node_id: track-creator-test__advanced.specialization.branch.advanced-algorithms
+name: Advanced Algorithms
+classification: specialization
+recommended_depth: advanced
+estimated_time_minutes: 45
+prerequisites:
+  - track-creator-test__foundations.programming.core.functions
+
+one_sentence_definition: Complex algorithmic paradigms including dynamic programming and graph traversals for solving constrained optimization problems.
+why_it_matters: Advanced algorithms enable engineers to process massive datasets and optimize resource allocation under non-trivial computational constraints.
+quick_overview: Advanced algorithmic strategies provide powerful techniques for computational efficiency. Dynamic programming breaks complex problems into overlapping subproblems with memoization, while graph algorithms (Dijkstra, BFS/DFS, Topo-Sort) model relational networks and shortest-path determinations.
+deep_dive: |
+  Mastering advanced algorithms involves recognizing problem structures and applying appropriate algorithmic archetypes:
+  1. Dynamic Programming (DP): Exploits optimal substructure and overlapping subproblems. Memoization stores top-down recursive results, whereas tabulation constructs bottom-up solutions in iterative tables, reducing exponential O(2^n) time to polynomial O(n*m).
+  2. Graph Algorithms: Breadth-First Search (BFS) computes shortest paths in unweighted graphs; Dijkstra's algorithm uses priority queues for weighted shortest paths; Topological Sort orders directed acyclic graphs (DAGs).
+  3. Complexity Bounds: Evaluating worst-case, average-case, and amortized asymptotic complexity (Big-O notation) ensures systems maintain sub-second responsiveness at scale.
+
+resources:
+  - title: MIT OpenCourseWare Introduction to Algorithms
+    url: https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/
+    type: course
+    tag: start_here
+    why: Comprehensive academic lectures covering dynamic programming and graph theory.
+    order_index: 1
+  - title: Algorithms by Robert Sedgewick
+    url: https://algs4.cs.princeton.edu/home/
+    type: book
+    tag: reference
+    why: Rigorous textbook reference for algorithmic analysis and implementations.
+    order_index: 2
+  - title: Graph Algorithm Practice Problems
+    url: https://neetcode.io/practice
+    type: practice
+    tag: practice
+    why: Curated set of algorithm challenges for graph traversal and dynamic programming.
+    order_index: 3
+
+quiz_pool:
+  - question: What two properties are required for a problem to be solvable via Dynamic Programming?
+    options:
+      - Optimal substructure and overlapping subproblems
+      - Linear time execution and zero memory footprint
+      - Global variable mutation and tail recursion
+      - Unsorted inputs and binary leaf nodes
+    correct_index: 0
+  - question: What is the primary difference between memoization and tabulation in dynamic programming?
+    options:
+      - Memoization is top-down caching; tabulation is bottom-up iterative computation
+      - Memoization only works on GPU threads; tabulation is CPU only
+      - Tabulation requires infinite recursion; memoization avoids variables
+      - They are mutually exclusive mathematical paradoxes
+    correct_index: 0
+  - question: Which algorithm finds the shortest path between nodes in a weighted graph with non-negative edge weights?
+    options:
+      - Dijkstra's algorithm
+      - Linear Regression
+      - Quick Sort
+      - Depth-First Search with post-order traversal
+    correct_index: 0
+  - question: What graph representation is strictly required to perform a Topological Sort?
+    options:
+      - Directed Acyclic Graph (DAG)
+      - Undirected cyclic grid
+      - Complete bipartite tree with self-loops
+      - Unconnected leaf forest
+    correct_index: 0
+  - question: What is the average time complexity of finding an element in a balanced Binary Search Tree?
+    options:
+      - O(log n)
+      - O(n^2)
+      - O(n!)
+      - O(1)
+    correct_index: 0
+  - question: What data structure is typically used to implement Breadth-First Search (BFS)?
+    options:
+      - Queue (FIFO)
+      - Stack (LIFO)
+      - Red-Black Tree
+      - Minimum Spanning Tree
+    correct_index: 0
+  - question: What technique does Dijkstra's algorithm use to efficiently retrieve the next unvisited vertex with the smallest distance?
+    options:
+      - Min-Priority Queue (Binary Heap)
+      - Simple circular buffer
+      - Random number generator
+      - Linear file scan on disk
+    correct_index: 0
+  - question: In Big-O notation, what does O(n log n) complexity represent compared to O(n^2)?
+    options:
+      - Significantly faster scaling for large values of n
+      - Slower execution across all inputs
+      - Exponential runaway resource consumption
+      - Fixed constant-time execution
+    correct_index: 0
+  - question: What is a cycle in graph theory?
+    options:
+      - A non-empty path in which the first and last vertices are identical
+      - A graph with zero edges
+      - A tree with only one child per node
+      - A completely disconnected vertex
+    correct_index: 0
+
+content_version: 1
+reviewed: true
