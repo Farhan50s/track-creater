@@ -13,6 +13,7 @@ import { KnowledgeSelectionPage } from '../features/onboarding/pages/KnowledgeSe
 import { TrackOverviewPage } from '../features/track/pages/TrackOverviewPage';
 import { PillarViewPage } from '../features/track/pages/PillarViewPage';
 import { SkillDetailPage } from '../features/skill/pages/SkillDetailPage';
+import { QuizPage } from '../features/quiz/pages/QuizPage';
 
 export const routes: RouteObject[] = [
   {
@@ -107,13 +108,7 @@ export const routes: RouteObject[] = [
               },
               {
                 path: 'quiz',
-                element: (
-                  <RoutePlaceholder
-                    screenName="Quiz Flow"
-                    routePath="/app/node/:nodeId/quiz"
-                    description="Deterministic 5-question MCQ checkpoint (4/5 required to pass)."
-                  />
-                ),
+                element: <QuizPage />,
               },
             ],
           },
