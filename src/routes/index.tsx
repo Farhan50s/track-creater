@@ -4,9 +4,14 @@ import { RoutePlaceholder } from '../components/RoutePlaceholder';
 import { ProtectedRoute } from '../components/guards/ProtectedRoute';
 import { PublicOnlyRoute } from '../components/guards/PublicOnlyRoute';
 import { OnboardingGuard } from '../components/guards/OnboardingGuard';
+import { OnboardingRouteGuard } from '../components/guards/OnboardingRouteGuard';
 import { LoginForm } from '../features/auth/components/LoginForm';
 import { SignupForm } from '../features/auth/components/SignupForm';
 import { ForgotPasswordForm } from '../features/auth/components/ForgotPasswordForm';
+import { GoalSelectionPage } from '../features/onboarding/pages/GoalSelectionPage';
+import { KnowledgeSelectionPage } from '../features/onboarding/pages/KnowledgeSelectionPage';
+import { TrackOverviewPage } from '../features/track/pages/TrackOverviewPage';
+import { PillarViewPage } from '../features/track/pages/PillarViewPage';
 
 export const routes: RouteObject[] = [
   {
@@ -45,27 +50,19 @@ export const routes: RouteObject[] = [
       },
       {
         path: 'onboarding',
-        element: <ProtectedRoute />,
+        element: (
+          <ProtectedRoute>
+            <OnboardingRouteGuard />
+          </ProtectedRoute>
+        ),
         children: [
           {
             path: 'goal',
-            element: (
-              <RoutePlaceholder
-                screenName="Onboarding — Goal Selection"
-                routePath="/onboarding/goal"
-                description="Role template selection screen (2-3 curated templates)."
-              />
-            ),
+            element: <GoalSelectionPage />,
           },
           {
             path: 'knowledge',
-            element: (
-              <RoutePlaceholder
-                screenName="Onboarding — Starting Knowledge"
-                routePath="/onboarding/knowledge"
-                description="Self-reported familiarity assessment per pillar."
-              />
-            ),
+            element: <KnowledgeSelectionPage />,
           },
         ],
       },
@@ -92,23 +89,11 @@ export const routes: RouteObject[] = [
             children: [
               {
                 index: true,
-                element: (
-                  <RoutePlaceholder
-                    screenName="Track Overview"
-                    routePath="/app/track"
-                    description="Full track progress overview across all pillars."
-                  />
-                ),
+                element: <TrackOverviewPage />,
               },
               {
                 path: ':pillarId',
-                element: (
-                  <RoutePlaceholder
-                    screenName="Pillar View"
-                    routePath="/app/track/:pillarId"
-                    description="Expandable vertical tree for a specific pillar."
-                  />
-                ),
+                element: <PillarViewPage />,
               },
             ],
           },
