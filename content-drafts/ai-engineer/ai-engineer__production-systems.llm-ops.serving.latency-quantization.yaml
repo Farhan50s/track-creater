@@ -1,0 +1,103 @@
+node_id: ai-engineer__production-systems.llm-ops.serving.latency-quantization
+name: Inference Optimization & Quantization
+classification: recommended
+recommended_depth: practical
+estimated_time_minutes: 30
+reviewed: true
+prerequisites:
+  - ai-engineer__deep-learning.architectures.backpropagation.transformers
+
+one_sentence_definition: Model compression techniques including post-training quantization, KV-cache paging, and high-throughput inference serving engines.
+why_it_matters: Deploying Large Language Models in production requires managing high GPU memory bandwidth and inference costs. Mastering quantization and serving engines is essential for achieving low Time-to-First-Token and high decoding throughput.
+quick_overview: >
+  This skill covers production LLM serving architectures and model compression methods. Engineers explore Post-Training Quantization (INT8, INT4, AWQ, GPTQ), KV-cache memory dynamics and PagedAttention (as implemented in vLLM), continuous batching, speculative decoding, and key serving metrics: Time to First Token (TTFT), Inter-Token Latency (ITL), and total tokens per second throughput.
+deep_dive: |
+  LLM inference operates in two distinct phases:
+  1. Prefill Phase (Compute-Bound): Processes the input prompt tokens in parallel to populate the initial KV cache.
+  2. Decode Phase (Memory-Bandwidth Bound): Autoregressively generates one token at a time, repeatedly loading billions of parameter weights from high-bandwidth GPU memory (HBM) for every single generated token.
+
+  To overcome memory capacity and bandwidth constraints, model quantization converts 16-bit floating-point weights (FP16/BF16) into lower-bit integer representations (INT8/INT4):
+  - GPTQ (Generative Pre-trained Quantization): Uses approximate second-order Taylor expansions to minimize output error per layer.
+  - AWQ (Activation-aware Weight Quantization): Identifies that only 1% of salient weight channels dictate output accuracy and protects them at full precision while quantizing the remaining 99%.
+
+  PagedAttention (vLLM) resolves memory fragmentation in the KV Cache by managing key-value memory in non-contiguous virtual memory pages (inspired by OS virtual memory paging), increasing GPU batch concurrency by 2x to 4x.
+
+  Continuous Batching dynamically injects incoming requests into running generation iterations at token-level granularity rather than waiting for static batch boundaries, dramatically reducing queue wait times in high-concurrency production endpoints.
+
+resources:
+  - title: vLLM Architecture & PagedAttention Paper
+    url: https://arxiv.org/abs/2309.06180
+    type: article
+    tag: start_here
+    why: The breakthrough paper introducing PagedAttention and continuous batching for high-throughput LLM serving.
+    order_index: 1
+  - title: Hugging Face Quantization Overview
+    url: https://huggingface.co/docs/transformers/main/en/quantization/overview
+    type: documentation
+    tag: reference
+    why: Guide to modern quantization formats including AWQ, GPTQ, and bitsandbytes.
+    order_index: 2
+  - title: TensorRT-LLM Performance Guide
+    url: https://github.com/NVIDIA/TensorRT-LLM
+    type: tutorial
+    tag: practice
+    why: Practical optimization techniques for NVIDIA GPU inference engines.
+    order_index: 3
+
+quiz_pool:
+  - question: Why is the autoregressive token decoding phase of LLMs memory-bandwidth bound rather than compute bound?
+    options:
+      - Every single token generation requires streaming billions of model weights from GPU memory (HBM) into compute cores
+      - The GPU compute cores are turned off during decoding
+      - Decoding only runs on single-core CPUs
+      - Token generation requires continuous internet queries
+    correct_index: 0
+  - question: How does PagedAttention (vLLM) resolve KV-cache memory waste?
+    options:
+      - Manages KV-cache memory in non-contiguous virtual pages, eliminating internal and external fragmentation
+      - Deletes the KV-cache after every generated word
+      - Stores all KV-cache vectors on mechanical hard drives
+      - Compresses all tokens into a single scalar value
+    correct_index: 0
+  - question: What is Continuous Batching in production LLM inference engines?
+    options:
+      - Iteration-level scheduling that inserts and evicts requests at the single-token boundary rather than waiting for entire batches to finish
+      - Batching all user requests into a single CSV file processed nightly
+      - Running training and inference in the exact same forward pass
+      - Restricting concurrent users to 1
+    correct_index: 0
+  - question: How does AWQ (Activation-aware Weight Quantization) protect model accuracy during 4-bit compression?
+    options:
+      - Identifies and protects the small percentage of salient weight channels based on activation magnitudes
+      - Trains the model from scratch for 100 epochs
+      - Replaces all attention layers with linear regressions
+      - Rounds all weights to either 0 or 1
+    correct_index: 0
+  - question: What does Time to First Token (TTFT) measure in LLM serving?
+    options:
+      - The duration between sending a request and receiving the first generated output token (measuring prompt prefill latency)
+      - The total time required to generate 1,000 tokens
+      - The time required to download the model weights from the web
+      - The physical booting duration of the server hardware
+    correct_index: 0
+  - question: What is Speculative Decoding?
+    options:
+      - Using a small fast draft model to speculate multiple tokens ahead, followed by a single parallel verification step by the target model
+      - Guessing user prompts before they are submitted
+      - Randomly dropping every third token to increase speed
+      - Generating text backwards from end to beginning
+    correct_index: 0
+  - question: In FP16 vs INT4 quantization, what is the approximate reduction factor in model weight memory?
+    options:
+      - Approximately 4x memory reduction (from 16 bits to 4 bits per parameter)
+      - Exactly 2x memory reduction
+      - 50x memory reduction
+      - 0% memory reduction
+    correct_index: 0
+  - question: What does Inter-Token Latency (ITL) measure during streaming LLM generation?
+    options:
+      - The average time taken to generate each subsequent token after the first token arrives
+      - The time taken to parse the prompt JSON
+      - The cold-start container initialization duration
+      - The latency of the client browser rendering DOM nodes
+    correct_index: 0

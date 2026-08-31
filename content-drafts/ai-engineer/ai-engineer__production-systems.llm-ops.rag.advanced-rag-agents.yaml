@@ -1,0 +1,108 @@
+node_id: ai-engineer__production-systems.llm-ops.rag.advanced-rag-agents
+name: Advanced RAG & Autonomous Agent Workflows
+classification: specialization
+recommended_depth: advanced
+estimated_time_minutes: 45
+reviewed: true
+prerequisites:
+  - ai-engineer__production-systems.llm-ops.rag.embeddings-vector-search
+
+one_sentence_definition: Multi-stage retrieval architectures, cross-encoder re-ranking, query transformation, and tool-calling autonomous LLM agent loops.
+why_it_matters: Naive RAG systems suffer from hallucination and low recall when faced with complex multi-step reasoning. Mastering advanced retrieval workflows and agentic tool use enables building reliable enterprise AI assistants.
+quick_overview: >
+  This skill covers advanced RAG architectures and autonomous agent patterns. Engineers learn query rewriting, HyDE (Hypothetical Document Embeddings), contextual re-ranking via cross-encoders, and self-reflective RAG loops (Corrective RAG, Self-RAG). In the agentic domain, engineers master ReAct (Reasoning + Acting) loops, tool calling with structured JSON schemas, memory management, and multi-agent coordination frameworks.
+deep_dive: |
+  Enterprise RAG systems encounter failure modes when user queries are ambiguous or require multi-hop reasoning. Advanced RAG replaces simple retrieve-and-generate with modular, self-correcting pipelines:
+
+  1. Query Pre-Retrieval Transformation:
+  - Query Decomposition: Breaks complex multi-faceted prompts into discrete sub-queries executed in parallel.
+  - HyDE (Hypothetical Document Embeddings): Uses an LLM to generate a draft answer first, then embeds that hypothetical document to retrieve empirically grounded source chunks matching the answer's semantic structure.
+
+  2. Post-Retrieval Re-Ranking:
+  Bi-encoder vector search quickly retrieves the top 50-100 candidate chunks. A heavier Cross-Encoder (such as Cohere Rerank or BGE-Reranker) performs joint full-attention over the query and candidate chunk pairs: CrossEncoder(Query, Chunk) -> Score [0, 1]. This filters out irrelevant noise, passing only the top 5 highest-quality passages into the LLM context window.
+
+  3. Autonomous Agent Loops:
+  Agents extend LLMs with decision-making agency using the ReAct (Thought -> Action -> Observation) loop:
+  - The model outputs reasoning thoughts followed by a structured tool call invocation (e.g. SQL query, web search API).
+  - The runtime environment executes the tool and injects the observation into the prompt context.
+  - The loop repeats iteratively until the model determines the goal is satisfied and generates the final user response.
+
+  Robust agent architectures implement strict guardrails: loop timeouts, schema validation (Pydantic/Zod), human-in-the-loop approval gates, and state persistence across multi-turn sessions.
+
+resources:
+  - title: Building Effective LLM Agents by Anthropic
+    url: https://www.anthropic.com/research/building-effective-agents
+    type: article
+    tag: start_here
+    why: Comprehensive architectural guide to workflow routing, evaluator-optimizer loops, and multi-agent patterns.
+    order_index: 1
+  - title: ReAct — Synergizing Reasoning and Acting in Language Models
+    url: https://arxiv.org/abs/2210.03629
+    type: article
+    tag: reference
+    why: The original paper establishing the ReAct agent framework for LLM tool use.
+    order_index: 2
+  - title: RAG Triad Evaluation Guide
+    url: https://docs.truera.com/truelens/core_concepts/rag_triad/
+    type: documentation
+    tag: practice
+    why: Practical framework for measuring Context Relevance, Groundedness, and Answer Relevance in RAG.
+    order_index: 3
+
+quiz_pool:
+  - question: What is the primary operational loop used in the ReAct agent architecture?
+    options:
+      - "Thought -> Action (Tool Call) -> Observation (Tool Result) -> Thought"
+      - "Map -> Reduce -> Filter"
+      - "Forward Pass -> Backward Pass -> Optimizer Step"
+      - "Tokenize -> Encode -> Decode"
+    correct_index: 0
+  - question: How does a Cross-Encoder re-ranker differ from a Bi-Encoder in retrieval pipelines?
+    options:
+      - Cross-Encoders pass the query and candidate text together into full self-attention, yielding higher accuracy at higher latency
+      - Cross-Encoders can only process numeric tabular data
+      - Cross-Encoders do not require neural network weights
+      - Cross-Encoders run 100x faster than vector dot products
+    correct_index: 0
+  - question: How does HyDE (Hypothetical Document Embeddings) improve retrieval for vague queries?
+    options:
+      - Generates a hypothetical answer with an LLM and embeds the answer to retrieve similar real passages
+      - Encrypts the user prompt before sending it to the database
+      - Translates the prompt into 5 different languages
+      - Drops all punctuation marks from the query
+    correct_index: 0
+  - question: What are the three pillars of the RAG Triad evaluation framework?
+    options:
+      - "Context Relevance, Groundedness (Faithfulness), and Answer Relevance"
+      - "Training Loss, Validation Loss, and Perplexity"
+      - "GPU Temperature, RAM Usage, and Disk I/O"
+      - "Token Count, Batch Size, and Learning Rate"
+    correct_index: 0
+  - question: Why is tool schema validation (e.g. using JSON Schema or Pydantic) critical in agent systems?
+    options:
+      - Ensures LLM-generated arguments conform strictly to the required types before executing backend tools
+      - Compiles Python code into machine assembly
+      - Prevents users from typing long prompts
+      - Speeds up vector database indexing
+    correct_index: 0
+  - question: What is the purpose of Query Decomposition in complex RAG workflows?
+    options:
+      - Breaking a multi-part query into independent sub-questions that can be retrieved and synthesized
+      - Removing vowels from search terms
+      - Splitting large PDFs into 100-word text files
+      - Shuffling the order of retrieved documents
+    correct_index: 0
+  - question: What is Self-RAG (Self-Reflective RAG)?
+    options:
+      - A framework where the model dynamically assesses whether retrieval is needed and critiques its own generated outputs
+      - A system that only reads its own hardcoded source code
+      - A RAG pipeline that runs without any embedding model
+      - An offline backup vector store
+    correct_index: 0
+  - question: How can infinite loops be prevented in autonomous LLM agent execution engines?
+    options:
+      - By enforcing maximum iteration step limits, timeouts, and structured error handling
+      - By removing all tools from the agent's prompt
+      - By setting temperature to 2.0
+      - By disabling LLM context history
+    correct_index: 0

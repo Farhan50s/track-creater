@@ -1,0 +1,104 @@
+node_id: ai-engineer__deep-learning.training.optimization.techniques
+name: Optimization & Regularization Techniques
+classification: recommended
+recommended_depth: practical
+estimated_time_minutes: 30
+reviewed: true
+prerequisites:
+  - ai-engineer__deep-learning.architectures.backpropagation.autograd
+
+one_sentence_definition: Advanced stochastic optimization algorithms, learning rate schedules, and regularization methods used to accelerate and stabilize deep network convergence.
+why_it_matters: Training deep neural networks without adaptive optimizers and proper regularization leads to training divergence, exploding loss, or severe generalization overfitting on test datasets.
+quick_overview: >
+  This skill covers stochastic optimization algorithms including SGD with Momentum, Adam, and AdamW (decoupled weight decay). Engineers master learning rate warmups, cosine annealing decay schedules, gradient clipping, dropout, weight decay (L2 regularization), and batch/layer normalization. Mastering these techniques equips engineers to systematically diagnose convergence issues, stabilize training curves, and improve out-of-distribution generalization.
+deep_dive: |
+  Vanilla Stochastic Gradient Descent (SGD) updates parameters along the negative gradient: w = w - lr * grad. However, in ravines with high curvature, standard SGD oscillates wildly.
+
+  Momentum accelerates gradient descent by adding a fraction gamma of the previous update vector, smoothing out high-frequency oscillations: v_t = gamma * v_{t-1} + lr * grad_t; w_t = w_{t-1} - v_t.
+
+  Adaptive gradient methods scale updates per-parameter. Adam (Adaptive Moment Estimation) tracks exponentially decaying averages of past gradients (first moment m_t) and past squared gradients (second moment v_t), correcting for initialization bias:
+  m_t = beta1 * m_{t-1} + (1 - beta1) * g_t
+  v_t = beta2 * v_{t-1} + (1 - beta2) * g_t^2
+  w_t = w_{t-1} - lr * (m_t / (1 - beta1^t)) / (sqrt(v_t / (1 - beta2^t)) + eps)
+
+  AdamW decouples weight decay from the gradient update, applying direct shrinkage w_t = (1 - lr * lambda) * w_{t-1} - lr * AdamUpdate, significantly improving generalization in Transformer architectures.
+
+  Gradient Clipping caps the L2 norm of the gradient vector to a threshold (such as 1.0), effectively preventing gradient explosion spikes from corrupting model weights during large-scale pre-training.
+
+resources:
+  - title: AdamW Paper — Decoupled Weight Decay Regularization
+    url: https://arxiv.org/abs/1711.05101
+    type: article
+    tag: start_here
+    why: Seminal paper explaining why L2 regularization and weight decay differ in adaptive optimizers like Adam.
+    order_index: 1
+  - title: PyTorch Optimizers Documentation
+    url: https://pytorch.org/docs/stable/optim.html
+    type: documentation
+    tag: reference
+    why: Reference guide for configuring AdamW, SGD, learning rate schedulers, and gradient clipping.
+    order_index: 2
+  - title: CS231n Optimization Guide
+    url: https://cs231n.github.io/neural-networks-3/
+    type: tutorial
+    tag: alternative
+    why: Intuitive visual walkthrough of learning rate schedules, dropout, and second-order optimization.
+    order_index: 3
+
+quiz_pool:
+  - question: Why is AdamW preferred over standard Adam for training Transformer models?
+    options:
+      - It decouples weight decay from gradient updates, ensuring proper L2 regularization
+      - It eliminates the need for learning rate warmups entirely
+      - It trains models with zero GPU memory overhead
+      - It replaces matrix multiplication with convolution
+    correct_index: 0
+  - question: What is the primary function of Gradient Clipping during neural network training?
+    options:
+      - Preventing gradient explosion by scaling down gradients when their norm exceeds a threshold
+      - Pruning weights that are close to zero
+      - Rounding floating-point activations to 8-bit integers
+      - Dropping 50% of incoming mini-batches
+    correct_index: 0
+  - question: What does the first moment vector (m_t) in the Adam optimizer estimate?
+    options:
+      - The exponentially moving average of past gradients (momentum)
+      - The uncentered variance of past gradients
+      - The second derivative of the loss surface
+      - The ratio of training error to test error
+    correct_index: 0
+  - question: What is the purpose of a linear learning rate warmup at the beginning of training?
+    options:
+      - Prevents unstable early updates from corrupting randomly initialized weights before statistics stabilize
+      - Warms up the physical GPU hardware temperature
+      - Fills the token vocabulary with zero embeddings
+      - Converts integer labels into one-hot vectors
+    correct_index: 0
+  - question: How does Dropout regularize a neural network during training?
+    options:
+      - By randomly setting a fraction of neuron activations to zero, preventing co-adaptation of features
+      - By discarding 20% of the training dataset
+      - By clamping parameter weights between -1 and 1
+      - By increasing the batch size exponentially
+    correct_index: 0
+  - question: What happens to Dropout layers during model inference and evaluation?
+    options:
+      - Dropout is deactivated and all activations are scaled and passed through deterministically
+      - Dropout randomly drops twice as many neurons
+      - Dropout computes the inverse of the activation matrix
+      - Dropout throws an evaluation exception
+    correct_index: 0
+  - question: In Cosine Annealing learning rate schedules, how does the learning rate evolve over time?
+    options:
+      - Decreases smoothly following a cosine curve towards a minimum value
+      - Increases linearly without bound
+      - Remains constant across all training epochs
+      - Halves randomly on every second iteration
+    correct_index: 0
+  - question: What does the second moment vector (v_t) in Adam track?
+    options:
+      - The exponentially decaying average of squared gradients (element-wise variance)
+      - The average magnitude of parameter weights
+      - The learning rate scaling multiplier
+      - The total count of completed training epochs
+    correct_index: 0

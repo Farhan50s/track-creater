@@ -1,0 +1,148 @@
+track_id: ai-engineer
+name: AI & Machine Learning Engineer
+description: A comprehensive, role-aligned curriculum covering mathematics foundations, deep learning architectures, LLM systems engineering, and scalable production deployment.
+
+pillars:
+  - pillar_id: ai-engineer__foundations
+    name: Mathematical & Programming Foundations
+    description: Core linear algebra, multivariate calculus, and statistical inference foundations for machine learning.
+    order: 1
+    topics:
+      - topic_id: ai-engineer__foundations.python-numpy
+        name: Scientific Python & Linear Algebra
+        order: 1
+        subtopics:
+          - subtopic_id: ai-engineer__foundations.python-numpy.core
+            name: Numerical Computation & Calculus
+            order: 1
+            skill_nodes:
+              - node_id: ai-engineer__foundations.python-numpy.core.vector-matrix-ops
+                name: Vector & Matrix Operations
+                classification: required
+                recommended_depth: implementation
+                estimated_time_minutes: 25
+                order: 1
+                prerequisites: []
+              - node_id: ai-engineer__foundations.python-numpy.core.calculus-gradients
+                name: Multivariate Calculus & Gradients
+                classification: required
+                recommended_depth: practical
+                estimated_time_minutes: 30
+                order: 2
+                prerequisites:
+                  - ai-engineer__foundations.python-numpy.core.vector-matrix-ops
+
+      - topic_id: ai-engineer__foundations.probability
+        name: Probability & Statistics for ML
+        order: 2
+        subtopics:
+          - subtopic_id: ai-engineer__foundations.probability.distributions
+            name: Statistical Modeling & Estimation
+            order: 1
+            skill_nodes:
+              - node_id: ai-engineer__foundations.probability.distributions.inference
+                name: Statistical Inference & Distributions
+                classification: required
+                recommended_depth: practical
+                estimated_time_minutes: 25
+                order: 1
+                prerequisites:
+                  - ai-engineer__foundations.python-numpy.core.calculus-gradients
+              - node_id: ai-engineer__foundations.probability.distributions.bayesian-methods
+                name: Bayesian Methods & Uncertainty
+                classification: optional
+                recommended_depth: overview
+                estimated_time_minutes: 20
+                order: 2
+                prerequisites:
+                  - ai-engineer__foundations.probability.distributions.inference
+
+  - pillar_id: ai-engineer__deep-learning
+    name: Deep Learning & Neural Architectures
+    description: Neural network mechanics, autograd optimization, attention mechanisms, and Transformer architectures.
+    order: 2
+    topics:
+      - topic_id: ai-engineer__deep-learning.architectures
+        name: Neural Network Foundations
+        order: 1
+        subtopics:
+          - subtopic_id: ai-engineer__deep-learning.architectures.backpropagation
+            name: Feedforward & Transformer Models
+            order: 1
+            skill_nodes:
+              - node_id: ai-engineer__deep-learning.architectures.backpropagation.autograd
+                name: Backpropagation & Autograd Engines
+                classification: required
+                recommended_depth: implementation
+                estimated_time_minutes: 35
+                order: 1
+                prerequisites:
+                  - ai-engineer__foundations.python-numpy.core.calculus-gradients
+              - node_id: ai-engineer__deep-learning.architectures.backpropagation.transformers
+                name: Attention Mechanisms & Transformers
+                classification: required
+                recommended_depth: practical
+                estimated_time_minutes: 40
+                order: 2
+                prerequisites:
+                  - ai-engineer__deep-learning.architectures.backpropagation.autograd
+
+      - topic_id: ai-engineer__deep-learning.training
+        name: Training Dynamics & Optimization
+        order: 2
+        subtopics:
+          - subtopic_id: ai-engineer__deep-learning.training.optimization
+            name: Optimization & Loss Regularization
+            order: 1
+            skill_nodes:
+              - node_id: ai-engineer__deep-learning.training.optimization.techniques
+                name: Optimization & Regularization Techniques
+                classification: recommended
+                recommended_depth: practical
+                estimated_time_minutes: 30
+                order: 1
+                prerequisites:
+                  - ai-engineer__deep-learning.architectures.backpropagation.autograd
+
+  - pillar_id: ai-engineer__production-systems
+    name: LLMs & Production AI Systems
+    description: Vector embeddings, Retrieval-Augmented Generation, multi-agent workflows, and low-latency model serving.
+    order: 3
+    topics:
+      - topic_id: ai-engineer__production-systems.llm-ops
+        name: LLM Systems, Retrieval & Serving
+        order: 1
+        subtopics:
+          - subtopic_id: ai-engineer__production-systems.llm-ops.rag
+            name: Retrieval-Augmented Generation (RAG)
+            order: 1
+            skill_nodes:
+              - node_id: ai-engineer__production-systems.llm-ops.rag.embeddings-vector-search
+                name: Embeddings & Vector Search Architecture
+                classification: required
+                recommended_depth: implementation
+                estimated_time_minutes: 35
+                order: 1
+                prerequisites:
+                  - ai-engineer__deep-learning.architectures.backpropagation.transformers
+              - node_id: ai-engineer__production-systems.llm-ops.rag.advanced-rag-agents
+                name: Advanced RAG & Autonomous Agent Workflows
+                classification: specialization
+                recommended_depth: advanced
+                estimated_time_minutes: 45
+                order: 2
+                prerequisites:
+                  - ai-engineer__production-systems.llm-ops.rag.embeddings-vector-search
+
+          - subtopic_id: ai-engineer__production-systems.llm-ops.serving
+            name: Model Serving & Quantization
+            order: 2
+            skill_nodes:
+              - node_id: ai-engineer__production-systems.llm-ops.serving.latency-quantization
+                name: Inference Optimization & Quantization
+                classification: recommended
+                recommended_depth: practical
+                estimated_time_minutes: 30
+                order: 1
+                prerequisites:
+                  - ai-engineer__deep-learning.architectures.backpropagation.transformers

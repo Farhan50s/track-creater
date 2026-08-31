@@ -85,7 +85,9 @@ export function GoalSelectionPage() {
           nodeCount: nodeCountMap.get(t.track_id) || 0,
         }));
 
-        setTracks(formattedTracks);
+        // Prioritize real production tracks over development test tracks
+        const productionTracks = formattedTracks.filter((t) => t.track_id !== 'track-creator-test');
+        setTracks(productionTracks.length > 0 ? productionTracks : formattedTracks);
       } catch (err: any) {
         console.error('Error loading tracks:', err);
         setError('Unable to load available role tracks. Please refresh.');

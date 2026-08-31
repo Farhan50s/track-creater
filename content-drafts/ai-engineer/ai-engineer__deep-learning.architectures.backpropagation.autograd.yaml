@@ -1,0 +1,104 @@
+node_id: ai-engineer__deep-learning.architectures.backpropagation.autograd
+name: Backpropagation & Autograd Engines
+classification: required
+recommended_depth: implementation
+estimated_time_minutes: 35
+reviewed: true
+prerequisites:
+  - ai-engineer__foundations.python-numpy.core.calculus-gradients
+
+one_sentence_definition: Algorithmic implementation of reverse-mode automatic differentiation over dynamic directed acyclic computation graphs for deep neural networks.
+why_it_matters: Modern deep learning frameworks like PyTorch and JAX rely entirely on autograd engines. Understanding computation graphs, tape recorders, and topological gradient accumulation allows engineers to build custom layers and debug backprop memory issues.
+quick_overview: >
+  This skill covers the implementation mechanics of reverse-mode automatic differentiation (autograd). Engineers build a clear mental model of how forward operations construct a directed acyclic computation graph (DAG), dynamically tracking tensors and gradient functions. During the backward pass, the autograd engine performs a reverse topological sort, applying the chain rule to accumulate partial derivatives at each leaf tensor, powering gradient descent for arbitrary multi-layer architectures.
+deep_dive: |
+  Automatic differentiation differs fundamentally from numerical differentiation (which suffers from truncation and roundoff errors) and symbolic differentiation (which suffers from expression explosion). Reverse-mode autodiff computes exact gradients in computational complexity proportional to the forward pass.
+
+  During the forward execution, each mathematical operation on a tracked tensor records an entry onto an execution tape or dynamic graph node. Each node stores references to input operands and a backward function closure that implements the vector-Jacobian product (VJP) for that specific operation.
+
+  When .backward() is invoked on a scalar output tensor (such as the loss), the autograd engine executes the following steps:
+  1. Computes the topological sort order of the computation graph starting from the output node.
+  2. Initializes the seed gradient (dL/dL = 1.0).
+  3. Traverses the graph in reverse topological order, evaluating the VJP of each operation.
+  4. Accumulates gradient contributions across branching paths (implementing the multivariate chain rule sum: dL/dx = sum dL/dy_i * dy_i/dx).
+  5. Populates the .grad attribute on leaf parameter tensors while discarding intermediate activation gradients unless retained.
+
+  Mastering in-place operation restrictions, non-differentiable operations (like argmax), and memory retention semantics (like torch.no_grad() and retain_graph) is vital for writing high-performance training loops and memory-efficient inference routines.
+
+resources:
+  - title: Micrograd by Andrej Karpathy
+    url: https://github.com/karpathy/micrograd
+    type: tutorial
+    tag: start_here
+    why: Minimalist 100-line scalar autograd engine demonstrating reverse-mode autodiff from scratch.
+    order_index: 1
+  - title: PyTorch Autograd Explained
+    url: https://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html
+    type: documentation
+    tag: reference
+    why: Official guide to PyTorch computation graphs, tensor tracking, and backward mechanics.
+    order_index: 2
+  - title: Automatic Differentiation in Machine Learning Survey
+    url: https://arxiv.org/abs/1502.05767
+    type: article
+    tag: alternative
+    why: Comprehensive academic survey of forward vs reverse mode automatic differentiation.
+    order_index: 3
+
+quiz_pool:
+  - question: What graph algorithm is executed by autograd engines to determine the order of backward gradient propagation?
+    options:
+      - Reverse topological sort
+      - "Dijkstra's shortest path"
+      - Breadth-first search queue
+      - "Kruskal's minimum spanning tree"
+    correct_index: 0
+  - question: Why is reverse-mode automatic differentiation preferred over forward-mode for deep neural networks?
+    options:
+      - It computes gradients for millions of parameters with respect to a single scalar loss in one backward pass
+      - It eliminates the need for floating-point calculations
+      - It only works on feedforward convolutional networks
+      - It requires zero memory for activations
+    correct_index: 0
+  - question: What happens when multiple computational branches consume the same tensor during the forward pass?
+    options:
+      - Their incoming gradients are summed together in the backward pass
+      - Only the first branch's gradient is retained
+      - The autograd engine throws a cyclic graph error
+      - The tensor's value is automatically halved
+    correct_index: 0
+  - question: What does the Vector-Jacobian Product (VJP) compute in reverse-mode autodiff?
+    options:
+      - The product of an incoming upstream gradient vector with the local Jacobian matrix of the operation
+      - The inverse of the Hessian matrix
+      - The scalar dot product of model weights
+      - The cross product of embedding coordinates
+    correct_index: 0
+  - question: What is the primary purpose of wrapping inference code in torch.no_grad()?
+    options:
+      - To disable computation graph creation, reducing memory footprint and accelerating execution
+      - To quantize weights to 8-bit integers
+      - To prevent model outputs from exceeding 1.0
+      - To serialize model parameters to disk
+    correct_index: 0
+  - question: Which type of operation cannot be differentiated by standard autograd engines without approximations?
+    options:
+      - Discrete operations like argmax or hard step functions
+      - Matrix multiplication
+      - Element-wise additions
+      - Convolutional filters
+    correct_index: 0
+  - question: What is stored in intermediate activation tensors during the forward pass?
+    options:
+      - Values needed to compute the local derivatives during the backward pass
+      - Optimizer state vectors like Adam momentum
+      - Token vocabulary lookups
+      - Serialized model checkpoints
+    correct_index: 0
+  - question: What does setting a tensor's requires_grad property to False achieve?
+    options:
+      - Excludes the tensor from computation graph tracking and freezes its gradients
+      - Deletes the tensor from memory immediately
+      - Forces the tensor to contain only positive numbers
+      - Inverts the tensor's dimension order
+    correct_index: 0

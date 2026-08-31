@@ -1,0 +1,99 @@
+node_id: ai-engineer__foundations.probability.distributions.inference
+name: Statistical Inference & Distributions
+classification: required
+recommended_depth: practical
+estimated_time_minutes: 25
+reviewed: true
+prerequisites:
+  - ai-engineer__foundations.python-numpy.core.calculus-gradients
+
+one_sentence_definition: Essential probability theory, common probability distributions, and statistical estimation techniques applied in machine learning algorithms.
+why_it_matters: Machine learning models operate under uncertainty and probabilistic assumptions. Understanding distributions, expectations, variance, and maximum likelihood estimation is essential for formulating loss functions such as cross-entropy and mean squared error.
+quick_overview: >
+  This skill covers fundamental probability theory, discrete and continuous distributions (Gaussian, Bernoulli, Categorical), expectation, variance, covariance, and maximum likelihood estimation (MLE). By understanding probabilistic principles, engineers can interpret classification probabilities, design robust loss metrics, and understand why cross-entropy loss naturally emerges from maximum likelihood estimation over categorical distributions.
+deep_dive: |
+  Probability theory provides the mathematical formalization of uncertainty in machine learning systems. Datasets represent empirical samples drawn from underlying, unobservable joint probability distributions P(X, Y).
+
+  Discrete distributions like the Bernoulli and Categorical distributions model binary and multi-class classification labels. Continuous distributions, particularly the Gaussian (Normal) distribution, model continuous target variables and latent representations. The Gaussian distribution is characterized by its mean (mu) and variance (sigma^2).
+
+  Maximum Likelihood Estimation (MLE) seeks parameter values theta that maximize the likelihood of observing the training data: L(theta) = prod P(x_i | theta). Taking the negative logarithm converts the product of probabilities into a sum of log-probabilities: NLL = -sum log P(x_i | theta). Minimizing negative log-likelihood over a Gaussian distribution corresponds directly to Mean Squared Error (MSE), while minimizing NLL over a Categorical distribution yields standard categorical Cross-Entropy loss.
+
+  Evaluating variance, confidence intervals, and hypothesis testing allows practitioners to rigorously assess model generalization and identify statistical drift between training and production distributions.
+
+resources:
+  - title: Seeing Theory — Visual Introduction to Probability
+    url: https://seeing-theory.brown.edu/
+    type: tutorial
+    tag: start_here
+    why: Interactive visualizations of probability distributions, statistical inference, and regression.
+    order_index: 1
+  - title: Probabilistic Machine Learning by Kevin Murphy
+    url: https://probml.github.io/pml-book/book1.html
+    type: book
+    tag: reference
+    why: Authoritative textbook connecting statistical foundations with deep learning.
+    order_index: 2
+  - title: SciPy Stats Documentation
+    url: https://docs.scipy.org/doc/scipy/reference/stats.html
+    type: documentation
+    tag: practice
+    why: Practical reference for fitting distributions and performing statistical tests in Python.
+    order_index: 3
+
+quiz_pool:
+  - question: What does Maximum Likelihood Estimation (MLE) aim to achieve?
+    options:
+      - Maximize the probability of observing the given dataset under the model parameters
+      - Minimize the number of layers in a neural network
+      - Equalize the mean and variance across all features
+      - Eliminate all outliers from the training set
+    correct_index: 0
+  - question: Minimizing the negative log-likelihood of a Categorical distribution yields which standard loss function?
+    options:
+      - Cross-entropy loss
+      - Mean Absolute Error (MAE)
+      - Huber loss
+      - Hinge loss
+    correct_index: 0
+  - question: Which probability distribution is parameterized by a mean and a standard deviation and forms a symmetric bell curve?
+    options:
+      - Gaussian (Normal) distribution
+      - Poisson distribution
+      - Uniform discrete distribution
+      - Exponential distribution
+    correct_index: 0
+  - question: What does the variance of a random variable measure?
+    options:
+      - The spread or dispersion of values around the expected mean
+      - The maximum possible value in the sample space
+      - The total count of unique observations
+      - The median value of the distribution
+    correct_index: 0
+  - question: What is the expected value of a fair six-sided die roll?
+    options:
+      - "3.5"
+      - "3.0"
+      - "4.0"
+      - "6.0"
+    correct_index: 0
+  - question: What theorem states that the sample mean of independent random variables approaches a normal distribution as sample size increases?
+    options:
+      - Central Limit Theorem
+      - Bayes Theorem
+      - Fermat's Last Theorem
+      - Spectral Theorem
+    correct_index: 0
+  - question: What does covariance measure between two random variables?
+    options:
+      - The degree to which two random variables change together linearly
+      - The sum of their individual standard deviations
+      - The conditional probability of independent events
+      - The absolute difference between their medians
+    correct_index: 0
+  - question: What is the range of values produced by a valid probability density function or probability mass function?
+    options:
+      - Non-negative values whose total integral or sum equals 1
+      - Any real numbers between -1 and 1
+      - Positive integers only
+      - Values between 0 and 100
+    correct_index: 0

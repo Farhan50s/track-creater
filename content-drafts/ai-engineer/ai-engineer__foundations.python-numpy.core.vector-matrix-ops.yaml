@@ -1,0 +1,99 @@
+node_id: ai-engineer__foundations.python-numpy.core.vector-matrix-ops
+name: Vector & Matrix Operations
+classification: required
+recommended_depth: implementation
+estimated_time_minutes: 25
+reviewed: true
+prerequisites: []
+
+one_sentence_definition: Fundamental linear algebra concepts and vectorized tensor operations that form the mathematical backbone of modern machine learning.
+why_it_matters: Vector and matrix computations underpin all neural network forward and backward passes. Mastering efficient multidimensional array manipulation prevents performance bottlenecks when training and evaluating machine learning models.
+quick_overview: >
+  Vector and matrix operations provide the mathematical language for representing datasets, neural network weights, and activation maps. This skill explores dot products, matrix multiplications, broadcasting semantics, and tensor transformations using vectorized arrays. Understanding dimension compatibility, transposition, and tensor reshaping allows machine learning engineers to implement high-throughput model layers without relying on slow explicit Python loops.
+deep_dive: |
+  Linear algebra in machine learning relies heavily on efficient multidimensional tensor computations executed on CPUs and GPUs. Rather than computing element-wise transformations sequentially, vectorized operations leverage SIMD instructions to process batches of numbers simultaneously.
+
+  The dot product between two vectors measures similarity and forms the core of linear projections:
+  dot(u, v) = sum(u_i * v_i). When extended to matrices, matrix multiplication computes inner products across rows and columns, subject to strict inner dimension matching: (M x K) multiplied by (K x N) yields an (M x N) output.
+
+  Broadcasting allows operations between tensors of differing shapes by virtually stretching singleton dimensions to match the target tensor rank, adhering to standard trailing-dimension alignment rules.
+
+  Understanding memory layout (such as row-major C-contiguous vs column-major Fortran ordering), stride manipulation, and contiguous memory views is essential for optimizing matrix transformations and avoiding unexpected memory allocation copies in production machine learning pipelines.
+
+resources:
+  - title: NumPy Quickstart Tutorial
+    url: https://numpy.org/doc/stable/user/quickstart.html
+    type: documentation
+    tag: start_here
+    why: The authoritative reference for array creation, broadcasting, and matrix operations in Python.
+    order_index: 1
+  - title: 3Blue1Brown Essence of Linear Algebra
+    url: https://www.3blue1brown.com/topics/linear-algebra
+    type: video
+    tag: alternative
+    why: Intuitive geometric visualizations of vector spaces, linear transformations, and dot products.
+    order_index: 2
+  - title: Vectorization Practice on NumPy
+    url: https://github.com/rougier/numpy-100
+    type: practice
+    tag: practice
+    why: 100 targeted practical exercises covering tensor manipulation and broadcasting edge cases.
+    order_index: 3
+
+quiz_pool:
+  - question: What is the resulting shape of multiplying a matrix of shape (32, 128) by a matrix of shape (128, 64)?
+    options:
+      - "(32, 64)"
+      - "(128, 128)"
+      - "(32, 128)"
+      - "(64, 32)"
+    correct_index: 0
+  - question: Which rule determines whether two tensor shapes are compatible for broadcasting?
+    options:
+      - Both tensors must have identical memory addresses
+      - Trailing dimensions must be equal or one of them must be 1
+      - Leading dimensions must both be prime numbers
+      - The total number of elements must be identical
+    correct_index: 1
+  - question: What is the primary performance benefit of vectorized tensor operations over Python for-loops?
+    options:
+      - Automatic garbage collection suppression
+      - Utilization of compiled C-level SIMD instructions and GPU parallelism
+      - Elimination of integer overflow checks
+      - Dynamic variable type synthesis
+    correct_index: 1
+  - question: What does the dot product of two normalized unit vectors represent geometrically?
+    options:
+      - The perpendicular distance between the coordinate origins
+      - The cosine of the angle between the two vectors
+      - The cross product area of the bounding parallelogram
+      - The arithmetic mean of all vector components
+    correct_index: 1
+  - question: What occurs when you transpose an (M x N) matrix?
+    options:
+      - All elements are negated
+      - Rows and columns are swapped, yielding shape (N x M)
+      - The matrix is inverted along its secondary diagonal
+      - Negative elements are set to zero
+    correct_index: 1
+  - question: What is an identity matrix?
+    options:
+      - A matrix with ones on the main diagonal and zeros elsewhere
+      - A matrix composed exclusively of zeros
+      - A matrix whose determinant is always zero
+      - A matrix with identical rows throughout
+    correct_index: 0
+  - question: Which operation computes the L2 norm of a vector?
+    options:
+      - Sum of absolute values of elements
+      - Square root of the sum of squared elements
+      - Maximum absolute element value
+      - Product of non-zero elements
+    correct_index: 1
+  - question: What is the effect of reshaping a tensor without altering its underlying memory buffer?
+    options:
+      - It reorders the logical dimensions while preserving the total element count
+      - It permanently duplicates the data across GPU memory
+      - It forces immediate disk serialization
+      - It modifies the floating-point precision
+    correct_index: 0

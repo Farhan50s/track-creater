@@ -1,0 +1,102 @@
+node_id: ai-engineer__production-systems.llm-ops.rag.embeddings-vector-search
+name: Embeddings & Vector Search Architecture
+classification: required
+recommended_depth: implementation
+estimated_time_minutes: 35
+reviewed: true
+prerequisites:
+  - ai-engineer__deep-learning.architectures.backpropagation.transformers
+
+one_sentence_definition: Dense semantic vector embeddings, similarity metrics, and Approximate Nearest Neighbor indexing structures powering enterprise retrieval systems.
+why_it_matters: Vector retrieval forms the data foundation of Retrieval-Augmented Generation (RAG). Building scalable semantic search requires understanding embedding models, chunking strategies, and index trade-offs across latency and recall.
+quick_overview: >
+  This skill covers semantic vector representations and vector search index architectures. Engineers explore dense text embedding models, cosine similarity vs Euclidean distance vs dot product metrics, text chunking strategies with metadata tagging, and Approximate Nearest Neighbor (ANN) index algorithms including Hierarchical Navigable Small World (HNSW) and Inverted File Index with Product Quantization (IVF-PQ).
+deep_dive: |
+  Dense embeddings map unstructured text into continuous vector spaces (typically 384 to 3072 dimensions) where semantic similarity corresponds to geometric proximity.
+
+  When preparing unstructured documents for retrieval, chunking strategy dictates search granularity. Chunking approaches range from fixed-character sliding windows with token overlap to recursive syntax-aware splitting and semantic boundary chunking. Chunks are enriched with metadata (timestamps, document IDs, access control tags) to enable hybrid filtering.
+
+  Exact k-Nearest Neighbor (k-NN) search computes pairwise distances across the entire corpus in O(N * D) time, which becomes prohibitively slow for millions of vectors. Approximate Nearest Neighbor (ANN) algorithms trade a tiny fraction of recall accuracy for sub-millisecond retrieval latencies:
+
+  1. HNSW (Hierarchical Navigable Small World): Constructs a multi-layer geometric graph where upper layers feature long-range skip connections for rapid navigation and bottom layers contain dense local clustering. HNSW delivers outstanding recall and low query latency at the expense of higher RAM usage.
+  2. IVF-PQ (Inverted File with Product Quantization): Clusters vector space into Voronoi cells (IVF) to prune search partitions, and quantizes sub-vectors into codebooks (PQ), drastically compressing index memory by 80-90%.
+
+  Hybrid Search combines dense semantic vector retrieval with sparse keyword scoring (BM25) using Reciprocal Rank Fusion (RRF), ensuring strong retrieval performance across both semantic queries and exact keyword identifier lookups.
+
+resources:
+  - title: Pinecone Vector Similarity Guide
+    url: https://www.pinecone.io/learn/vector-similarity/
+    type: article
+    tag: start_here
+    why: Comprehensive explanation of cosine similarity, dot product, and vector indexing tradeoffs.
+    order_index: 1
+  - title: HNSW Algorithm Paper & Analysis
+    url: https://arxiv.org/abs/1603.09320
+    type: article
+    tag: reference
+    why: The original research paper describing Hierarchical Navigable Small World graphs.
+    order_index: 2
+  - title: LangChain Chunking and VectorStore Tutorial
+    url: https://python.langchain.com/docs/concepts/vectorstores/
+    type: tutorial
+    tag: practice
+    why: Hands-on implementation of document ingestion, chunking, and vector index querying.
+    order_index: 3
+
+quiz_pool:
+  - question: What is the primary trade-off of Approximate Nearest Neighbor (ANN) indexing compared to exact k-NN search?
+    options:
+      - Sacrifices a negligible percentage of recall accuracy in exchange for sub-millisecond search latencies at scale
+      - Requires all vectors to contain only binary numbers
+      - Only works on datasets smaller than 1,000 vectors
+      - Increases memory consumption by 100x without speed improvements
+    correct_index: 0
+  - question: How does the HNSW (Hierarchical Navigable Small World) index achieve fast vector search?
+    options:
+      - By traversing a multi-layered graph with skip connections across upper layers and dense local connections at the bottom
+      - By computing a full brute-force matrix multiplication on every query
+      - By storing all vectors as plain text on disk
+      - By randomly sampling 5 vectors per query
+    correct_index: 0
+  - question: Why is token overlap typically included in text chunking strategies?
+    options:
+      - To preserve semantic context and continuity across chunk boundaries
+      - To artificially inflate the size of the vector database
+      - To encrypt sensitive user data
+      - To convert Markdown syntax into HTML
+    correct_index: 0
+  - question: When embedding vectors are normalized to unit length (L2 norm = 1), what is the relationship between dot product and cosine similarity?
+    options:
+      - The dot product is exactly equal to the cosine similarity
+      - The dot product is the inverse of the cosine similarity
+      - The dot product is always zero
+      - The dot product requires an additional square root operation
+    correct_index: 0
+  - question: What is the primary benefit of Product Quantization (PQ) in vector search indices?
+    options:
+      - Compresses high-dimensional vectors into compact byte codes, drastically reducing RAM requirements
+      - Guarantees 100% exact precision search
+      - Automatically translates queries into multiple languages
+      - Converts dense embeddings into sparse keywords
+    correct_index: 0
+  - question: What is Hybrid Search in modern retrieval architectures?
+    options:
+      - Combining dense vector semantic search with sparse keyword search (BM25) via fusion algorithms
+      - Running queries on both CPU and GPU simultaneously
+      - Searching both images and audio files in one prompt
+      - Querying multiple cloud providers concurrently
+    correct_index: 0
+  - question: What does Reciprocal Rank Fusion (RRF) do in retrieval pipelines?
+    options:
+      - Combines and re-ranks search results from multiple retrieval systems based on rank positions
+      - Inverts vector coordinates across the primary axis
+      - Deletes duplicate documents from the database
+      - Computes gradient updates for embedding models
+    correct_index: 0
+  - question: What metric measures the proportion of true relevant documents retrieved in top-k search results?
+    options:
+      - Recall@K
+      - Perplexity
+      - BLEU score
+      - Learning rate
+    correct_index: 0

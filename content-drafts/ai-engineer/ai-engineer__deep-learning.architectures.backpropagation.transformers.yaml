@@ -1,0 +1,103 @@
+node_id: ai-engineer__deep-learning.architectures.backpropagation.transformers
+name: Attention Mechanisms & Transformers
+classification: required
+recommended_depth: practical
+estimated_time_minutes: 40
+reviewed: true
+prerequisites:
+  - ai-engineer__deep-learning.architectures.backpropagation.autograd
+
+one_sentence_definition: Scaled dot-product self-attention mechanisms and multi-head Transformer architectures powering modern Large Language Models and foundation AI systems.
+why_it_matters: Transformers represent the architectural foundation of contemporary generative AI. Understanding scaled dot-product attention, multi-head projections, positional encodings, and causal masking is necessary for fine-tuning and building with state-of-the-art LLMs.
+quick_overview: >
+  This skill covers the Transformer architecture introduced in Attention Is All You Need. Engineers explore scaled dot-product self-attention, multi-head attention projections, residual connections, layer normalization, feedforward sub-layers, and rotary positional embeddings (RoPE). Through practical architectural dissection, engineers understand why Transformers achieve quadratic context scalability and how causal masking enables autoregressive token generation.
+deep_dive: |
+  The Transformer architecture replaces sequential recurrent loops with parallel self-attention mechanisms, enabling massive scalability across GPU clusters.
+
+  At the core is the Scaled Dot-Product Attention operator. Given input token embeddings X, linear projections produce Queries (Q = X * W_Q), Keys (K = X * W_K), and Values (V = X * W_V). The attention score matrix is computed as:
+  Scores = softmax((Q * K^T) / sqrt(d_k))
+  The scaling factor 1/sqrt(d_k) prevents dot products from growing excessively large in high dimensions, which would otherwise push softmax into regions with vanishingly small gradients.
+
+  Multi-Head Attention splits Q, K, and V into h separate lower-dimensional projection subspaces, allowing the model to simultaneously attend to information at different representation positions (such as syntactic agreement and semantic coreference).
+
+  In decoder-only autoregressive models (like GPT and LLaMA), a Causal Attention Mask (upper-triangular matrix of -inf) is added prior to the softmax step to prevent tokens from attending to subsequent future positions during pre-training and generation.
+
+  Modern LLMs incorporate optimizations such as Pre-Layer Normalization (RMSNorm), Rotary Positional Embeddings (RoPE), FlashAttention (memory-efficient IO-aware GPU kernel tiling), and SwiGLU feedforward activation functions.
+
+resources:
+  - title: The Illustrated Transformer by Jay Alammar
+    url: https://jalammar.github.io/illustrated-transformer/
+    type: article
+    tag: start_here
+    why: The definitive visual walkthrough of query, key, value projections and Transformer block mechanics.
+    order_index: 1
+  - title: Attention Is All You Need Paper
+    url: https://arxiv.org/abs/1706.03762
+    type: article
+    tag: reference
+    why: The original seminal research paper introducing the Transformer architecture.
+    order_index: 2
+  - title: nanoGPT Repository by Andrej Karpathy
+    url: https://github.com/karpathy/nanoGPT
+    type: tutorial
+    tag: practice
+    why: Clean, readable PyTorch implementation of decoder-only GPT architecture.
+    order_index: 3
+
+quiz_pool:
+  - question: What is the primary mathematical formula for Scaled Dot-Product Attention?
+    options:
+      - "softmax(Q * K^T / sqrt(d_k)) * V"
+      - "sigmoid(Q * K) + V"
+      - "tanh(Q + K) * V"
+      - "relu(Q * V) / sqrt(d_k)"
+    correct_index: 0
+  - question: Why are attention dot products scaled by 1/sqrt(d_k)?
+    options:
+      - To prevent extremely large magnitudes from pushing the softmax function into regions with vanishing gradients
+      - To convert complex numbers into real values
+      - To enforce zero mean across embedding dimensions
+      - To reduce memory consumption from quadratic to linear
+    correct_index: 0
+  - question: What is the purpose of causal masking in autoregressive decoder-only Transformers?
+    options:
+      - To prevent tokens from attending to subsequent future tokens during generation
+      - To randomly drop 50% of weights during training
+      - To eliminate out-of-vocabulary tokens
+      - To normalize token embeddings to unit norm
+    correct_index: 0
+  - question: What advantage does Multi-Head Attention provide over single-head attention?
+    options:
+      - Allows the model to jointly attend to information from different representation subspaces at different positions
+      - Reduces the total number of trainable model parameters
+      - Completely removes the need for residual connections
+      - Guarantees 100% deterministic training outputs
+    correct_index: 0
+  - question: What is the computational and memory complexity of standard self-attention with respect to sequence length N?
+    options:
+      - O(N^2) quadratic complexity
+      - O(N) linear complexity
+      - O(log N) logarithmic complexity
+      - O(1) constant complexity
+    correct_index: 0
+  - question: What is the function of positional encodings (like RoPE or sinusoidal encodings) in Transformers?
+    options:
+      - To inject sequence order information since self-attention is permutation-invariant
+      - To compress token vocabulary embeddings
+      - To compute loss gradients faster
+      - To prevent out-of-memory errors on long prompts
+    correct_index: 0
+  - question: How does FlashAttention achieve significant speedups without changing the exact mathematical output?
+    options:
+      - By tiling matrix computations to maximize fast GPU SRAM usage and minimize slow HBM memory read/writes
+      - By pruning 90% of attention weights
+      - By truncating sequence context lengths
+      - By running attention in 1-bit precision
+    correct_index: 0
+  - question: What is the typical structure of a standard Transformer decoder layer?
+    options:
+      - Masked Multi-Head Attention followed by Add & Norm, then Feedforward Network followed by Add & Norm
+      - Convolution followed by Max-Pooling and Dropout
+      - Recurrent LSTM cell followed by Softmax
+      - Dense Linear layer followed by K-Means clustering
+    correct_index: 0

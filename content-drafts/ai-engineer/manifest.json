@@ -1,0 +1,23 @@
+{
+  "track_id": "ai-engineer",
+  "validated_at": "2026-08-31T06:46:32.066Z",
+  "validator_version": "1.0.0",
+  "seed_eligible": true,
+  "node_count": 10,
+  "reviewed_node_count": 10,
+  "error_count": 0,
+  "warning_count": 0,
+  "file_hashes": {
+    "skeleton.yaml": "2385aea162c9ab89a380d6423d58e1e08995b2f8fc98c8d2d0f887b5a544e45f",
+    "ai-engineer__foundations.python-numpy.core.vector-matrix-ops.yaml": "0c829ceaa4353855acdce548dfd2419ac0291a01175a9eec10683403c77d10a9",
+    "ai-engineer__foundations.python-numpy.core.calculus-gradients.yaml": "a105f774d927df3da75d335dfa8dfa7732b1dbf3ec74918adbd29da88dc59512",
+    "ai-engineer__foundations.probability.distributions.inference.yaml": "bf63f154b477aeba6fa79771c270db963ff283f11e16d1ae6be756a1f07222b0",
+    "ai-engineer__foundations.probability.distributions.bayesian-methods.yaml": "029ffc9974ab1e0c5e3cf5875cdc290e2ea206f934a845e9a78a68641fcfd6b1",
+    "ai-engineer__deep-learning.architectures.backpropagation.autograd.yaml": "10da2e28a8ceebf4e95bf0ed59df1b4b3bd3c9b20651db165aacc606a3619a25",
+    "ai-engineer__deep-learning.architectures.backpropagation.transformers.yaml": "9c764f37471e889df7cb084336066e7711ed432f158044e4b24128e6ca78381a",
+    "ai-engineer__deep-learning.training.optimization.techniques.yaml": "aa9245957f2a7f1abcad8bfbd54aba34ac3b78a0c34f35b70fa6796809eda13d",
+    "ai-engineer__production-systems.llm-ops.rag.embeddings-vector-search.yaml": "d1dafe5a5dee8648da86e3a817dbc15c3427c6b6b268783b144c3e0b6e28937c",
+    "ai-engineer__production-systems.llm-ops.rag.advanced-rag-agents.yaml": "f06828c73977212a73d8b0f210f6079ef422efa4034da0e3925d5c5584c35999",
+    "ai-engineer__production-systems.llm-ops.serving.latency-quantization.yaml": "b65da52e2341fc059306d9880782c2cde6febc8df047ab618534d5b5f92cff69"
+  }
+}

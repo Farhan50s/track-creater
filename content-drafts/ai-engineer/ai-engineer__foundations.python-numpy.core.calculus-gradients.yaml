@@ -1,0 +1,99 @@
+node_id: ai-engineer__foundations.python-numpy.core.calculus-gradients
+name: Multivariate Calculus & Gradients
+classification: required
+recommended_depth: practical
+estimated_time_minutes: 30
+reviewed: true
+prerequisites:
+  - ai-engineer__foundations.python-numpy.core.vector-matrix-ops
+
+one_sentence_definition: Core multivariable calculus principles including partial derivatives, gradients, and the chain rule used for optimizing model parameters.
+why_it_matters: Gradient-based optimization is the primary engine behind neural network learning. Understanding how partial derivatives propagate through mathematical graphs is vital for diagnosing gradient vanishing, gradient explosion, and loss plateauing.
+quick_overview: >
+  Multivariate calculus provides the mathematical foundation for machine learning optimization. In this module, engineers master partial differentiation, the gradient vector, directional derivatives, and multivariate chain rules. By understanding how scalar loss functions change with respect to multidimensional parameter vectors, engineers can reason about gradient descent paths, convex vs non-convex surfaces, and learning rate dynamics during model training.
+deep_dive: |
+  Neural network training formulates learning as minimizing a scalar objective function L(w) parameterized by millions of continuous weights. Calculus provides the analytical tools to determine the direction of steepest ascent or descent in high-dimensional parameter spaces.
+
+  The gradient of a scalar-valued function f(x1, x2, ..., xn) is the vector of its first-order partial derivatives: grad(f) = [df/dx1, df/dx2, ..., df/dxn]^T. Evaluated at any point, the negative gradient points in the direction of steepest local decrease.
+
+  The chain rule is the foundational mechanic of backpropagation. For composite functions f(g(x)), the derivative of the outer function with respect to the input equals the derivative of the outer function multiplied by the derivative of the inner function: df/dx = (df/dg) * (dg/dx). In multivariable vector calculus, this expands into matrix multiplications involving Jacobian and Hessian matrices.
+
+  Understanding how non-linear activations (like ReLU, Sigmoid, and GELU) affect gradient magnitudes is crucial for designing stable deep neural network architectures that avoid saturation and vanishing gradients during long training runs.
+
+resources:
+  - title: Khan Academy Multivariable Calculus
+    url: https://www.khanacademy.org/math/multivariable-calculus
+    type: course
+    tag: start_here
+    why: Structured visual walkthrough of partial derivatives, gradients, and vector fields.
+    order_index: 1
+  - title: Calculus for Deep Learning Notes
+    url: https://explained.ai/matrix-calculus/
+    type: article
+    tag: alternative
+    why: Deep dive into matrix calculus notation and multivariable chain rule mechanics.
+    order_index: 2
+  - title: PyTorch Autograd Mechanics
+    url: https://pytorch.org/docs/stable/notes/autograd.html
+    type: documentation
+    tag: reference
+    why: Explains how gradient computation maps directly to automatic differentiation graphs.
+    order_index: 3
+
+quiz_pool:
+  - question: What does the gradient vector of a scalar loss function represent?
+    options:
+      - The direction and rate of fastest increase of the function
+      - The global minimum coordinates of the loss landscape
+      - The variance of model parameters
+      - The learning rate scaling factor
+    correct_index: 0
+  - question: In which direction does gradient descent move parameter weights?
+    options:
+      - In the exact direction of the gradient vector
+      - Opposite to the gradient vector (negative gradient)
+      - Perpendicular to the gradient vector
+      - Along the principal component axis
+    correct_index: 1
+  - question: What is the primary role of the chain rule in neural network training?
+    options:
+      - To initialize random network weights
+      - To compute derivatives of composite functions through successive layers
+      - To serialize model checkpoints to disk
+      - To compress token embeddings
+    correct_index: 1
+  - question: What is a partial derivative?
+    options:
+      - The derivative of a function with respect to one variable while holding other variables constant
+      - An incomplete derivative evaluated only on integers
+      - The second derivative of a linear function
+      - The ratio of training loss to validation loss
+    correct_index: 0
+  - question: What mathematical matrix contains all first-order partial derivatives of a vector-valued function?
+    options:
+      - Hessian matrix
+      - Jacobian matrix
+      - Covariance matrix
+      - Adjacency matrix
+    correct_index: 1
+  - question: What occurs when gradients approach zero across early layers of a deep network?
+    options:
+      - Gradient explosion
+      - Vanishing gradients
+      - Overfitting
+      - Quantization noise
+    correct_index: 1
+  - question: What is the derivative of the standard ReLU activation function f(x) = max(0, x) for x > 0?
+    options:
+      - "0"
+      - "1"
+      - "x"
+      - "infinity"
+    correct_index: 1
+  - question: What mathematical matrix contains all second-order partial derivatives of a scalar function?
+    options:
+      - Hessian matrix
+      - Gram matrix
+      - Diagonal matrix
+      - Confusion matrix
+    correct_index: 0

@@ -1,0 +1,86 @@
+node_id: ai-engineer__foundations.probability.distributions.bayesian-methods
+name: Bayesian Methods & Uncertainty
+classification: optional
+recommended_depth: overview
+estimated_time_minutes: 20
+reviewed: true
+prerequisites:
+  - ai-engineer__foundations.probability.distributions.inference
+
+one_sentence_definition: Conceptual framework for updating prior beliefs with observed evidence and modeling epistemic uncertainty in machine learning predictions.
+why_it_matters: In high-stakes AI applications like medical diagnosis and autonomous systems, knowing when a model is uncertain is as important as its raw accuracy score. Bayesian reasoning provides principled uncertainty quantification.
+quick_overview: >
+  Bayesian methods provide a coherent probabilistic framework for updating beliefs in light of observed evidence using Bayes' theorem: P(theta | D) = P(D | theta) * P(theta) / P(D). Unlike frequentist maximum likelihood estimation that produces single point estimates, Bayesian inference models parameters as probability distributions. This enables machine learning practitioners to quantify epistemic uncertainty, incorporate prior domain knowledge, and perform principled Bayesian optimization for hyperparameter tuning.
+deep_dive: null
+
+resources:
+  - title: Bayes' Rule Explained
+    url: https://betterexplained.com/articles/an-intuitive-and-short-explanation-of-bayes-theorem/
+    type: article
+    tag: start_here
+    why: Intuitive explanation of prior, likelihood, and posterior probability updates.
+    order_index: 1
+  - title: Bayesian Methods for Hackers
+    url: https://camdavidsonpilon.github.io/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers/
+    type: book
+    tag: reference
+    why: Practical introduction to Bayesian modeling and probabilistic programming in Python.
+    order_index: 2
+
+quiz_pool:
+  - question: What is Bayes' Theorem used for in probabilistic machine learning?
+    options:
+      - Updating the probability of a hypothesis based on new evidence
+      - Calculating matrix determinants in polynomial time
+      - Compressing floating point weights into integer representations
+      - Sorting training samples in ascending order of loss
+    correct_index: 0
+  - question: "In Bayes' theorem P(A|B) = P(B|A)P(A) / P(B), what is P(A) called?"
+    options:
+      - Prior probability
+      - Posterior probability
+      - Likelihood
+      - Marginal evidence
+    correct_index: 0
+  - question: What is the main distinction between Bayesian inference and standard Maximum Likelihood Estimation (MLE)?
+    options:
+      - Bayesian inference produces probability distributions over parameters rather than single point estimates
+      - Bayesian inference only works on discrete categorical data
+      - MLE requires quantum computing hardware
+      - Bayesian methods never require training data
+    correct_index: 0
+  - question: What type of uncertainty arises from a model's lack of knowledge due to sparse training data?
+    options:
+      - Epistemic uncertainty
+      - Aleatoric uncertainty
+      - Numerical precision noise
+      - Sensor measurement error
+    correct_index: 0
+  - question: What is a conjugate prior in Bayesian statistics?
+    options:
+      - A prior distribution that results in a posterior distribution of the same family
+      - A prior with an infinite standard deviation
+      - A prior that forces the likelihood to zero
+      - A deterministic constant value
+    correct_index: 0
+  - question: Which technique is commonly used to approximate intractable high-dimensional posterior distributions?
+    options:
+      - Markov Chain Monte Carlo (MCMC) and Variational Inference
+      - Binary search on sorted arrays
+      - Bubble sort iteration
+      - Direct linear matrix inversion
+    correct_index: 0
+  - question: "What role does the likelihood P(Data | Theta) play in Bayesian updating?"
+    options:
+      - It measures how probable the observed data is given specific parameter values
+      - It represents the prior belief before seeing any data
+      - It normalizes the denominator to sum to one
+      - It defines the learning rate schedule
+    correct_index: 0
+  - question: What is Maximum A Posteriori (MAP) estimation?
+    options:
+      - Finding the parameter value that maximizes the posterior probability distribution
+      - Calculating the arithmetic mean of all feature columns
+      - Selecting the nearest neighbor in embedding space
+      - Projecting data onto principal component eigenvectors
+    correct_index: 0

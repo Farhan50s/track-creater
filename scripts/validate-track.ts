@@ -3,7 +3,11 @@ import * as path from 'path';
 import * as crypto from 'crypto';
 import { parse as parseYaml } from 'yaml';
 
-const trackId = process.argv[2] || 'track-creator-test';
+const trackArgIndex = process.argv.indexOf('--track');
+const trackId =
+  (trackArgIndex !== -1 && process.argv[trackArgIndex + 1]) ||
+  process.argv.find((a, i) => i >= 2 && !a.startsWith('--')) ||
+  'track-creator-test';
 const trackDir = path.join(process.cwd(), 'content-drafts', trackId);
 
 console.log(`=== Track Validator ===`);
