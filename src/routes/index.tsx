@@ -10,6 +10,7 @@ import { SignupForm } from '../features/auth/components/SignupForm';
 import { ForgotPasswordForm } from '../features/auth/components/ForgotPasswordForm';
 import { GoalSelectionPage } from '../features/onboarding/pages/GoalSelectionPage';
 import { KnowledgeSelectionPage } from '../features/onboarding/pages/KnowledgeSelectionPage';
+import { HomePage } from '../features/dashboard/pages/HomePage';
 import { TrackOverviewPage } from '../features/track/pages/TrackOverviewPage';
 import { PillarViewPage } from '../features/track/pages/PillarViewPage';
 import { SkillDetailPage } from '../features/skill/pages/SkillDetailPage';
@@ -78,13 +79,7 @@ export const routes: RouteObject[] = [
         children: [
           {
             index: true,
-            element: (
-              <RoutePlaceholder
-                screenName="Home / Dashboard"
-                routePath="/app"
-                description="Active learning panel with per-pillar focus and rule-based recommendation."
-              />
-            ),
+            element: <HomePage />,
           },
           {
             path: 'track',

@@ -20,17 +20,18 @@ Track Creator is a role-aligned skill tracking web application built on progress
 | **Phase 5** | Track Overview & Expandable Pillar Tree | `PASS` | `/app/track` overview, `/app/track/:pillarId` tree, soft-locked nodes, required-only percentages |
 | **Phase 6** | Skill Detail Page & Progress Trigger | `PASS` | `/app/node/:nodeId` learning surface, `mark_node_opened` RPC on mount, lock banner, curated resources, overview-depth null deep-dive handling |
 | **Phase 7** | Quiz Flow & Server Grading | `PASS` | `/app/node/:nodeId/quiz` 3-screen carousel, Fisher-Yates sampling (5 questions), zero answer-key leaks, literal 4/5 integer threshold, non-degrading retakes, abandonment safeguard |
-| **Phase 8** | Home Dashboard & Recommendation Engine | `NEXT` | `/app` Active Learning panel, per-pillar focus, rule-based recommendation |
-| **Phase 9** | Responsive & Accessibility Polish | `PENDING` | Mobile/desktop viewport testing, ARIA compliance, keyboard flows |
+| **Phase 8** | Home Dashboard & Recommendation Engine | `PASS` | `/app` landing dashboard, TrackSummaryBanner with required-only completion %, Active Learning panel with parallel pillar cards, 4-step recommendation engine, 100% completion celebration card |
+| **Phase 9** | Responsive & Accessibility Polish | `NEXT` | Mobile/desktop viewport testing, ARIA compliance, keyboard flows |
 | **Phase 10** | Security & Integration Testing | `PENDING` | End-to-end user journey verification, secret leak audits |
 | **Phase 11** | Real-Content Cutover | `PENDING` | Full 2-3 role track authoring, validation, and database seeding |
 
 ---
 
 ## 3. Latest Milestone Completed
-**Phase 7: Quiz Engine & Server Grading**
-- Built `/app/node/:nodeId/quiz` featuring Start Screen $\rightarrow$ 1-Question-at-a-time Carousel $\rightarrow$ Result Card.
-- Integrated Fisher-Yates question sampling for exactly 5 questions per attempt.
-- Confirmed zero answer-key leak: `quiz_answers` has RLS enabled with 0 SELECT access for authenticated/anon roles.
-- Wired submission strictly to `submit_quiz_attempt` RPC, enforcing server-side pass criteria ($\ge 4/5$ correct), attempt logging, and non-degrading retakes on completed nodes.
-- Automated verification in `scripts/verify-phase7.ts` passed 100% of 9 comprehensive tests.
+**Phase 8: Home Dashboard & Recommendation Engine**
+- Built `/app` live home landing surface replacing previous placeholder shell.
+- Implemented pure deterministic `computeFocusPillar` and `computeRecommendedAction` engine resolving "Recommended next", cross-pillar "Complete this first", and "Optional next" states.
+- Implemented `TrackSummaryBanner` with required-only overall progress percentage and quick stats chips.
+- Implemented `ActiveLearningSection` and `ActivePillarCard` supporting parallel progression with independent `🎯 Current Focus` markers.
+- Implemented `TrackCompletedCard` for 100% completion celebration state.
+- Automated tests in `scripts/verify-phase8.ts` passed 100% across all 6 test vectors.
