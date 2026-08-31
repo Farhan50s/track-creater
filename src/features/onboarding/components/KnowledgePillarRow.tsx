@@ -81,6 +81,10 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '8px',
   },
   optionButton: {
+    minHeight: '44px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     padding: '10px 8px',
     fontSize: '13px',
     border: '1px solid var(--border-color)',
@@ -88,6 +92,5 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: 'pointer',
     textAlign: 'center',
     transition: 'all 0.15s ease',
-    outline: 'none',
   },
 };

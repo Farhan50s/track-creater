@@ -14,12 +14,19 @@ export function SubtopicSection({ subtopic, isExpanded, onToggle }: SubtopicSect
       <button
         type="button"
         onClick={onToggle}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onToggle();
+          }
+        }}
         style={styles.headerButton}
         aria-expanded={isExpanded}
         aria-controls={`subtopic-content-${subtopic.subtopic_id}`}
+        aria-label={`${subtopic.name} subtopic, ${subtopic.nodes.length} skills, ${isExpanded ? 'expanded' : 'collapsed'}`}
       >
         <div style={styles.titleGroup}>
-          <span style={styles.chevron}>{isExpanded ? '▾' : '▸'}</span>
+          <span style={styles.chevron} aria-hidden="true">{isExpanded ? '▾' : '▸'}</span>
           <span style={styles.title}>{subtopic.name}</span>
         </div>
 
@@ -52,6 +59,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    minHeight: '44px',
     padding: '12px 16px',
     backgroundColor: 'transparent',
     border: 'none',
@@ -59,7 +67,6 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: 'pointer',
     textAlign: 'left',
     color: 'var(--text-primary)',
-    outline: 'none',
     transition: 'background-color 0.15s ease',
   },
   titleGroup: {

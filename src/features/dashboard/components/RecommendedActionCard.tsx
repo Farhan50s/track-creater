@@ -136,6 +136,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
+    minHeight: '48px',
     padding: '14px 28px',
     fontSize: '15px',
     fontWeight: '700',

@@ -18,20 +18,20 @@ export function NodeCard({ node }: NodeCardProps) {
     switch (status) {
       case 'completed':
         return (
-          <span style={styles.completedIcon} title="Completed">
+          <span style={styles.completedIcon} title="Completed" aria-hidden="true">
             ✓
           </span>
         );
       case 'in_progress':
         return (
-          <span style={styles.inProgressIcon} title="In Progress">
+          <span style={styles.inProgressIcon} title="In Progress" aria-hidden="true">
             ◐
           </span>
         );
       case 'not_started':
       default:
         return (
-          <span style={styles.notStartedIcon} title="Not Started">
+          <span style={styles.notStartedIcon} title="Not Started" aria-hidden="true">
             ○
           </span>
         );
@@ -51,6 +51,17 @@ export function NodeCard({ node }: NodeCardProps) {
     }
   };
 
+  const accessibleStatusText =
+    node.status === 'completed'
+      ? 'Completed'
+      : node.status === 'in_progress'
+      ? 'In Progress'
+      : 'Not Started';
+
+  const accessibleLockText = node.is_locked
+    ? `, Locked: requires completion of ${node.unmet_prerequisites.length} prerequisites`
+    : '';
+
   return (
     <div
       onClick={handleClick}
@@ -64,7 +75,7 @@ export function NodeCard({ node }: NodeCardProps) {
           handleClick();
         }
       }}
-      aria-label={`Skill: ${node.name}, ${node.classification}, ${node.status.replace('_', ' ')}${node.is_locked ? ', locked' : ''}`}
+      aria-label={`Skill: ${node.name}, ${node.classification}, status: ${accessibleStatusText}${accessibleLockText}`}
       style={{
         ...styles.card,
         opacity: node.is_locked ? 0.75 : 1,
@@ -99,20 +110,26 @@ export function NodeCard({ node }: NodeCardProps) {
             )}
           </div>
 
-          {node.is_locked && node.unmet_prerequisite_names && node.unmet_prerequisite_names.length > 0 && (
-            <div style={styles.lockHint}>
-              Requires: {node.unmet_prerequisite_names.join(', ')}
-            </div>
-          )}
+          <div style={styles.metaRow}>
+            {getClassificationBadge(node.classification)}
+            <span style={styles.metaDivider}>•</span>
+            <span style={styles.depthText}>
+              {node.recommended_depth.charAt(0).toUpperCase() + node.recommended_depth.slice(1)}
+            </span>
+            <span style={styles.metaDivider}>•</span>
+            <span style={styles.timeText}>{node.estimated_time_minutes} min</span>
+
+            {node.is_locked && node.unmet_prerequisites.length > 0 && (
+              <span style={styles.unmetText}>
+                (Requires prerequisite)
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
       <div style={styles.rightCol}>
-        <div style={styles.metaRow}>
-          <span style={styles.depthBadge}>{node.recommended_depth}</span>
-          <span style={styles.timeBadge}>{node.estimated_time_minutes}m</span>
-          {getClassificationBadge(node.classification)}
-        </div>
+        <span style={styles.arrowIcon} aria-hidden="true">→</span>
       </div>
     </div>
   );
@@ -123,46 +140,48 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '14px 18px',
-    border: '1px solid var(--border-color)',
+    minHeight: '52px',
+    padding: '12px 16px',
     borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--border-color)',
     cursor: 'pointer',
     transition: 'all 0.15s ease',
-    gap: '16px',
-    outline: 'none',
+    gap: '12px',
+    maxWidth: '100%',
   },
   leftCol: {
     display: 'flex',
-    alignItems: 'center',
-    gap: '14px',
+    alignItems: 'flex-start',
+    gap: '12px',
     flex: 1,
     minWidth: 0,
   },
   statusCol: {
+    paddingTop: '2px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '24px',
-    height: '24px',
-    flexShrink: 0,
+    width: '20px',
   },
   completedIcon: {
-    color: '#10B981',
-    fontSize: '16px',
-    fontWeight: 'bold',
+    color: 'var(--accent-primary)',
+    fontWeight: '800',
+    fontSize: '15px',
   },
   inProgressIcon: {
-    color: '#F59E0B',
+    color: 'var(--status-warning)',
+    fontWeight: '700',
     fontSize: '16px',
   },
   notStartedIcon: {
     color: 'var(--text-muted)',
-    fontSize: '16px',
+    fontSize: '14px',
   },
   contentCol: {
     display: 'flex',
     flexDirection: 'column',
     gap: '4px',
+    flex: 1,
     minWidth: 0,
   },
   titleRow: {
@@ -173,82 +192,85 @@ const styles: Record<string, React.CSSProperties> = {
   },
   nodeName: {
     fontSize: '15px',
-    fontWeight: '500',
+    fontWeight: '600',
     color: 'var(--text-primary)',
+    lineHeight: '1.4',
+    wordBreak: 'break-word',
   },
   currentFocusBadge: {
     fontSize: '11px',
-    fontWeight: '600',
-    padding: '2px 8px',
-    borderRadius: 'var(--radius-sm)',
+    fontWeight: '700',
     backgroundColor: 'rgba(16, 185, 129, 0.15)',
     color: 'var(--accent-primary)',
-    border: '1px solid rgba(16, 185, 129, 0.3)',
+    border: '1px solid rgba(16, 185, 129, 0.35)',
+    padding: '1px 6px',
+    borderRadius: 'var(--radius-sm)',
+    whiteSpace: 'nowrap',
   },
   lockBadge: {
     fontSize: '11px',
-    fontWeight: '500',
-    padding: '2px 6px',
-    borderRadius: 'var(--radius-sm)',
-    backgroundColor: 'rgba(100, 116, 139, 0.2)',
-    color: 'var(--text-secondary)',
-  },
-  lockHint: {
-    fontSize: '12px',
+    fontWeight: '600',
+    backgroundColor: 'rgba(107, 114, 128, 0.2)',
     color: 'var(--text-muted)',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
+    border: '1px solid var(--border-color)',
+    padding: '1px 6px',
+    borderRadius: 'var(--radius-sm)',
     whiteSpace: 'nowrap',
-  },
-  rightCol: {
-    display: 'flex',
-    alignItems: 'center',
-    flexShrink: 0,
   },
   metaRow: {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
+    gap: '6px',
     flexWrap: 'wrap',
+    fontSize: '12px',
   },
-  depthBadge: {
-    fontSize: '11px',
-    textTransform: 'capitalize',
-    color: 'var(--text-secondary)',
-    padding: '2px 6px',
-    borderRadius: 'var(--radius-sm)',
-    backgroundColor: 'var(--bg-primary)',
-    border: '1px solid var(--border-color)',
+  metaDivider: {
+    color: 'var(--border-color)',
   },
-  timeBadge: {
+  depthText: {
+    color: 'var(--text-muted)',
+  },
+  timeText: {
+    color: 'var(--text-muted)',
+  },
+  unmetText: {
+    color: 'var(--status-warning)',
     fontSize: '11px',
-    color: 'var(--text-secondary)',
   },
   badge: {
     fontSize: '11px',
     fontWeight: '600',
-    padding: '3px 8px',
+    padding: '1px 6px',
     borderRadius: 'var(--radius-sm)',
     textTransform: 'capitalize',
+    letterSpacing: '0.02em',
   },
   requiredBadge: {
-    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+    backgroundColor: 'rgba(16, 185, 129, 0.12)',
     color: 'var(--accent-primary)',
-    border: '1px solid rgba(16, 185, 129, 0.3)',
+    border: '1px solid rgba(16, 185, 129, 0.25)',
   },
   recommendedBadge: {
-    backgroundColor: 'rgba(59, 130, 246, 0.15)',
-    color: '#60A5FA',
-    border: '1px solid rgba(59, 130, 246, 0.3)',
+    backgroundColor: 'rgba(20, 184, 166, 0.12)',
+    color: 'var(--accent-teal)',
+    border: '1px solid rgba(20, 184, 166, 0.25)',
   },
   optionalBadge: {
-    backgroundColor: 'rgba(148, 163, 184, 0.15)',
-    color: '#94A3B8',
-    border: '1px solid rgba(148, 163, 184, 0.25)',
+    backgroundColor: 'rgba(156, 163, 175, 0.12)',
+    color: 'var(--text-secondary)',
+    border: '1px solid rgba(156, 163, 175, 0.25)',
   },
   specializationBadge: {
-    backgroundColor: 'rgba(168, 85, 247, 0.15)',
-    color: '#C084FC',
-    border: '1px solid rgba(168, 85, 247, 0.3)',
+    backgroundColor: 'rgba(245, 158, 11, 0.12)',
+    color: 'var(--status-warning)',
+    border: '1px solid rgba(245, 158, 11, 0.25)',
+  },
+  rightCol: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  arrowIcon: {
+    color: 'var(--text-muted)',
+    fontSize: '14px',
   },
 };

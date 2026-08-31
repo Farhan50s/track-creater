@@ -26,12 +26,19 @@ export function TopicSection({
       <button
         type="button"
         onClick={onToggle}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onToggle();
+          }
+        }}
         style={styles.headerButton}
         aria-expanded={isExpanded}
         aria-controls={`topic-content-${topic.topic_id}`}
+        aria-label={`${topic.name} topic, ${completedNodesCount} of ${totalNodesCount} completed, ${isExpanded ? 'expanded' : 'collapsed'}`}
       >
         <div style={styles.titleGroup}>
-          <span style={styles.chevron}>{isExpanded ? '▼' : '▶'}</span>
+          <span style={styles.chevron} aria-hidden="true">{isExpanded ? '▼' : '▶'}</span>
           <h2 style={styles.title}>{topic.name}</h2>
         </div>
 
@@ -85,6 +92,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    minHeight: '48px',
     padding: '16px 20px',
     backgroundColor: 'var(--bg-surface)',
     border: 'none',
@@ -92,7 +100,6 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: 'pointer',
     textAlign: 'left',
     color: 'var(--text-primary)',
-    outline: 'none',
     transition: 'background-color 0.15s ease',
   },
   titleGroup: {

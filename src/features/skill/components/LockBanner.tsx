@@ -98,6 +98,9 @@ const styles: Record<string, React.CSSProperties> = {
     color: '#F59E0B',
     fontWeight: '600',
     textDecoration: 'underline',
+    minHeight: '36px',
+    padding: '4px 8px',
+    borderRadius: 'var(--radius-sm)',
   },
   checkIcon: {
     fontSize: '12px',

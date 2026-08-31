@@ -17,8 +17,16 @@ export function ContentToggle({ quickOverview, deepDive }: ContentToggleProps) {
           <button
             type="button"
             onClick={() => setIsDeepDiveExpanded((prev) => !prev)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setIsDeepDiveExpanded((prev) => !prev);
+              }
+            }}
             style={styles.toggleButton}
             aria-expanded={isDeepDiveExpanded}
+            aria-controls="skill-deep-dive-section"
+            aria-label={isDeepDiveExpanded ? 'Collapse deep dive section' : 'Expand deep dive section'}
           >
             {isDeepDiveExpanded ? '▾ Collapse Deep Dive' : '▸ Expand Deep Dive'}
           </button>
@@ -31,7 +39,7 @@ export function ContentToggle({ quickOverview, deepDive }: ContentToggleProps) {
       </div>
 
       {hasDeepDive && isDeepDiveExpanded && (
-        <div style={styles.deepDiveSection}>
+        <div id="skill-deep-dive-section" style={styles.deepDiveSection}>
           <h3 style={styles.subHeading}>Deep Dive</h3>
           <div style={styles.contentBody}>{deepDive}</div>
         </div>

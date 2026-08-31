@@ -10,9 +10,6 @@ const ROUTES = [
   { path: '/onboarding/knowledge', label: 'Starting Knowledge' },
   { path: '/app', label: 'Home' },
   { path: '/app/track', label: 'Track Overview' },
-  { path: '/app/track/sample-pillar', label: 'Pillar View (:pillarId)' },
-  { path: '/app/node/sample-node', label: 'Skill Detail (:nodeId)' },
-  { path: '/app/node/sample-node/quiz', label: 'Quiz (:nodeId)' },
   { path: '/app/profile', label: 'Profile' },
 ];
 
@@ -30,7 +27,7 @@ export function AppShell() {
       <header className="app-header">
         <div className="app-header-brand">
           <span className="app-header-title">Track Creator</span>
-          <span className="app-header-badge">Phase 3 Auth</span>
+          <span className="app-header-badge">V1 Production</span>
         </div>
 
         <div className="app-header-user">
@@ -52,10 +49,10 @@ export function AppShell() {
                 </div>
               ) : (
                 <div style={styles.authLinks}>
-                  <NavLink to="/login" className="nav-link">
+                  <NavLink to="/login" className="nav-link" style={styles.authLinkBtn}>
                     Sign In
                   </NavLink>
-                  <NavLink to="/signup" className="nav-link" style={styles.signUpLink}>
+                  <NavLink to="/signup" className="nav-link" style={{ ...styles.authLinkBtn, ...styles.signUpLink }}>
                     Sign Up
                   </NavLink>
                 </div>
@@ -65,8 +62,8 @@ export function AppShell() {
         </div>
       </header>
 
-      <nav className="app-nav" aria-label="Phase 3 Route Navigation">
-        <span className="app-nav-label">Routes:</span>
+      <nav className="app-nav" aria-label="Application Navigation">
+        <span className="app-nav-label">Navigation:</span>
         {ROUTES.map((route) => (
           <NavLink
             key={route.path}
@@ -93,6 +90,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
+    flexWrap: 'wrap',
   },
   userEmail: {
     fontSize: '13px',
@@ -103,24 +101,36 @@ const styles: Record<string, React.CSSProperties> = {
     whiteSpace: 'nowrap',
   },
   logoutButton: {
-    padding: '6px 12px',
+    minHeight: '38px',
+    padding: '8px 16px',
     fontSize: '13px',
-    fontWeight: '500',
+    fontWeight: '600',
     color: 'var(--text-primary)',
-    backgroundColor: 'transparent',
+    backgroundColor: 'var(--bg-primary)',
     border: '1px solid var(--border-color)',
     borderRadius: 'var(--radius-md)',
     cursor: 'pointer',
     transition: 'all 0.15s ease',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   authLinks: {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
+    flexWrap: 'wrap',
+  },
+  authLinkBtn: {
+    minHeight: '38px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   signUpLink: {
     backgroundColor: 'rgba(16, 185, 129, 0.15)',
     color: 'var(--accent-primary)',
     border: '1px solid rgba(16, 185, 129, 0.3)',
+    fontWeight: '600',
   },
 };

@@ -14,19 +14,22 @@ export function QuizOption({ index, text, isSelected, onSelect, disabled = false
   return (
     <button
       type="button"
+      role="radio"
+      aria-checked={isSelected}
       onClick={onSelect}
       disabled={disabled}
       style={{
         ...styles.optionButton,
         ...(isSelected ? styles.selectedButton : {}),
       }}
-      aria-pressed={isSelected}
+      aria-label={`Option ${letter}: ${text}${isSelected ? ', selected' : ''}`}
     >
       <span
         style={{
           ...styles.letterBadge,
           ...(isSelected ? styles.selectedLetterBadge : {}),
         }}
+        aria-hidden="true"
       >
         {letter}
       </span>
@@ -41,7 +44,8 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     gap: '14px',
     width: '100%',
-    padding: '16px 20px',
+    minHeight: '48px',
+    padding: '14px 18px',
     backgroundColor: 'var(--bg-surface)',
     border: '1px solid var(--border-color)',
     borderRadius: 'var(--radius-md)',

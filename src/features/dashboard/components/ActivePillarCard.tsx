@@ -161,6 +161,11 @@ const styles: Record<string, React.CSSProperties> = {
     color: 'var(--text-muted)',
   },
   exploreLink: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    minHeight: '36px',
+    padding: '4px 10px',
+    borderRadius: 'var(--radius-sm)',
     fontSize: '13px',
     fontWeight: '600',
     color: 'var(--accent-primary)',
