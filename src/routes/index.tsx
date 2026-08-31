@@ -12,6 +12,7 @@ import { GoalSelectionPage } from '../features/onboarding/pages/GoalSelectionPag
 import { KnowledgeSelectionPage } from '../features/onboarding/pages/KnowledgeSelectionPage';
 import { TrackOverviewPage } from '../features/track/pages/TrackOverviewPage';
 import { PillarViewPage } from '../features/track/pages/PillarViewPage';
+import { SkillDetailPage } from '../features/skill/pages/SkillDetailPage';
 
 export const routes: RouteObject[] = [
   {
@@ -102,13 +103,7 @@ export const routes: RouteObject[] = [
             children: [
               {
                 index: true,
-                element: (
-                  <RoutePlaceholder
-                    screenName="Skill Detail"
-                    routePath="/app/node/:nodeId"
-                    description="Core skill learning surface with definition, overview/deep-dive, prerequisites, and resources."
-                  />
-                ),
+                element: <SkillDetailPage />,
               },
               {
                 path: 'quiz',
