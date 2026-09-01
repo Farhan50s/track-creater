@@ -195,8 +195,13 @@ export function useDashboardData(): DashboardData {
         });
       }
 
-      // Compute overall track required metrics
-      const allRequiredNodes = Array.from(allNodesMetaMap.values()).filter((n) => n.classification === 'required');
+      // Collect all nodes belonging strictly to the active track's pillars
+      const activeTrackNodes = pillarSummaries.flatMap((p) => p.nodes);
+      const activeTrackNodesMap = new Map<string, SkillNodeWithMeta>();
+      activeTrackNodes.forEach((n) => activeTrackNodesMap.set(n.node_id, n));
+
+      // Compute overall track required metrics strictly from active track
+      const allRequiredNodes = activeTrackNodes.filter((n) => n.classification === 'required');
       const allCompletedRequired = allRequiredNodes.filter((n) => progressMap.get(n.node_id) === 'completed');
       const overallPercent =
         allRequiredNodes.length > 0
@@ -209,7 +214,7 @@ export function useDashboardData(): DashboardData {
       // Compute Focus Pillar and Recommendation
       const resolvedFocusPillar = pillarSummaries.length > 0 ? computeFocusPillar(pillarSummaries) : null;
       const recAction = resolvedFocusPillar
-        ? computeRecommendedAction(resolvedFocusPillar, pillarSummaries, allNodesMetaMap, progressMap)
+        ? computeRecommendedAction(resolvedFocusPillar, pillarSummaries, activeTrackNodesMap, progressMap)
         : null;
 
       if (isMounted.current) {
@@ -220,7 +225,7 @@ export function useDashboardData(): DashboardData {
         setOverallCompletionPercent(overallPercent);
         setTotalRequiredSkills(allRequiredNodes.length);
         setCompletedRequiredSkills(allCompletedRequired.length);
-        setTotalSkills(allNodesMetaMap.size);
+        setTotalSkills(activeTrackNodes.length);
       }
     } catch (err: any) {
       console.error('Error fetching dashboard data:', err);

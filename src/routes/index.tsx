@@ -16,6 +16,9 @@ import { PillarViewPage } from '../features/track/pages/PillarViewPage';
 import { SkillDetailPage } from '../features/skill/pages/SkillDetailPage';
 import { QuizPage } from '../features/quiz/pages/QuizPage';
 
+import { LandingPage } from '../features/landing/pages/LandingPage';
+import { ProfilePage } from '../features/profile/pages/ProfilePage';
+
 export const routes: RouteObject[] = [
   {
     path: '/',
@@ -23,13 +26,7 @@ export const routes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: (
-          <RoutePlaceholder
-            screenName="Landing"
-            routePath="/"
-            description="Public landing page introducing Track Creator and the Progressive Mastery concept."
-          />
-        ),
+        element: <LandingPage />,
       },
       {
         path: 'signup',
@@ -109,13 +106,7 @@ export const routes: RouteObject[] = [
           },
           {
             path: 'profile',
-            element: (
-              <RoutePlaceholder
-                screenName="Account Settings"
-                routePath="/app/profile"
-                description="User profile and account settings."
-              />
-            ),
+            element: <ProfilePage />,
           },
         ],
       },

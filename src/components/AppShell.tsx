@@ -1,17 +1,5 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { NavLink, Link, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../features/auth/hooks/useAuth';
-
-const ROUTES = [
-  { path: '/', label: 'Landing' },
-  { path: '/signup', label: 'Sign Up' },
-  { path: '/login', label: 'Login' },
-  { path: '/forgot-password', label: 'Forgot Password' },
-  { path: '/onboarding/goal', label: 'Onboarding Goal' },
-  { path: '/onboarding/knowledge', label: 'Starting Knowledge' },
-  { path: '/app', label: 'Home' },
-  { path: '/app/track', label: 'Track Overview' },
-  { path: '/app/profile', label: 'Profile' },
-];
 
 export function AppShell() {
   const { user, signOut, isLoading } = useAuth();
@@ -25,9 +13,39 @@ export function AppShell() {
   return (
     <div className="app-container">
       <header className="app-header">
-        <div className="app-header-brand">
-          <span className="app-header-title">Track Creator</span>
-          <span className="app-header-badge">V1 Production</span>
+        <div className="app-header-left">
+          <Link
+            to={user ? '/app' : '/'}
+            className="app-header-brand"
+            aria-label="Track Creator Home"
+          >
+            <span className="app-header-title">Track Creator</span>
+            <span className="app-header-badge">V1 Production</span>
+          </Link>
+
+          {user && !isLoading && (
+            <nav className="app-header-nav" aria-label="Main Navigation">
+              <NavLink
+                to="/app"
+                end
+                className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+              >
+                Dashboard
+              </NavLink>
+              <NavLink
+                to="/app/track"
+                className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+              >
+                Track Map
+              </NavLink>
+              <NavLink
+                to="/onboarding/goal"
+                className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+              >
+                Switch Track
+              </NavLink>
+            </nav>
+          )}
         </div>
 
         <div className="app-header-user">
@@ -35,9 +53,18 @@ export function AppShell() {
             <>
               {user ? (
                 <div style={styles.userSection}>
-                  <span style={styles.userEmail} title={user.email}>
-                    {user.email}
-                  </span>
+                  <NavLink
+                    to="/app/profile"
+                    className={({ isActive }) =>
+                      isActive ? 'nav-link active' : 'nav-link'
+                    }
+                    style={styles.profileLink}
+                    title="Account Settings"
+                    aria-label="View Account Profile"
+                  >
+                    <span style={styles.userIcon}>👤</span>
+                    <span style={styles.userEmail}>{user.email}</span>
+                  </NavLink>
                   <button
                     onClick={handleLogout}
                     style={styles.logoutButton}
@@ -52,8 +79,12 @@ export function AppShell() {
                   <NavLink to="/login" className="nav-link" style={styles.authLinkBtn}>
                     Sign In
                   </NavLink>
-                  <NavLink to="/signup" className="nav-link" style={{ ...styles.authLinkBtn, ...styles.signUpLink }}>
-                    Sign Up
+                  <NavLink
+                    to="/signup"
+                    className="nav-link"
+                    style={{ ...styles.authLinkBtn, ...styles.signUpLink }}
+                  >
+                    Start Learning
                   </NavLink>
                 </div>
               )}
@@ -61,22 +92,6 @@ export function AppShell() {
           )}
         </div>
       </header>
-
-      <nav className="app-nav" aria-label="Application Navigation">
-        <span className="app-nav-label">Navigation:</span>
-        {ROUTES.map((route) => (
-          <NavLink
-            key={route.path}
-            to={route.path}
-            end={route.path === '/' || route.path === '/app'}
-            className={({ isActive }) =>
-              isActive ? 'nav-link active' : 'nav-link'
-            }
-          >
-            {route.label}
-          </NavLink>
-        ))}
-      </nav>
 
       <main className="app-main">
         <Outlet />
@@ -92,17 +107,26 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '12px',
     flexWrap: 'wrap',
   },
+  profileLink: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px',
+    padding: '6px 12px',
+  },
+  userIcon: {
+    fontSize: '13px',
+    lineHeight: 1,
+  },
   userEmail: {
     fontSize: '13px',
-    color: 'var(--text-secondary)',
-    maxWidth: '200px',
+    maxWidth: '180px',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
   },
   logoutButton: {
-    minHeight: '38px',
-    padding: '8px 16px',
+    minHeight: '36px',
+    padding: '6px 14px',
     fontSize: '13px',
     fontWeight: '600',
     color: 'var(--text-primary)',
@@ -118,19 +142,19 @@ const styles: Record<string, React.CSSProperties> = {
   authLinks: {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
+    gap: '10px',
     flexWrap: 'wrap',
   },
   authLinkBtn: {
-    minHeight: '38px',
+    minHeight: '36px',
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
   },
   signUpLink: {
-    backgroundColor: 'rgba(16, 185, 129, 0.15)',
-    color: 'var(--accent-primary)',
-    border: '1px solid rgba(16, 185, 129, 0.3)',
+    backgroundColor: 'var(--accent-primary)',
+    color: '#ffffff',
+    border: '1px solid var(--accent-primary)',
     fontWeight: '600',
   },
 };
