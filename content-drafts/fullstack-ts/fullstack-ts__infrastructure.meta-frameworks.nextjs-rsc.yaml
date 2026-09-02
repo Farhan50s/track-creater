@@ -1,0 +1,149 @@
+node_id: fullstack-ts__infrastructure.meta-frameworks.nextjs-rsc
+name: React Server Components & Streaming
+title: React Server Components & Streaming
+track_id: fullstack-ts
+classification: required
+recommended_depth: implementation
+estimated_time_minutes: 120
+estimated_minutes: 120
+reviewed: true
+content_version: 1
+
+metadata:
+  reviewed: true
+  content_version: 1
+  generated_at: "2026-09-02T10:00:00Z"
+  generator_version: "gemini-1.5-pro"
+  prompt_version: "1.0.0"
+  model: "gemini-1.5-pro"
+
+one_sentence_definition: >-
+  React Server Components render data-fetching UI trees exclusively on the server, streaming incremental HTML and serializable JSON to client viewports.
+
+why_it_matters: >-
+  Traditional client-side SPAs ship large JavaScript bundles and trigger cascading network waterfalls. React Server Components eliminate data-fetching JavaScript from client bundles, enabling direct database access and instant initial page loads.
+
+quick_overview: >-
+  Next.js App Router implements React Server Components (RSC) architecture. By default, components in the app directory are Server Components that execute exclusively on the server during request time or build time. Server Components can perform direct asynchronous database queries and filesystem reads without API route boilerplate. They ship zero JavaScript to the client browser, reducing bundle payloads significantly. When interactive state or event listeners are required, the 'use client' directive designates Client Component boundaries. Suspense boundaries enable progressive HTML streaming, rendering fast UI skeletons while slow server operations resolve.
+
+deep_dive: >-
+  Architecting full-stack applications with React Server Components in Next.js:
+
+  1. Server Component vs Client Component Architecture:
+  - React Server Components (Default):
+    Async functions that fetch data directly:
+    ```tsx
+    // app/dashboard/page.tsx (Server Component)
+    import { db } from '@/lib/db';
+    import { Suspense } from 'react';
+    import { AnalyticsCard } from './AnalyticsCard';
+    import { RealtimeFeed } from './RealtimeFeed'; // Client component
+
+    export default async function DashboardPage() {
+      const stats = await db.query.analytics.findFirst();
+      return (
+        <main className="p-8">
+          <AnalyticsCard stats={stats} />
+          <Suspense fallback={<p>Loading live stream...</p>}>
+            <RealtimeFeed />
+          </Suspense>
+        </main>
+      );
+    }
+    ```
+  - Client Components (`'use client'`):
+    Required only when components use React state (`useState`, `useReducer`), effects (`useEffect`), browser APIs (`window`, `localStorage`), or event listeners (`onClick`, `onChange`).
+
+  2. Composition Patterns & Boundary Crossing:
+  Server components can import and render client components, and client components can receive server-rendered components as `children` or JSX props:
+  ```tsx
+  'use client';
+  export function ModalWrapper({ children }: { children: React.ReactNode }) {
+    const [isOpen, setIsOpen] = useState(false);
+    return isOpen ? <div>{children}</div> : null;
+  }
+  ```
+  Props passed across the server-client boundary must be serializable (primitives, plain objects, arrays).
+
+  3. Progressive Streaming with Suspense:
+  Next.js streams server HTML chunks over HTTP as they resolve, displaying outer layout shells and Suspense fallbacks immediately without blocking on slow database queries.
+
+resources:
+  - title: Next.js Documentation - Server Components & Client Components
+    url: https://nextjs.org/docs/app/building-your-application/rendering/server-components
+    type: documentation
+    tag: start_here
+    why: The official guide to React Server Components, client boundaries, and streaming in Next.js.
+    order_index: 1
+  - title: Next.js Documentation - Loading UI and Streaming
+    url: https://nextjs.org/docs/app/building-your-application/routing/loading-ui-and-streaming
+    type: documentation
+    tag: reference
+    why: Practical patterns for Suspense boundaries, skeleton screens, and progressive streaming.
+    order_index: 2
+
+quiz_pool:
+  - question: "What is the default component type in Next.js App Router (app directory)?"
+    options:
+      - "React Server Components (RSC)"
+      - "Client Components"
+      - "Class Components"
+      - "Static HTML Templates"
+    correct_index: 0
+    explanation: "All components inside the Next.js app directory are React Server Components by default unless marked with 'use client'."
+  - question: "How much JavaScript code do React Server Components ship to the client browser?"
+    options:
+      - "Zero JavaScript bytes (they render on the server and stream HTML/RSC payload only)"
+      - "Their full TypeScript source code"
+      - "50 KB per component"
+      - "The entire Node.js runtime"
+    correct_index: 0
+    explanation: "Server components execute exclusively on the server; their code and heavy dependencies are excluded from client JS bundles."
+  - question: "When must the 'use client' directive be declared at the top of a file?"
+    options:
+      - "When the component uses React hooks (useState, useEffect), event handlers (onClick), or browser-specific APIs"
+      - "Whenever fetching data from PostgreSQL"
+      - "On every page file"
+      - "When using TypeScript"
+    correct_index: 0
+    explanation: "'use client' defines the boundary where client-side interactivity, state, and event listeners are enabled."
+  - question: "How does progressive streaming with React Suspense improve initial page load performance?"
+    options:
+      - "It streams the initial HTML shell immediately and renders fallback skeletons while slow server operations resolve in parallel"
+      - "It cancels slow database queries"
+      - "It compresses video files"
+      - "It turns off CSS rendering"
+    correct_index: 0
+    explanation: "Suspense streaming sends the page layout and skeleton immediately, streaming data-dependent components as they resolve."
+  - question: "Can a Server Component directly query a PostgreSQL database using an ORM without calling an HTTP API route?"
+    options:
+      - "Yes; Server Components execute on the Node.js server and have direct access to backend persistence and database clients"
+      - "No; Server Components must always make fetch() requests to API routes"
+      - "Only in development mode"
+      - "Only when running on localhost"
+    correct_index: 0
+    explanation: "Because Server Components run in the server environment, they can invoke database queries and ORMs directly."
+  - question: "What restriction applies to props passed from a Server Component to a Client Component?"
+    options:
+      - "Props must be JSON-serializable (no functions, class instances, or database connection handles)"
+      - "Props can only be numbers"
+      - "Props cannot exceed 10 characters"
+      - "Props must be encrypted"
+    correct_index: 0
+    explanation: "Data crossing the server-to-client boundary must be serializable into the RSC wire payload format."
+  - question: "How can a Client Component render a Server Component without converting it into a Client Component?"
+    options:
+      - "By passing the Server Component as a 'children' prop into the Client Component container"
+      - "By importing the Server Component directly into the client file"
+      - "By copying the file into the public directory"
+      - "It is impossible to nest server components in client containers"
+    correct_index: 0
+    explanation: "Using the children pattern (composition), Server Components can be rendered by the server and passed as JSX into client wrappers."
+  - question: "What special file in a Next.js route directory automatically creates a Suspense boundary for that route segment?"
+    options:
+      - "loading.tsx"
+      - "layout.tsx"
+      - "page.tsx"
+      - "error.tsx"
+    correct_index: 0
+    explanation: "Next.js automatically wraps page.tsx content in a React Suspense boundary using the fallback UI defined in loading.tsx."

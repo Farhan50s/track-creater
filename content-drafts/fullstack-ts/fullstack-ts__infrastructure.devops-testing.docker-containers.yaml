@@ -1,0 +1,177 @@
+node_id: fullstack-ts__infrastructure.devops-testing.docker-containers
+name: Multi-Stage Docker Builds & Compose
+title: Multi-Stage Docker Builds & Compose
+track_id: fullstack-ts
+classification: required
+recommended_depth: practical
+estimated_time_minutes: 90
+estimated_minutes: 90
+reviewed: true
+content_version: 1
+
+metadata:
+  reviewed: true
+  content_version: 1
+  generated_at: "2026-09-02T10:00:00Z"
+  generator_version: "gemini-1.5-pro"
+  prompt_version: "1.0.0"
+  model: "gemini-1.5-pro"
+
+one_sentence_definition: >-
+  Docker packages full-stack applications into isolated container images using multi-stage builds and multi-container Docker Compose orchestration.
+
+why_it_matters: >-
+  "It works on my machine" bugs occur when local environments diverge from production operating systems. Docker guarantees reproducible execution environments, while multi-stage builds strip developer toolchains to produce tiny, secure production runtime images.
+
+quick_overview: >-
+  Docker is the industry-standard containerization platform for isolating application runtimes, dependencies, system libraries, and network ports. Multi-stage Dockerfiles optimize build pipelines by separating the compile stage (containing TypeScript compilers, devDependencies, and test runners) from the minimal production runner stage (containing only Node.js runtime, production node_modules, and compiled JavaScript). Docker Compose orchestrates multi-container local development environments, spinning up Node.js servers, PostgreSQL databases, and Redis caches with isolated virtual networks and persistent volume mounts.
+
+deep_dive: >-
+  Mastering containerization patterns for full-stack TypeScript services:
+
+  1. Multi-Stage Dockerfile Optimization:
+  Multi-stage builds prevent shipping source compilers, package managers, and devDependencies into production containers:
+  ```dockerfile
+  # Stage 1: Base Dependencies
+  FROM node:20-alpine AS deps
+  WORKDIR /app
+  COPY package*.json ./
+  RUN npm ci
+
+  # Stage 2: Builder
+  FROM node:20-alpine AS builder
+  WORKDIR /app
+  COPY --from=deps /app/node_modules ./node_modules
+  COPY . .
+  RUN npm run build
+  RUN npm prune --production
+
+  # Stage 3: Production Runner
+  FROM node:20-alpine AS runner
+  WORKDIR /app
+  ENV NODE_ENV=production
+  USER node
+  COPY --from=builder /app/dist ./dist
+  COPY --from=builder /app/node_modules ./node_modules
+  COPY package.json ./
+
+  EXPOSE 3000
+  CMD ["node", "dist/index.js"]
+  ```
+
+  2. Security & Image Hardening:
+  - Non-Root User: Running as `USER node` prevents root-privilege escalation if container execution is compromised.
+  - Alpine/Distroless Base: Using slim base images minimizes CVE attack surfaces.
+  - `.dockerignore`: Excludes `node_modules`, `.git`, `.env`, and local build artifacts from container build context.
+
+  3. Docker Compose Local Orchestration:
+  A declarative `docker-compose.yml` orchestrates services:
+  ```yaml
+  version: '3.8'
+  services:
+    app:
+      build: .
+      ports:
+        - "3000:3000"
+      environment:
+        - DATABASE_URL=postgres://user:pass@db:5432/appdb
+        - REDIS_URL=redis://cache:6379
+      depends_on:
+        - db
+        - cache
+
+    db:
+      image: postgres:16-alpine
+      environment:
+        POSTGRES_USER: user
+        POSTGRES_PASSWORD: pass
+        POSTGRES_DB: appdb
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+
+    cache:
+      image: redis:7-alpine
+
+  volumes:
+    postgres_data:
+  ```
+
+resources:
+  - title: Docker Official Documentation - Multi-stage Builds
+    url: https://docs.docker.com/build/building/multi-stage/
+    type: documentation
+    tag: start_here
+    why: The official guide to structuring efficient multi-stage Docker build pipelines.
+    order_index: 1
+  - title: Docker Compose Official Documentation
+    url: https://docs.docker.com/compose/
+    type: documentation
+    tag: reference
+    why: Guide to orchestrating multi-container applications with networks and volumes.
+    order_index: 2
+
+quiz_pool:
+  - question: "What is the primary benefit of Multi-Stage Docker builds in TypeScript projects?"
+    options:
+      - "They isolate build tools (compilers, devDependencies) in earlier stages, producing small, secure production images containing only runtime assets"
+      - "They compile TypeScript into Python"
+      - "They eliminate the need for Docker Compose"
+      - "They automatically deploy code to AWS"
+    correct_index: 0
+    explanation: "Multi-stage builds discard compilers and dev tools, resulting in lightweight, secure production images."
+  - question: "Why should production containers switch from root to a non-root user (e.g. USER node)?"
+    options:
+      - "To mitigate privilege escalation attacks if an attacker compromises the container process"
+      - "Because Node.js cannot execute as root"
+      - "To increase CPU clock speeds"
+      - "To compress the image size by 50%"
+    correct_index: 0
+    explanation: "Running as a non-root user prevents container breakout vulnerabilities from gaining root host privileges."
+  - question: "What is the purpose of the '.dockerignore' file?"
+    options:
+      - "To prevent unnecessary files (node_modules, .env, .git) from being copied into the Docker build context"
+      - "To ignore failed Docker builds"
+      - "To disable network connections"
+      - "To delete local files automatically"
+    correct_index: 0
+    explanation: ".dockerignore excludes sensitive or large files from being sent to the Docker daemon during build time."
+  - question: "How does Docker Compose enable communication between different service containers (e.g. app connecting to db)?"
+    options:
+      - "It creates an isolated virtual bridge network where services can resolve each other using their service names as DNS hostnames"
+      - "By sharing the same localhost IP address"
+      - "Via bluetooth connections"
+      - "Through public internet URLs"
+    correct_index: 0
+    explanation: "Docker Compose provisions a shared network where service names (e.g. 'db', 'cache') resolve automatically via internal DNS."
+  - question: "Why are persistent Docker Volumes used for PostgreSQL database containers in Docker Compose?"
+    options:
+      - "To persist database data on host disk storage so data is not lost when the database container stops or restarts"
+      - "To make SQL queries execute faster"
+      - "To encrypt database tables"
+      - "To convert PostgreSQL into SQLite"
+    correct_index: 0
+    explanation: "Container file systems are ephemeral; named volumes preserve database files across container lifecycle recreations."
+  - question: "Why is 'COPY package*.json ./' and 'RUN npm ci' executed before copying application source code in Dockerfiles?"
+    options:
+      - "To leverage Docker layer caching, preventing slow dependency re-installation when only source files change"
+      - "Because npm ci deletes source files"
+      - "Because Docker cannot read TypeScript"
+      - "To reduce RAM usage during startup"
+    correct_index: 0
+    explanation: "Docker caches intermediate layers; copying lockfiles first allows Docker to reuse cached node_modules if dependencies haven't changed."
+  - question: "What does the EXPOSE instruction do in a Dockerfile?"
+    options:
+      - "Documents the network port on which the container application listens at runtime"
+      - "Automatically publishes the port to the public internet"
+      - "Disables the firewall"
+      - "Encrypts network traffic"
+    correct_index: 0
+    explanation: "EXPOSE acts as metadata documentation specifying the container's intended listening ports."
+  - question: "Which command starts all services defined in a docker-compose.yml file in detached background mode?"
+    options:
+      - "docker compose up -d"
+      - "docker compose run"
+      - "docker start all"
+      - "docker compose build --fast"
+    correct_index: 0
+    explanation: "docker compose up -d builds, creates, and starts all defined service containers in background detached mode."

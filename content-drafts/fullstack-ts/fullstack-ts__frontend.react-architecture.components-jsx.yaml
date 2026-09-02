@@ -1,0 +1,140 @@
+node_id: fullstack-ts__frontend.react-architecture.components-jsx
+name: React Components, Props & Reconciliation
+title: React Components, Props & Reconciliation
+track_id: fullstack-ts
+classification: required
+recommended_depth: practical
+estimated_time_minutes: 90
+estimated_minutes: 90
+reviewed: true
+content_version: 1
+
+metadata:
+  reviewed: true
+  content_version: 1
+  generated_at: "2026-09-02T10:00:00Z"
+  generator_version: "gemini-1.5-pro"
+  prompt_version: "1.0.0"
+  model: "gemini-1.5-pro"
+
+one_sentence_definition: >-
+  React functional components translate typed props into declarative JSX element trees through concurrent virtual DOM reconciliation.
+
+why_it_matters: >-
+  Understanding JSX compilation, unidirectional data flow, component purity, and reconciliation keys prevents UI state corruption, unnecessary re-renders, and list rendering bugs.
+
+quick_overview: >-
+  React functional components are JavaScript functions that accept an immutable props object and return declarative JSX element descriptors. JSX compiles to standard React.createElement (or jsx runtime) calls that produce lightweight Virtual DOM trees. When component state or props change, React evaluates the component and reconciles the new virtual tree against the existing tree using diffing heuristics. Key concepts include unidirectional data flow, component composition (using children props), pure render functions without side-effects, and stable key attributes for dynamic lists to preserve element identity across render cycles.
+
+deep_dive: >-
+  React's declarative paradigm transforms how user interfaces are constructed and updated:
+
+  1. Functional Components & JSX:
+  JSX is a syntax extension that compiles into function calls returning JavaScript object descriptors (React elements). Components must remain pure functions regarding props: given the same props, a component should return the same JSX without mutating external variables.
+  ```tsx
+  interface UserCardProps {
+    name: string;
+    role: string;
+    onSelect?: () => void;
+  }
+
+  export function UserCard({ name, role, onSelect }: UserCardProps) {
+    return (
+      <div className="card" onClick={onSelect}>
+        <h3>{name}</h3>
+        <span className="badge">{role}</span>
+      </div>
+    );
+  }
+  ```
+
+  2. Virtual DOM & Reconciliation Heuristics:
+  React's diffing algorithm operates in O(N) time based on two assumptions:
+  - Two elements of different types (e.g., changing from `<div>` to `<section>`) tear down the entire old subtree and build a new one.
+  - In lists of child elements, `key` props identify which elements are retained, moved, or deleted across renders.
+
+  3. The Invariant of Stable List Keys:
+  Keys must be unique, stable strings or IDs (such as database primary keys). Using array indices (`key={index}`) as keys causes severe UI bugs when lists are filtered, sorted, or prepended, because index keys trick React into reusing DOM nodes with mismatched internal state.
+
+  4. Component Composition:
+  Favoring composition (`children` prop or specialized render props) over deep prop-drilling simplifies component APIs and reduces coupling across application layout layers.
+
+resources:
+  - title: React Official Documentation - Describing the UI
+    url: https://react.dev/learn/describing-the-ui
+    type: documentation
+    tag: start_here
+    why: The official guide to JSX, components, passing props, and rendering lists.
+    order_index: 1
+  - title: React Official Documentation - Keeping Components Pure
+    url: https://react.dev/learn/keeping-components-pure
+    type: documentation
+    tag: reference
+    why: Deep architectural insights into component purity and idempotent rendering.
+    order_index: 2
+
+quiz_pool:
+  - question: "What does JSX compile into behind the scenes?"
+    options:
+      - "Standard JavaScript function calls (React.createElement or jsx runtime calls) that return lightweight object descriptors"
+      - "Raw HTML strings parsed via innerHTML"
+      - "WebAssembly binary instructions"
+      - "Direct DOM mutation scripts"
+    correct_index: 0
+    explanation: "JSX is syntactic sugar that compiles into function calls creating virtual element descriptor objects."
+  - question: "Why is using array index as a 'key' prop (e.g. key={index}) discouraged for dynamic lists?"
+    options:
+      - "Sorting, filtering, or inserting items changes item indices, causing React to misidentify items and corrupt component state"
+      - "Array indices are not supported in React"
+      - "It throws a fatal syntax error"
+      - "It increases bundle size by 50%"
+    correct_index: 0
+    explanation: "Index keys change when items are reordered or filtered, causing React to reuse DOM elements incorrectly."
+  - question: "What does 'unidirectional data flow' mean in React?"
+    options:
+      - "Data flows downward from parent components to child components via props"
+      - "Data flows only from child to parent"
+      - "Data cannot be updated once rendered"
+      - "Components cannot receive callbacks"
+    correct_index: 0
+    explanation: "In React, state flows strictly downward as props; children communicate updates upward by invoking parent callback functions."
+  - question: "What is a 'pure component' render function in React?"
+    options:
+      - "A component that produces the same JSX output for the same props and does not mutate any variables outside its scope"
+      - "A component that has no CSS styles"
+      - "A component that cannot use TypeScript"
+      - "A component without a return statement"
+    correct_index: 0
+    explanation: "Pure components behave like pure mathematical functions: they do not produce side effects and produce identical output for identical inputs."
+  - question: "What happens during reconciliation when the root element type changes (e.g. from <div> to <span>)?"
+    options:
+      - "React completely unmounts and destroys the old DOM subtree and builds a new subtree from scratch"
+      - "React only updates the tag name while preserving all child state"
+      - "React throws a warning and stops rendering"
+      - "The browser reloads the page"
+    correct_index: 0
+    explanation: "Whenever the element type changes at a tree position, React destroys the old subtree and reconstructs the new elements."
+  - question: "How does the 'children' prop facilitate component composition in React?"
+    options:
+      - "It allows parent components to nest arbitrary child JSX elements without needing to know their internal structure"
+      - "It copies child components into localStorage"
+      - "It restricts components to rendering only text"
+      - "It forces components to use class syntax"
+    correct_index: 0
+    explanation: "The children prop allows container components (e.g., Cards, Dialogs, Shells) to wrap and render arbitrary nested content."
+  - question: "Can props passed to a React component be directly mutated by the receiving component?"
+    options:
+      - "No; props are read-only and immutable"
+      - "Yes; props can be reassigned freely"
+      - "Only if the prop is a number"
+      - "Only in development mode"
+    correct_index: 0
+    explanation: "Props are strictly immutable. To change values, the component must request state changes via parent callbacks."
+  - question: "What is React's Virtual DOM reconciliation complexity?"
+    options:
+      - "O(N) using heuristic diffing based on element types and keys"
+      - "O(N^3) standard tree comparison"
+      - "O(1) instant lookup"
+      - "O(N^2) quadratic comparison"
+    correct_index: 0
+    explanation: "React achieves linear O(N) reconciliation performance using heuristic rules regarding element types and unique key attributes."

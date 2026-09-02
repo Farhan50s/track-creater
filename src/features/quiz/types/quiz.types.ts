@@ -7,11 +7,32 @@ export interface QuizQuestion {
   options: string[];
 }
 
+export interface QuestionReviewItem {
+  question_id: string;
+  question_text: string;
+  options: string[];
+  selected_index: number;
+  correct_index: number;
+  is_correct: boolean;
+  explanation: string;
+}
+
+export interface QuizSubmissionResponse {
+  attempt_id: string;
+  score: number;
+  total_questions: number;
+  passed: boolean;
+  status?: NodeStatus;
+  review?: QuestionReviewItem[];
+}
+
 export interface QuizAttemptResult {
   attempt_id: string;
   score: number;
   passed: boolean;
   status: NodeStatus;
+  total_questions?: number;
+  review?: QuestionReviewItem[];
 }
 
 export type QuizLifecycleState =

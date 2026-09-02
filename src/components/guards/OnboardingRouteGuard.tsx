@@ -1,16 +1,17 @@
-import { Navigate, Outlet } from 'react-router-dom';
+import { useLocation, Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../features/auth/hooks/useAuth';
 import { LoadingFallback } from '../LoadingFallback';
 
 export function OnboardingRouteGuard({ children }: { children?: React.ReactNode }) {
   const { hasActiveTrack, isLoading } = useAuth();
+  const location = useLocation();
 
   if (isLoading) {
     return <LoadingFallback />;
   }
 
-  // If user already has an active track, onboarding is complete; redirect to /app
-  if (hasActiveTrack) {
+  // /onboarding/goal is accessible for both initial enrollment and in-app track switching
+  if (hasActiveTrack && location.pathname.includes('/onboarding/knowledge')) {
     return <Navigate to="/app" replace />;
   }
 

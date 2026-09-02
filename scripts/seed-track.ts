@@ -78,6 +78,7 @@ async function seed() {
   // Parse skeleton and drafts
   const skeletonPath = path.join(trackDir, 'skeleton.yaml');
   const skeleton = parseYaml(fs.readFileSync(skeletonPath, 'utf-8'));
+  skeleton.name = skeleton.name || skeleton.title;
 
   const supabase = createClient(supabaseUrl, serviceRoleKey, {
     auth: { persistSession: false },
@@ -100,61 +101,72 @@ async function seed() {
 
   // 3. Insert Pillars
   for (const p of skeleton.pillars) {
-    console.log(`  Inserting pillar: ${p.pillar_id} ("${p.name}")`);
+    const pillarName = p.name || p.title;
+    const pillarOrder = p.order ?? p.order_index;
+    console.log(`  Inserting pillar: ${p.pillar_id} ("${pillarName}")`);
     const { error: pillarErr } = await supabase.from('pillars').insert({
       pillar_id: p.pillar_id,
       track_id: skeleton.track_id,
-      name: p.name,
+      name: pillarName,
       description: p.description,
-      order_index: p.order,
+      order_index: pillarOrder,
     });
     if (pillarErr) throw new Error(`Pillar insert failed: ${pillarErr.message}`);
 
     // 4. Insert Topics
     for (const t of p.topics || []) {
-      console.log(`    Inserting topic: ${t.topic_id} ("${t.name}")`);
+      const topicName = t.name || t.title;
+      const topicOrder = t.order ?? t.order_index;
+      console.log(`    Inserting topic: ${t.topic_id} ("${topicName}")`);
       const { error: topicErr } = await supabase.from('topics').insert({
         topic_id: t.topic_id,
         pillar_id: p.pillar_id,
-        name: t.name,
-        order_index: t.order,
+        name: topicName,
+        order_index: topicOrder,
       });
       if (topicErr) throw new Error(`Topic insert failed: ${topicErr.message}`);
 
       // 5. Insert Subtopics
       for (const st of t.subtopics || []) {
-        console.log(`      Inserting subtopic: ${st.subtopic_id} ("${st.name}")`);
+        const subtopicName = st.name || st.title;
+        const subtopicOrder = st.order ?? st.order_index;
+        console.log(`      Inserting subtopic: ${st.subtopic_id} ("${subtopicName}")`);
         const { error: subtopicErr } = await supabase.from('subtopics').insert({
           subtopic_id: st.subtopic_id,
           topic_id: t.topic_id,
-          name: st.name,
-          order_index: st.order,
+          name: subtopicName,
+          order_index: subtopicOrder,
         });
         if (subtopicErr) throw new Error(`Subtopic insert failed: ${subtopicErr.message}`);
 
         // 6. Insert Skill Nodes
-        for (const sn of st.skill_nodes || []) {
+        const nodesList = st.skill_nodes || st.nodes || [];
+        for (const sn of nodesList) {
           const draftPath = path.join(trackDir, `${sn.node_id}.yaml`);
           const draft = parseYaml(fs.readFileSync(draftPath, 'utf-8'));
+          const nodeName = draft.name || draft.title || sn.name || sn.title;
+          const nodeOrder = sn.order ?? sn.order_index;
+          const nodeEstimatedMinutes = draft.estimated_time_minutes ?? draft.estimated_minutes ?? sn.estimated_time_minutes ?? sn.estimated_minutes ?? 25;
 
-          console.log(`        Inserting skill node: ${sn.node_id} ("${draft.name}")`);
+          console.log(`        Inserting skill node: ${sn.node_id} ("${nodeName}")`);
           const { error: nodeErr } = await supabase.from('skill_nodes').insert({
             node_id: sn.node_id,
             parent_subtopic_id: st.subtopic_id,
-            name: draft.name,
-            classification: draft.classification,
-            recommended_depth: draft.recommended_depth,
-            estimated_time_minutes: draft.estimated_time_minutes,
+            name: nodeName,
+            classification: draft.classification || sn.classification,
+            recommended_depth: draft.recommended_depth || sn.recommended_depth,
+            estimated_time_minutes: nodeEstimatedMinutes,
             one_sentence_definition: draft.one_sentence_definition,
             why_it_matters: draft.why_it_matters,
             quick_overview: draft.quick_overview,
             deep_dive: draft.deep_dive || null,
             content_version: draft.content_version || 1,
-            order_index: sn.order,
+            order_index: nodeOrder,
           });
           if (nodeErr) throw new Error(`Skill node insert failed: ${nodeErr.message}`);
 
           // 7. Insert Resources
+          let resIdx = 1;
           for (const res of draft.resources || []) {
             const { error: resErr } = await supabase.from('resources').insert({
               node_id: sn.node_id,
@@ -163,7 +175,7 @@ async function seed() {
               type: res.type,
               tag: res.tag,
               why: res.why || null,
-              order_index: res.order_index,
+              order_index: res.order_index ?? resIdx++,
             });
             if (resErr) throw new Error(`Resource insert failed: ${resErr.message}`);
           }
@@ -181,6 +193,7 @@ async function seed() {
             const { error: ansErr } = await supabase.from('quiz_answers').insert({
               question_id: qData.question_id,
               correct_index: q.correct_index,
+              explanation: q.explanation || null,
             });
             if (ansErr) throw new Error(`Quiz answer insert failed: ${ansErr.message}`);
           }

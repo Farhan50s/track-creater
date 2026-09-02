@@ -1,0 +1,148 @@
+node_id: fullstack-ts__infrastructure.meta-frameworks.server-actions
+name: Server Actions & Cache Revalidation
+title: Server Actions & Cache Revalidation
+track_id: fullstack-ts
+classification: required
+recommended_depth: implementation
+estimated_time_minutes: 90
+estimated_minutes: 90
+reviewed: true
+content_version: 1
+
+metadata:
+  reviewed: true
+  content_version: 1
+  generated_at: "2026-09-02T10:00:00Z"
+  generator_version: "gemini-1.5-pro"
+  prompt_version: "1.0.0"
+  model: "gemini-1.5-pro"
+
+one_sentence_definition: >-
+  Server Actions execute asynchronous server mutations directly from React components and forms, managing optimistic updates and cache revalidation.
+
+why_it_matters: >-
+  Writing manual REST mutation routes, fetch callers, and state refetches creates brittle boilerplate. Server Actions streamline full-stack data mutations into type-safe RPC-like functions with built-in cache purging via revalidatePath and revalidateTag.
+
+quick_overview: >-
+  Server Actions are asynchronous server functions invoked directly from client components or HTML forms in Next.js. Designated by the 'use server' directive, Server Actions handle data mutations, schema validation, session authentication, and database writes without requiring dedicated API routes. They seamlessly integrate with native HTML forms (supporting progressive enhancement even without JavaScript) and React hooks like useActionState and useOptimistic for instant UI feedback. Following mutations, functions like revalidatePath and revalidateTag invalidate cached Server Component trees, ensuring fresh data renders automatically.
+
+deep_dive: >-
+  Mastering full-stack mutations with Next.js Server Actions and cache revalidation:
+
+  1. Declaring Server Actions:
+  Server actions are declared with the `'use server'` directive:
+  ```ts
+  // app/actions/tracks.ts
+  'use server';
+
+  import { db } from '@/lib/db';
+  import { revalidatePath } from 'next/cache';
+  import { z } from 'zod';
+
+  const UpdateTrackSchema = z.object({
+    trackId: z.string(),
+    title: z.string().min(3),
+  });
+
+  export async function updateTrackAction(formData: FormData) {
+    const rawData = Object.fromEntries(formData);
+    const parsed = UpdateTrackSchema.safeParse(rawData);
+    if (!parsed.success) {
+      return { error: 'Invalid input fields' };
+    }
+
+    await db.update(tracks).set({ title: parsed.data.title }).where(eq(tracks.id, parsed.data.trackId));
+    revalidatePath('/app/track');
+    return { success: true };
+  }
+  ```
+
+  2. Progressive Enhancement & Form Integration:
+  Passing a server action to a `<form action={updateTrackAction}>` allows form submission before client JavaScript loads.
+
+  3. Optimistic UI Updates with `useOptimistic`:
+  `useOptimistic` renders immediate UI state changes while the server mutation processes in the background, automatically reverting if the action fails.
+
+  4. Cache Revalidation Strategies:
+  - `revalidatePath('/app/track')`: Purges the cache for a specific route segment on the next request.
+  - `revalidateTag('user-profile')`: Invalidates all cached `fetch` requests tagged with `next: { tags: ['user-profile'] }` across the application.
+
+resources:
+  - title: Next.js Documentation - Server Actions and Mutations
+    url: https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations
+    type: documentation
+    tag: start_here
+    why: The official guide to invoking server actions, form bindings, and security considerations.
+    order_index: 1
+  - title: Next.js Documentation - Revalidating Data
+    url: https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#revalidating-data
+    type: documentation
+    tag: reference
+    why: In-depth explanation of on-demand cache revalidation using paths and cache tags.
+    order_index: 2
+
+quiz_pool:
+  - question: "What directive designates a function as a Server Action in Next.js?"
+    options:
+      - "'use server'"
+      - "'use action'"
+      - "'use mutation'"
+      - "'use backend'"
+    correct_index: 0
+    explanation: "The 'use server' directive at the file or function level marks asynchronous functions as callable Server Actions."
+  - question: "What does 'revalidatePath(\"/dashboard\")' do when called inside a Server Action?"
+    options:
+      - "Purges the cached server-rendered data for the /dashboard route, ensuring the next visit displays fresh database state"
+      - "Redirects the browser to /dashboard"
+      - "Deletes the dashboard HTML file from disk"
+      - "Clears user browser cookies"
+    correct_index: 0
+    explanation: "revalidatePath purges Next.js cached data for the specified path, refreshing Server Components on the next render."
+  - question: "What is 'Progressive Enhancement' when using Server Actions with native HTML <form action={...}> elements?"
+    options:
+      - "Forms can submit and trigger server mutations even before client-side JavaScript has finished loading or if JS is disabled"
+      - "CSS animations load progressively"
+      - "Images upscale in quality"
+      - "Database queries run faster over time"
+    correct_index: 0
+    explanation: "Using native HTML form actions allows browsers to perform standard POST submissions even before client JS hydrates."
+  - question: "What is the purpose of the 'useOptimistic' React hook in Next.js forms?"
+    options:
+      - "To immediately update the client UI with the anticipated result while the server action mutation executes in the background"
+      - "To hide form errors"
+      - "To prevent users from clicking submit twice"
+      - "To retry failed network requests 10 times"
+    correct_index: 0
+    explanation: "useOptimistic renders instant optimistic state, reverting automatically if the server action rejects."
+  - question: "How does 'revalidateTag(tag)' differ from 'revalidatePath(path)'?"
+    options:
+      - "revalidateTag purges all cached fetch requests associated with a semantic cache tag across multiple routes simultaneously"
+      - "revalidateTag only works for images"
+      - "revalidateTag deletes git tags"
+      - "There is no difference"
+    correct_index: 0
+    explanation: "revalidateTag enables targeted cache invalidation across arbitrary pages sharing the same data cache tag."
+  - question: "Why must input data passed to Server Actions always be validated using libraries like Zod?"
+    options:
+      - "Server Actions are publicly exposed POST endpoints callable by external clients, making input validation mandatory for security"
+      - "Next.js crashes without Zod"
+      - "Forms cannot submit strings"
+      - "To convert FormData into XML"
+    correct_index: 0
+    explanation: "Server Actions create public HTTP endpoints; failing to validate inputs exposes applications to malicious parameter manipulation."
+  - question: "Can Server Actions set or delete HTTP cookies in Next.js?"
+    options:
+      - "Yes; Server Actions can modify cookies using the 'cookies()' helper from 'next/headers'"
+      - "No; cookies can only be set in middleware"
+      - "Only in development mode"
+      - "Only when using HTTP/1.0"
+    correct_index: 0
+    explanation: "The next/headers cookies() API allows reading, setting, and deleting cookies directly inside Server Actions."
+  - question: "What React hook is used to access the return state and pending status of a Server Action form?"
+    options:
+      - "useActionState (or useFormState)"
+      - "useEffect"
+      - "useCallback"
+      - "useRef"
+    correct_index: 0
+    explanation: "useActionState manages the returned action state (success, validation errors) and pending transition status."

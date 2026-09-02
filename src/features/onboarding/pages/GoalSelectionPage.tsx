@@ -8,24 +8,35 @@ import { GoalSelectionCard } from '../components/GoalSelectionCard';
 import { LoadingFallback } from '../../../components/LoadingFallback';
 
 export function GoalSelectionPage() {
-  const { hasActiveTrack, isLoading: authLoading } = useAuth();
+  const { user, hasActiveTrack, refreshActiveTrack, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
 
   const [tracks, setTracks] = useState<TrackWithScope[]>([]);
+  const [activeTrackId, setActiveTrackId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSwitching, setIsSwitching] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!authLoading && hasActiveTrack) {
-      navigate('/app', { replace: true });
-    }
-  }, [hasActiveTrack, authLoading, navigate]);
-
-  useEffect(() => {
-    async function loadTracks() {
+    async function loadTracksAndCurrentEnrolment() {
       try {
         setIsLoading(true);
         setError(null);
+
+        // Fetch current active track if user is logged in
+        let currentTrackId: string | null = null;
+        if (user) {
+          const { data: activeRes } = await supabase
+            .from('user_active_track')
+            .select('track_id')
+            .eq('user_id', user.id)
+            .maybeSingle();
+
+          if (activeRes) {
+            currentTrackId = activeRes.track_id;
+            setActiveTrackId(currentTrackId);
+          }
+        }
 
         // Fetch tracks, pillars, and skill_nodes in parallel
         const [tracksRes, pillarsRes, nodesRes] = await Promise.all([
@@ -96,11 +107,45 @@ export function GoalSelectionPage() {
       }
     }
 
-    loadTracks();
-  }, []);
+    loadTracksAndCurrentEnrolment();
+  }, [user]);
 
   const handleSelectTrack = (trackId: string) => {
     navigate(`/onboarding/knowledge?trackId=${encodeURIComponent(trackId)}`);
+  };
+
+  const handleSwitchTrack = async (targetTrackId: string) => {
+    if (!user) return;
+    try {
+      setIsSwitching(true);
+      setError(null);
+
+      // Perform upsert on user_active_track
+      const { error: upsertErr } = await supabase
+        .from('user_active_track')
+        .upsert(
+          {
+            user_id: user.id,
+            track_id: targetTrackId,
+            selected_at: new Date().toISOString(),
+          },
+          { onConflict: 'user_id' }
+        );
+
+      if (upsertErr) throw upsertErr;
+
+      // Update local and context state
+      setActiveTrackId(targetTrackId);
+      await refreshActiveTrack();
+
+      // Navigate cleanly to /app displaying the newly active track
+      navigate('/app', { replace: true });
+    } catch (err: any) {
+      console.error('Error switching track:', err);
+      setError(err.message || 'Failed to switch track. Please try again.');
+    } finally {
+      setIsSwitching(false);
+    }
   };
 
   if (authLoading || isLoading) {
@@ -109,8 +154,12 @@ export function GoalSelectionPage() {
 
   return (
     <OnboardingLayout
-      title="Choose Your Role Goal"
-      subtitle="Select a structured learning roadmap. Each track is designed for progressive mastery from core foundations to advanced application."
+      title={hasActiveTrack ? 'Switch Career Track' : 'Choose Your Role Goal'}
+      subtitle={
+        hasActiveTrack
+          ? 'Switch between career tracks at any time. Your completion history across all tracks is permanently preserved.'
+          : 'Select a structured learning roadmap. Each track is designed for progressive mastery from core foundations to advanced application.'
+      }
     >
       {error && (
         <div style={styles.errorBanner} role="alert">
@@ -120,7 +169,15 @@ export function GoalSelectionPage() {
 
       <div style={styles.grid}>
         {tracks.map((track) => (
-          <GoalSelectionCard key={track.track_id} track={track} onSelect={handleSelectTrack} />
+          <GoalSelectionCard
+            key={track.track_id}
+            track={track}
+            isActiveTrack={activeTrackId === track.track_id}
+            hasEnrolledTrack={hasActiveTrack}
+            isSwitching={isSwitching}
+            onSelect={handleSelectTrack}
+            onSwitchTrack={handleSwitchTrack}
+          />
         ))}
       </div>
     </OnboardingLayout>

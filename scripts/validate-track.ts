@@ -70,8 +70,9 @@ async function validate() {
   if (skeleton.track_id !== trackId) {
     error('Structural', `skeleton.yaml track_id '${skeleton.track_id}' does not match expected '${trackId}'`);
   }
+  skeleton.name = skeleton.name || skeleton.title;
   if (!skeleton.name || typeof skeleton.name !== 'string') {
-    error('Structural', `Track missing non-empty name`);
+    error('Structural', `Track missing non-empty name or title`);
   }
   if (!skeleton.description || typeof skeleton.description !== 'string') {
     error('Structural', `Track missing non-empty description`);
@@ -106,6 +107,9 @@ async function validate() {
   } else {
     const pillarOrders = new Set<number>();
     for (const pillar of skeleton.pillars) {
+      pillar.name = pillar.name || pillar.title;
+      pillar.order = pillar.order ?? pillar.order_index;
+
       if (!pillar.pillar_id || pillarIds.has(pillar.pillar_id)) {
         error('Structural', `Duplicate or missing pillar_id: ${pillar.pillar_id}`);
       }
@@ -121,6 +125,9 @@ async function validate() {
       } else {
         const topicOrders = new Set<number>();
         for (const topic of pillar.topics) {
+          topic.name = topic.name || topic.title;
+          topic.order = topic.order ?? topic.order_index;
+
           if (!topic.topic_id || topicIds.has(topic.topic_id)) {
             error('Structural', `Duplicate or missing topic_id: ${topic.topic_id}`);
           }
@@ -135,6 +142,9 @@ async function validate() {
           if (Array.isArray(topic.subtopics)) {
             const subtopicOrders = new Set<number>();
             for (const subtopic of topic.subtopics) {
+              subtopic.name = subtopic.name || subtopic.title;
+              subtopic.order = subtopic.order ?? subtopic.order_index;
+
               if (!subtopic.subtopic_id || subtopicIds.has(subtopic.subtopic_id)) {
                 error('Structural', `Duplicate or missing subtopic_id: ${subtopic.subtopic_id}`);
               }
@@ -145,9 +155,14 @@ async function validate() {
               }
               subtopicOrders.add(subtopic.order);
 
-              if (Array.isArray(subtopic.skill_nodes)) {
+              const subNodes = subtopic.skill_nodes || subtopic.nodes;
+              if (Array.isArray(subNodes)) {
                 const nodeOrders = new Set<number>();
-                for (const node of subtopic.skill_nodes) {
+                for (const node of subNodes) {
+                  node.name = node.name || node.title;
+                  node.order = node.order ?? node.order_index;
+                  node.estimated_time_minutes = node.estimated_time_minutes ?? node.estimated_minutes;
+
                   if (skeletonNodes.has(node.node_id)) {
                     error('Structural', `Duplicate node_id: ${node.node_id}`);
                   }
@@ -269,8 +284,9 @@ async function validate() {
     if (draft.node_id !== sNode.node_id) {
       error('Content', `node_id in draft '${draft.node_id}' does not match skeleton '${sNode.node_id}'`, nodeId);
     }
-    if (draft.name !== sNode.name) {
-      error('Content', `name in draft '${draft.name}' does not match skeleton '${sNode.name}'`, nodeId);
+    const draftName = draft.name || draft.title;
+    if (draftName !== sNode.name) {
+      error('Content', `name/title in draft '${draftName}' does not match skeleton '${sNode.name}'`, nodeId);
     }
     if (draft.classification !== sNode.classification) {
       error('Content', `classification '${draft.classification}' does not match skeleton '${sNode.classification}'`, nodeId);
@@ -278,12 +294,14 @@ async function validate() {
     if (draft.recommended_depth !== sNode.recommended_depth) {
       error('Content', `recommended_depth '${draft.recommended_depth}' does not match skeleton '${sNode.recommended_depth}'`, nodeId);
     }
-    if (draft.estimated_time_minutes !== sNode.estimated_time_minutes) {
-      error('Content', `estimated_time_minutes ${draft.estimated_time_minutes} does not match skeleton ${sNode.estimated_time_minutes}`, nodeId);
+    const draftEstMinutes = draft.estimated_time_minutes ?? draft.estimated_minutes;
+    if (draftEstMinutes !== sNode.estimated_time_minutes) {
+      error('Content', `estimated_time_minutes/estimated_minutes ${draftEstMinutes} does not match skeleton ${sNode.estimated_time_minutes}`, nodeId);
     }
 
     // Check reviewed status
-    if (draft.reviewed === true) {
+    const isReviewed = draft.reviewed === true || draft.metadata?.reviewed === true;
+    if (isReviewed) {
       reviewedNodeCount++;
     } else {
       error('Content', `Node is marked 'reviewed: false'. Must be reviewed and set to 'reviewed: true' for seed eligibility.`, nodeId);

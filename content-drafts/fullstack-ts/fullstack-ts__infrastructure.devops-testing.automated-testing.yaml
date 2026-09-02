@@ -1,0 +1,153 @@
+node_id: fullstack-ts__infrastructure.devops-testing.automated-testing
+name: Unit, Integration & E2E Testing (Vitest & Playwright)
+title: Unit, Integration & E2E Testing (Vitest & Playwright)
+track_id: fullstack-ts
+classification: required
+recommended_depth: implementation
+estimated_time_minutes: 120
+estimated_minutes: 120
+reviewed: true
+content_version: 1
+
+metadata:
+  reviewed: true
+  content_version: 1
+  generated_at: "2026-09-02T10:00:00Z"
+  generator_version: "gemini-1.5-pro"
+  prompt_version: "1.0.0"
+  model: "gemini-1.5-pro"
+
+one_sentence_definition: >-
+  Automated testing pyramids validate software stability across unit calculations, API/database integrations with Vitest, and full browser workflows with Playwright.
+
+why_it_matters: >-
+  Manual testing is slow, expensive, and error-prone. A comprehensive automated testing suite prevents functional and visual regressions, giving teams confidence to ship code continuously to production.
+
+quick_overview: >-
+  Quality engineering in TypeScript spans a structured testing pyramid: fast unit tests for pure functions and state reducers, integration tests for API endpoints and database queries against test databases, and end-to-end (E2E) tests validating complete user workflows. Vitest provides an ultra-fast test runner that leverages Vite's native ES module pipeline, mock utilities (vi.fn, vi.spyOn), and snapshot testing. Playwright automates real browser sessions across Chromium, Firefox, and WebKit, executing end-to-end user journeys (authentication, checkout, quiz flows) with auto-waiting assertions and network mocking.
+
+deep_dive: >-
+  Designing and implementing automated test suites across the testing pyramid:
+
+  1. The Testing Pyramid Architecture:
+  - Unit Tests (~70%): Vitest tests isolated utilities, math calculations, schema parsers, and custom React hooks.
+  - Integration Tests (~20%): Tests Express routes, database repositories, or Supabase RPCs using test containers or isolated schema transactions.
+  - End-to-End Tests (~10%): Playwright drives headless browsers against the compiled application build to test complete user journeys.
+
+  2. Unit & Integration Testing with Vitest:
+  ```ts
+  import { describe, it, expect, vi, beforeEach } from 'vitest';
+  import { calculatePillarProgress } from './progressUtils';
+
+  describe('calculatePillarProgress', () => {
+    it('returns 100% when all required nodes are completed', () => {
+      const nodes = [
+        { id: '1', classification: 'required', status: 'completed' },
+        { id: '2', classification: 'optional', status: 'not_started' },
+      ];
+      const result = calculatePillarProgress(nodes);
+      expect(result.completionPercent).toBe(100);
+      expect(result.completedRequiredCount).toBe(1);
+    });
+  });
+  ```
+
+  3. Browser End-to-End Testing with Playwright:
+  Playwright features built-in auto-waiting, eliminating flaky `sleep()` timeouts:
+  ```ts
+  import { test, expect } from '@playwright/test';
+
+  test('learner can log in and view active track', async ({ page }) => {
+    await page.goto('/login');
+    await page.fill('input[type="email"]', 'learner@example.com');
+    await page.fill('input[type="password"]', 'Password123!');
+    await page.click('button[type="submit"]');
+
+    // Auto-waits for URL redirect
+    await expect(page).toHaveURL('/app');
+    await expect(page.locator('h1')).toContainText('Track Overview');
+  });
+  ```
+
+  4. Test Isolation & Database Mocking:
+  Tests must remain idempotent: using unique database schema fixtures or database transaction rollbacks ensures tests run independently without polluting persistent state.
+
+resources:
+  - title: Vitest Official Documentation - Getting Started
+    url: https://vitest.dev/guide/
+    type: documentation
+    tag: start_here
+    why: The official guide to Vitest assertions, mocking, and coverage reports.
+    order_index: 1
+  - title: Playwright Official Documentation - Best Practices
+    url: https://playwright.dev/docs/best-practices
+    type: documentation
+    tag: reference
+    why: Best practices for writing resilient cross-browser end-to-end tests without flakiness.
+    order_index: 2
+
+quiz_pool:
+  - question: "What is the primary philosophy of the 'Testing Pyramid' in software quality assurance?"
+    options:
+      - "Maintaining a broad base of fast unit tests, a moderate layer of integration tests, and a small suite of high-confidence E2E tests"
+      - "Writing 100% of all tests as manual browser tests"
+      - "Only testing the database layer"
+      - "Running tests once a month"
+    correct_index: 0
+    explanation: "The pyramid optimizes test speed, cost, and confidence by favoring unit tests for bulk logic and E2E tests for key user journeys."
+  - question: "Why is Vitest significantly faster than older testing frameworks in Vite projects?"
+    options:
+      - "It shares Vite transform pipeline and plugins directly without requiring redundant transpilation steps"
+      - "It skips running assertions"
+      - "It runs only in the browser"
+      - "It disables TypeScript checks"
+    correct_index: 0
+    explanation: "Vitest reuses Vite config, loaders, and transforms natively, providing instant feedback and module execution."
+  - question: "How does Playwright prevent flaky tests caused by asynchronous UI rendering?"
+    options:
+      - "Through built-in auto-waiting assertions that automatically wait for elements to be attached, visible, and interactive before acting"
+      - "By inserting hardcoded 10-second sleep pauses on every line"
+      - "By disabling CSS transitions"
+      - "By running tests in single-thread mode"
+    correct_index: 0
+    explanation: "Playwright auto-waits for elements to reach actionable states (visible, enabled, stable) before executing clicks or assertions."
+  - question: "What is the role of an 'integration test' compared to a 'unit test'?"
+    options:
+      - "Integration tests verify that multiple interconnected components (such as an API route querying a database) work correctly together"
+      - "Integration tests test single mathematical functions in isolation"
+      - "Integration tests only check CSS font styles"
+      - "Integration tests are executed by customer support"
+    correct_index: 0
+    explanation: "Integration tests validate data flow and interactions between multiple modules or real infrastructure services."
+  - question: "How can test idempotency be maintained when running integration tests against a database?"
+    options:
+      - "By executing each test within isolated database transactions that roll back or by creating disposable test database schemas"
+      - "By running tests only on production databases"
+      - "By disabling foreign key constraints permanently"
+      - "By deleting the database after every test"
+    correct_index: 0
+    explanation: "Transactional rollbacks or unique test database fixtures guarantee test isolation without data cross-contamination."
+  - question: "What does 'vi.spyOn(object, method)' do in Vitest?"
+    options:
+      - "Creates a mock spy that wraps an existing method, tracking its invocations, arguments, and return values"
+      - "Deletes the method from the object"
+      - "Logs user keystrokes"
+      - "Encrypts the function code"
+    correct_index: 0
+    explanation: "vi.spyOn observes method calls, arguments, and outcomes while optionally preserving or mocking original behavior."
+  - question: "Which Playwright locator strategy is recommended as the most resilient for finding interactive UI elements?"
+    options:
+      - "User-facing role and text locators (e.g., page.getByRole('button', { name: 'Submit' }))"
+      - "Deep fragile CSS selectors (e.g., div > div:nth-child(3) > span)"
+      - "XPath coordinates"
+      - "Hardcoded pixel coordinates"
+    correct_index: 0
+    explanation: "Accessible user-facing locators (getByRole, getByLabel) mimic real user interaction and resist markup refactors."
+  - question: "What is 'Code Coverage' in automated testing suites?"
+    options:
+      - "A metric measuring the percentage of application lines, branches, and functions executed during automated test runs"
+      - "The total number of comments in source files"
+      - "The speed of the network connection"
+      - "The number of Git commits"
+    correct_index: 0
+    explanation: "Code coverage tracks which lines and branches were executed by tests, identifying untested code paths."

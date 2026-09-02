@@ -1,0 +1,123 @@
+node_id: fullstack-ts__frontend.web-standards.semantic-html
+name: Semantic HTML5 & Accessibility Landmarks
+title: Semantic HTML5 & Accessibility Landmarks
+track_id: fullstack-ts
+classification: required
+recommended_depth: practical
+estimated_time_minutes: 60
+estimated_minutes: 60
+reviewed: true
+content_version: 1
+
+metadata:
+  reviewed: true
+  content_version: 1
+  generated_at: "2026-09-02T10:00:00Z"
+  generator_version: "gemini-1.5-pro"
+  prompt_version: "1.0.0"
+  model: "gemini-1.5-pro"
+
+one_sentence_definition: >-
+  Semantic HTML5 establishes meaningful document object models and built-in accessibility landmarks for assistive screen readers and search engines.
+
+why_it_matters: >-
+  Semantic elements provide native accessibility landmark roles that assistive technologies rely on for navigation. Replacing generic container divisions with semantic elements improves accessibility compliance and search engine indexability without complex custom ARIA configurations.
+
+quick_overview: >-
+  Semantic HTML uses meaningful markup elements—such as header, nav, main, article, section, aside, and footer—to convey the structure and purpose of content directly within the Document Object Model. When browsers parse semantic HTML5 tags, they automatically populate accessibility tree landmarks with standardized roles. This allows screen readers and keyboard navigation tools to jump between content sections seamlessly. Understanding document outline algorithms, heading hierarchies (h1 through h6), interactive form controls (label, fieldset, legend), and ARIA attributes (such as aria-expanded, aria-controls, and aria-live) ensures web applications are universally accessible and WCAG 2.1 compliant.
+
+deep_dive: >-
+  Semantic markup is the foundational tier of accessible web architecture. Rather than treating HTML purely as visual styling hooks, semantic elements communicate programmatic intent to the browser rendering engine and accessibility API layers.
+
+  Standard HTML5 structural elements automatically map to WAI-ARIA landmark roles without requiring manual role attributes:
+  - `<header>` maps to banner (when scoped to the document root).
+  - `<nav>` maps to navigation landmarks, enabling screen reader users to skip directly to navigation menus.
+  - `<main>` represents the primary distinct body content of the document, mapping to the main landmark.
+  - `<article>` denotes a self-contained, independently distributable composition (such as a blog post, comment, or news item).
+  - `<section>` groups thematic content typically introduced with a heading element.
+  - `<aside>` represents auxiliary content tangentially related to surrounding material.
+  - `<footer>` maps to contentinfo when scoped to the root document.
+
+  Heading hierarchies must follow strict sequential order (h1 -> h2 -> h3) without skipping heading levels, establishing an intuitive document outline. For interactive elements, pairing native `<button>` tags with keyboard focus states (:focus-visible) and appropriate ARIA attributes provides native keyboard activation (Enter and Space keys) that `<div>` click handlers lack by default.
+
+  Form accessibility requires explicit association between `<label for="inputId">` and `<input id="inputId">` elements, wrapping related inputs in `<fieldset>` with descriptive `<legend>` headers. Live regions (`aria-live="polite"` or `aria-live="assertive"`) allow dynamic single-page application notifications to be announced by screen readers without interrupting user interaction flow.
+
+resources:
+  - title: MDN Web Docs - HTML Semantic Elements
+    url: https://developer.mozilla.org/en-US/docs/Glossary/Semantics#semantics_in_html
+    type: documentation
+    tag: start_here
+    why: Comprehensive documentation of semantic HTML elements and DOM semantics.
+    order_index: 1
+  - title: W3C WAI - ARIA Landmarks Example
+    url: https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/examples/general-principles.html
+    type: documentation
+    tag: reference
+    why: Official accessibility guidelines for semantic landmark regions.
+    order_index: 2
+
+quiz_pool:
+  - question: "Which HTML5 element represents self-contained content intended to be independently distributable?"
+    options:
+      - "<section>"
+      - "<article>"
+      - "<aside>"
+      - "<header>"
+    correct_index: 1
+    explanation: "<article> designates independent, self-contained content suitable for standalone syndication or reuse."
+  - question: "Why is using a native <button> element preferable to a <div onClick={...}> for clickable actions?"
+    options:
+      - "Buttons automatically support keyboard focus and trigger on Enter/Space without manual accessibility wiring"
+      - "Div elements cannot execute JavaScript"
+      - "Buttons execute 50% faster in V8"
+      - "Div tags cannot have CSS styles applied"
+    correct_index: 0
+    explanation: "Native button elements have built-in accessibility roles, tab sequence inclusion, and Space/Enter key event handlers."
+  - question: "What landmark role does the <main> element map to in the browser accessibility tree?"
+    options:
+      - "navigation"
+      - "main"
+      - "banner"
+      - "contentinfo"
+    correct_index: 1
+    explanation: "The <main> tag maps directly to the main landmark, signaling the central content of the document."
+  - question: "How should an accessible HTML form label be linked explicitly to its corresponding text input?"
+    options:
+      - "Set the label 'for' attribute to match the input 'id' attribute"
+      - "Place both inside the same div"
+      - "Set the label class to match the input name"
+      - "Link them with CSS selectors"
+    correct_index: 0
+    explanation: "The 'for' attribute on a label links explicitly to the target input's 'id', enabling click-to-focus and screen reader reading."
+  - question: "What is the purpose of 'aria-live=\"polite\"' on a dynamic notification container?"
+    options:
+      - "It tells screen readers to announce new content updates when the user is idle"
+      - "It immediately interrupts the user speech synthesizer"
+      - "It hides the container permanently"
+      - "It plays a browser audio chime"
+    correct_index: 0
+    explanation: "aria-live='polite' announces dynamic DOM updates at the next available pause without cutting off current screen reader announcements."
+  - question: "Which element provides a caption for a <fieldset> grouping related form controls?"
+    options:
+      - "<label>"
+      - "<legend>"
+      - "<caption>"
+      - "<summary>"
+    correct_index: 1
+    explanation: "The <legend> element serves as the title or caption for the content enclosed within a <fieldset>."
+  - question: "Why should heading levels (h1 through h6) not skip levels in a document outline?"
+    options:
+      - "Screen reader users navigate via heading shortcuts; skipping levels causes disorientation about document structure"
+      - "Skipping headings throws a fatal JavaScript syntax error"
+      - "Browsers refuse to render h3 tags without an h2"
+      - "CSS cannot style skipped headings"
+    correct_index: 0
+    explanation: "Screen readers rely on heading hierarchy for document navigation; skipping levels creates confusion regarding nested content relationships."
+  - question: "What landmark role is assigned by default to a top-level <footer> element in a document?"
+    options:
+      - "banner"
+      - "contentinfo"
+      - "complementary"
+      - "region"
+    correct_index: 1
+    explanation: "A top-level <footer> within the document context maps to the contentinfo landmark role."

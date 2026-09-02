@@ -1,0 +1,140 @@
+node_id: fullstack-ts__backend.security.jwt-rbac
+name: JWT Token Pairs & Role-Based Access Control
+title: JWT Token Pairs & Role-Based Access Control
+track_id: fullstack-ts
+classification: required
+recommended_depth: implementation
+estimated_time_minutes: 90
+estimated_minutes: 90
+reviewed: true
+content_version: 1
+
+metadata:
+  reviewed: true
+  content_version: 1
+  generated_at: "2026-09-02T10:00:00Z"
+  generator_version: "gemini-1.5-pro"
+  prompt_version: "1.0.0"
+  model: "gemini-1.5-pro"
+
+one_sentence_definition: >-
+  JSON Web Token pairs provide stateless cryptographic authorization, while Role-Based Access Control enforces granular endpoint permissions across application domains.
+
+why_it_matters: >-
+  Stateless JWTs reduce database authentication lookups across distributed microservices. Pairing short-lived access tokens with rotating refresh tokens and RBAC middleware enforces strict authorization boundaries without sacrificing performance.
+
+quick_overview: >-
+  JSON Web Tokens (JWTs) are cryptographically signed JSON data structures (Header, Payload, Signature) that transmit authenticated claims between client and server. Production systems utilize Token Pair architectures: short-lived Access Tokens (e.g., 15-minute lifespan signed with HMAC-SHA256 or RSA/ECDSA) paired with long-lived Refresh Tokens stored securely in the database with rotation on use. Authorization evaluates claims using Role-Based Access Control (RBAC), where permissions are attached to user roles (such as admin, editor, member) and enforced via Express middleware guards before route handlers execute.
+
+deep_dive: >-
+  Architecting stateless authentication token pairs with role-based access gates:
+
+  1. JWT Anatomy & Cryptographic Signing:
+  A JWT consists of three base64url-encoded components separated by dots:
+  - Header: Algorithm and token type (`{ "alg": "HS256", "typ": "JWT" }`).
+  - Payload: Standard registered claims (`sub`, `iat`, `exp`) and custom claims (`role`, `permissions`).
+  - Signature: `HMACSHA256(base64UrlEncode(header) + "." + base64UrlEncode(payload), secret)`.
+  Because the signature verifies integrity, servers validate authenticity without database read queries.
+
+  2. Token Pair Architecture & Refresh Rotation:
+  To mitigate the risk of stolen stateless tokens that cannot be easily revoked:
+  - Access Token: Short expiration (15 minutes). Sent in Authorization header (`Bearer <token>`) or HttpOnly cookie.
+  - Refresh Token: Long expiration (7–30 days). Stored in a database table (`refresh_tokens`) and delivered in an HttpOnly cookie.
+  - Refresh Rotation: When the access token expires, the client hits `/api/auth/refresh`. The server validates the refresh token, revokes it in the database, and issues a brand-new token pair. If a revoked refresh token is reused, the server flags token theft and revokes all active sessions for that user.
+
+  3. Role-Based Access Control (RBAC) Middleware:
+  Declarative middleware checks user roles and permissions:
+  ```ts
+  export function requireRole(allowedRoles: string[]) {
+    return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+      const userRole = req.user?.role;
+      if (!userRole || !allowedRoles.includes(userRole)) {
+        return res.status(403).json({ error: 'Forbidden: Insufficient privileges' });
+      }
+      next();
+    };
+  }
+
+  // Route protection
+  app.delete('/api/v1/tracks/:id', authenticateToken, requireRole(['admin']), deleteTrackHandler);
+  ```
+
+resources:
+  - title: Auth0 - JSON Web Token Introduction & Architecture
+    url: https://jwt.io/introduction
+    type: documentation
+    tag: start_here
+    why: The definitive guide to JWT structure, claims, signature verification, and security best practices.
+    order_index: 1
+  - title: OWASP - JSON Web Token Cheat Sheet
+    url: https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html
+    type: article
+    tag: reference
+    why: Security hardening guidelines for token expiration, key rotation, and signature algorithms.
+    order_index: 2
+
+quiz_pool:
+  - question: "What are the three period-separated parts of a JSON Web Token (JWT)?"
+    options:
+      - "Header, Payload, and Signature"
+      - "Username, Password, and Role"
+      - "Algorithm, Data, and Private Key"
+      - "Host, Path, and Query"
+    correct_index: 0
+    explanation: "A JWT is composed of a base64url-encoded Header, Payload (claims), and cryptographic Signature."
+  - question: "Why is a short lifespan (e.g., 15 minutes) recommended for stateless JWT Access Tokens?"
+    options:
+      - "Because stateless tokens cannot be easily revoked before expiration; short lifetimes minimize the exposure window if a token is stolen"
+      - "Because browsers delete cookies after 15 minutes"
+      - "Because JavaScript memory resets every 15 minutes"
+      - "Because JWT signatures expire mathematically"
+    correct_index: 0
+    explanation: "Short lifespans limit the window of vulnerability if an access token is intercepted."
+  - question: "What is 'Refresh Token Rotation'?"
+    options:
+      - "Every time a refresh token is used to obtain a new access token, the server revokes it and issues a brand-new refresh token"
+      - "Rotating database passwords every hour"
+      - "Re-encrypting all database records daily"
+      - "Changing the JWT signing algorithm on every request"
+    correct_index: 0
+    explanation: "Refresh token rotation ensures single-use refresh tokens; detecting reuse of an old token signals potential compromise."
+  - question: "What HTTP status code should be returned when an authenticated user attempts to access an admin route without sufficient permissions?"
+    options:
+      - "403 Forbidden"
+      - "401 Unauthorized"
+      - "404 Not Found"
+      - "500 Internal Server Error"
+    correct_index: 0
+    explanation: "401 means unauthenticated (missing/invalid credentials); 403 means authenticated but forbidden (insufficient privileges)."
+  - question: "What does the 'exp' claim represent in a JWT payload?"
+    options:
+      - "The Unix timestamp expiration time after which the token is rejected as invalid"
+      - "The user experience level"
+      - "The experimental feature flag"
+      - "The export file format"
+    correct_index: 0
+    explanation: "The 'exp' (Expiration Time) claim specifies the exact timestamp after which the JWT is no longer accepted."
+  - question: "What is Role-Based Access Control (RBAC)?"
+    options:
+      - "Restricting endpoint access based on assigned organizational roles (e.g., admin, editor, member)"
+      - "Restricting access based on IP address only"
+      - "Encrypting passwords with a role key"
+      - "Allowing anyone with an account full system access"
+    correct_index: 0
+    explanation: "RBAC evaluates permissions mapped to defined roles, gating system resources according to assigned user responsibilities."
+  - question: "Can a client decode and read the JSON claims inside a standard JWT payload without the server secret key?"
+    options:
+      - "Yes; the payload is only base64url-encoded, not encrypted, so sensitive secrets must never be placed in the payload"
+      - "No; the secret key encrypts the entire token"
+      - "Only in Firefox"
+      - "Only if they have the admin password"
+    correct_index: 0
+    explanation: "Standard JWTs are signed, not encrypted. Anyone can decode the base64 payload; thus, secrets must never be placed in JWT claims."
+  - question: "Where should refresh tokens be stored on web clients to prevent XSS theft?"
+    options:
+      - "In an HttpOnly, Secure, SameSite cookie"
+      - "In localStorage"
+      - "In a global JavaScript variable"
+      - "In sessionStorage"
+    correct_index: 0
+    explanation: "HttpOnly cookies prevent client-side JavaScript access, shielding refresh tokens from theft during XSS exploits."

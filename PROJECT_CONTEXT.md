@@ -24,13 +24,12 @@ Track Creator is a role-aligned skill tracking web application built on progress
 | **Phase 9** | Responsive & Accessibility Polish | `PASS` | WCAG 2.1 AA `:focus-visible` emerald rings, Enter/Space accordion key controls, semantic `role="radiogroup"` / `role="radio"` quiz options, $\ge 44\text{px}$ touch targets, and zero horizontal overflow at 375px/768px/1440px |
 | **Phase 10** | Security & Integration Testing | `PASS` | 7 adversarial penetration attack tests passed against live Supabase; 9-step learner lifecycle verified; 0 secret keys leaked in production client bundle |
 | **Phase 11** | Real-Content Cutover & Production Rollout | `PASS` | Production track `ai-engineer` authored (3 pillars, 10 nodes, 80 quiz questions), Kahn's DAG acyclic validation, database seeded, `/onboarding/goal` cutover |
+| **Release Polish** | Scoping, Navigation & Landing/Profile | `PASS` | Active track node scoping fixed (67% for 2/3 completed), clean production header nav, dark-themed hero landing page, account settings profile page |
+| **Canonical Track 2** | Full-Stack TypeScript Developer (`fullstack-ts`) | `PASS` | Canonical 23-node DAG authored (3 pillars, 9 topics, 10 subtopics, 23 skill nodes, 184 quiz questions, 46 resources), Kahn's DAG acyclicity verified, seeded into Supabase, verified with live onboarding & quiz progression |
+| **Phase 12** | Ergonomics & Review Suite | `PASS` | Migration 0009 authored, post-quiz explanation review card with color-coded choices and explanation callouts, PrismJS markdown syntax highlighter, in-app track switching on `/onboarding/goal` and header active track pill |
 
 ---
 
-## 3. Project Status
-**All 11 Implementation Phases Complete (`PASS`).**
-- Production Track: **AI & Machine Learning Engineer** (`ai-engineer`)
-- Structure: 3 Pillars, 5 Topics, 6 Subtopics, 10 Skill Nodes, 80 Quiz Questions, 30 Curated Resources
-- Content Validation: 0 Errors, SHA-256 Manifest Verified, Kahn's Topological Sort Acyclic
-- Database: All tables and RPC functions populated and secure in live Supabase PostgreSQL
-- Frontend: Responsive, WCAG 2.1 AA accessible, production built and type-checked
+## 3. Production Tracks Catalog
+1. **AI & Machine Learning Engineer** (`ai-engineer`): 3 Pillars · 10 Skills · 80 Quiz Questions
+2. **Full-Stack TypeScript Developer** (`fullstack-ts`): 3 Pillars · 23 Skills · 184 Quiz Questions

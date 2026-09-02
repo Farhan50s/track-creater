@@ -1,0 +1,157 @@
+node_id: fullstack-ts__frontend.typescript-core.unions-generics
+name: Discriminated Unions & Generics
+title: Discriminated Unions & Generics
+track_id: fullstack-ts
+classification: required
+recommended_depth: implementation
+estimated_time_minutes: 120
+estimated_minutes: 120
+reviewed: true
+content_version: 1
+
+metadata:
+  reviewed: true
+  content_version: 1
+  generated_at: "2026-09-02T10:00:00Z"
+  generator_version: "gemini-1.5-pro"
+  prompt_version: "1.0.0"
+  model: "gemini-1.5-pro"
+
+one_sentence_definition: >-
+  Discriminated unions enable exhaustive compile-time pattern matching, while generics parameterize type structures for reusable, type-safe abstractions.
+
+why_it_matters: >-
+  Discriminated unions model state transitions (such as loading, success, and error states) with compile-time exhaustiveness guarantees. Generics enable flexible data structures, API clients, and utility helpers without losing precise type resolution.
+
+quick_overview: >-
+  Advanced TypeScript systems rely on Discriminated Unions and Generics to express dynamic runtime behavior with compile-time guarantees. Discriminated unions combine multiple object variants that share a common literal tag property (such as status or type), allowing TypeScript to narrow types inside conditional branches and verify exhaustive handling with the never type. Generics parameterize types across functions, interfaces, and classes using type variables (T, K, V). Combining generics with generic constraints (extends), keyof, typeof, conditional types (T extends U ? X : Y), and built-in utilities (Partial, Pick, Omit, Record) unlocks enterprise-grade type safety.
+
+deep_dive: >-
+  Mastering advanced type programming in TypeScript involves combining discriminated unions with generic constraints:
+
+  1. Discriminated Unions & Exhaustive Checking:
+  A discriminated union models distinct states using a common literal discriminator:
+  ```ts
+  type AsyncState<T> =
+    | { status: 'idle' }
+    | { status: 'loading' }
+    | { status: 'success'; data: T }
+    | { status: 'error'; error: Error };
+
+  function handleState<T>(state: AsyncState<T>) {
+    switch (state.status) {
+      case 'idle': return 'Waiting...';
+      case 'loading': return 'Loading...';
+      case 'success': return state.data;
+      case 'error': return state.error.message;
+      default: {
+        const _exhaustiveCheck: never = state;
+        throw new Error(`Unhandled state: ${_exhaustiveCheck}`);
+      }
+    }
+  }
+  ```
+  If a new state variant (e.g., 'cancelled') is added without updating the switch statement, TypeScript raises a compile-time error at `_exhaustiveCheck`.
+
+  2. Generic Functions & Constraints:
+  Generics allow functions to capture and propagate argument types:
+  ```ts
+  function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
+    return obj[key];
+  }
+  ```
+  The constraint `K extends keyof T` ensures `key` must be a valid property name of `T`, and the return type `T[K]` matches the exact value type of that property.
+
+  3. Conditional Types & Infer:
+  Conditional types resolve types based on relationship checks:
+  ```ts
+  type UnpackPromise<T> = T extends Promise<infer U> ? U : T;
+  ```
+  The `infer` keyword extracts nested types dynamically within conditional evaluations.
+
+  4. Standard Utility Types:
+  - `Partial<T>`: All properties optional.
+  - `Required<T>`: All properties required.
+  - `Pick<T, K>`: Constructs a type with subset of properties `K`.
+  - `Omit<T, K>`: Constructs a type by removing properties `K`.
+  - `Record<K, T>`: Constructs an object type whose keys are `K` and values are `T`.
+
+resources:
+  - title: TypeScript Handbook - Generics & Conditional Types
+    url: https://www.typescriptlang.org/docs/handbook/2/generics.html
+    type: documentation
+    tag: start_here
+    why: The definitive reference on generic parameters, constraints, and conditional typing.
+    order_index: 1
+  - title: Total TypeScript - Advanced Generics Workshop
+    url: https://www.totaltypescript.com/tutorials
+    type: tutorial
+    tag: reference
+    why: Advanced patterns for discriminated unions, infer keyword, and mapped types.
+    order_index: 2
+
+quiz_pool:
+  - question: "What is the defining characteristic of a Discriminated Union in TypeScript?"
+    options:
+      - "A union of object types that share a common literal property (tag) used by the compiler to narrow types"
+      - "A union of only primitive types"
+      - "A type that is rejected by the compiler"
+      - "A union with no properties"
+    correct_index: 0
+    explanation: "Discriminated unions share a common literal tag property, allowing TypeScript to narrow the variant inside control-flow branches."
+  - question: "How does assigning an unhandled branch to the 'never' type enforce exhaustive checking?"
+    options:
+      - "If any union member is unhandled, TypeScript attempts to assign that type to never, triggering a compile-time error"
+      - "It crashes the browser at runtime"
+      - "It converts all unhandled branches to null"
+      - "It disables the default switch statement"
+    correct_index: 0
+    explanation: "Because 'never' cannot hold any value, assigning an unhandled variant to a 'never' variable causes a compile-time type mismatch error."
+  - question: "What does '<K extends keyof T>' do in a generic function definition?"
+    options:
+      - "Constrains generic type K to be one of the known property keys of type T"
+      - "Deletes keys from type T"
+      - "Extends the class prototype"
+      - "Converts object keys into numbers"
+    correct_index: 0
+    explanation: "extends keyof T restricts K to the union of string/number literal property names belonging to type T."
+  - question: "Which utility type constructs a type picking only keys K from type T?"
+    options:
+      - "Pick<T, K>"
+      - "Omit<T, K>"
+      - "Extract<T, K>"
+      - "Partial<T>"
+    correct_index: 0
+    explanation: "Pick<T, K> constructs an object type with only the specified set of properties K from T."
+  - question: "What does the 'infer' keyword do inside a conditional type?"
+    options:
+      - "Introduces a type variable to be deduced dynamically from the type being checked"
+      - "Forces runtime type deduction in JavaScript"
+      - "Converts interfaces into classes"
+      - "Throws a runtime exception"
+    correct_index: 0
+    explanation: "infer allows extracting and naming a sub-type (such as a Promise value or function return type) within a conditional type branch."
+  - question: "Which utility type creates an object type with specified key types K and value types T?"
+    options:
+      - "Record<K, T>"
+      - "Dictionary<K, T>"
+      - "Map<K, T>"
+      - "Object<K, T>"
+    correct_index: 0
+    explanation: "Record<K, T> generates an object type where keys are of type K and values are of type T."
+  - question: "What is the return type of 'UnpackPromise<Promise<string>>' using type UnpackPromise<T> = T extends Promise<infer U> ? U : T?"
+    options:
+      - "string"
+      - "Promise<string>"
+      - "unknown"
+      - "void"
+    correct_index: 0
+    explanation: "The conditional type checks if T is a Promise, and infer U extracts the inner type (string)."
+  - question: "Why is 'Omit<User, \"password\">' useful in API data transfer objects?"
+    options:
+      - "It produces a type containing all User fields except the sensitive password property, preventing accidental leakage"
+      - "It encrypts the password field in the database"
+      - "It deletes the password column from PostgreSQL"
+      - "It makes the password property optional"
+    correct_index: 0
+    explanation: "Omit removes specified keys from a type, creating safe DTO types without sensitive attributes."

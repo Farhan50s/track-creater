@@ -1,0 +1,158 @@
+node_id: fullstack-ts__infrastructure.distributed-systems.redis-caching
+name: In-Memory Caching & Rate Limiting with Redis
+title: In-Memory Caching & Rate Limiting with Redis
+track_id: fullstack-ts
+classification: recommended
+recommended_depth: practical
+estimated_time_minutes: 90
+estimated_minutes: 90
+reviewed: true
+content_version: 1
+
+metadata:
+  reviewed: true
+  content_version: 1
+  generated_at: "2026-09-02T10:00:00Z"
+  generator_version: "gemini-1.5-pro"
+  prompt_version: "1.0.0"
+  model: "gemini-1.5-pro"
+
+one_sentence_definition: >-
+  Redis provides in-memory key-value data structures with sub-millisecond latencies for caching, rate limiting, and distributed state coordination.
+
+why_it_matters: >-
+  Heavy database queries degrade under sudden traffic spikes. Implementing Cache-Aside caching with Redis offloads database read load, while sliding-window rate limiters protect APIs from DDoS attacks and abusive scraping.
+
+quick_overview: >-
+  Redis (Remote Dictionary Server) is an open-source, in-memory data structure store used as a distributed cache, message broker, and fast database. Operating entirely in RAM with optional background disk persistence, Redis delivers sub-millisecond reads and writes. Common application patterns include the Cache-Aside pattern (checking Redis cache before querying PostgreSQL), setting Time-To-Live (TTL) expiration keys to purge stale data, atomic rate-limiting counters (using INCR and EXPIRE or sliding-window sorted sets), and distributed locking algorithms (Redlock) to prevent concurrency race conditions across server worker clusters.
+
+deep_dive: >-
+  Architecting high-throughput distributed caching and API rate limiting using Redis:
+
+  1. The Cache-Aside (Lazy Loading) Pattern:
+  Application services check Redis cache before falling back to PostgreSQL:
+  ```ts
+  import Redis from 'ioredis';
+
+  const redis = new Redis(process.env.REDIS_URL!);
+
+  export async function getCachedTrack(trackId: string) {
+    const cacheKey = `track:${trackId}`;
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+      return JSON.parse(cached);
+    }
+
+    // Cache Miss: Query Database
+    const track = await db.query.tracks.findFirst({ where: eq(tracks.id, trackId) });
+    if (track) {
+      // Set in cache with 1-hour TTL (3600 seconds)
+      await redis.set(cacheKey, JSON.stringify(track), 'EX', 3600);
+    }
+    return track;
+  }
+  ```
+
+  2. Cache Invalidation Strategies:
+  - Time-To-Live (TTL): Guarantees data expires automatically.
+  - Write-Through / Write-Invalidate: Whenever a record is mutated via POST/PATCH, the application immediately deletes the corresponding Redis key (`await redis.del(cacheKey)`).
+
+  3. API Rate Limiting with Sliding Window:
+  Protecting endpoints against brute-force abuse using Redis Sorted Sets (`ZADD`, `ZREMRANGEBYSCORE`, `ZCARD`):
+  ```ts
+  export async function rateLimit(ip: string, limit = 100, windowSec = 60): Promise<boolean> {
+    const now = Date.now();
+    const clearBefore = now - windowSec * 1000;
+    const key = `ratelimit:${ip}`;
+
+    const multi = redis.multi();
+    multi.zremrangebyscore(key, 0, clearBefore); // Remove expired timestamps
+    multi.zadd(key, now, now.toString()); // Record current request
+    multi.zcard(key); // Count active requests in window
+    multi.expire(key, windowSec);
+
+    const results = await multi.exec();
+    const requestCount = results?.[2]?.[1] as number;
+    return requestCount <= limit;
+  }
+  ```
+
+resources:
+  - title: Redis Official Documentation - Data Structures & Caching
+    url: https://redis.io/docs/latest/
+    type: documentation
+    tag: start_here
+    why: The official guide to Redis key-value pairs, TTL expiration, and atomic operations.
+    order_index: 1
+  - title: Redis Guide - Rate Limiting Pattern
+    url: https://redis.io/glossary/rate-limiting/
+    type: tutorial
+    tag: reference
+    why: Comprehensive patterns for implementing token bucket and sliding-window rate limiters.
+    order_index: 2
+
+quiz_pool:
+  - question: "What is the primary operational characteristic of the 'Cache-Aside' pattern with Redis?"
+    options:
+      - "The application checks the cache first, querying the primary database and populating the cache with a TTL only upon a cache miss"
+      - "The cache automatically empties the database once per hour"
+      - "The application writes directly to disk without memory caching"
+      - "The client browser bypasses the web server"
+    correct_index: 0
+    explanation: "Cache-Aside queries cache first; on a miss, it fetches from the database and sets the cache with an expiration."
+  - question: "What does 'TTL' (Time-To-Live) signify when setting a key in Redis?"
+    options:
+      - "The duration after which Redis automatically deletes the key from memory"
+      - "The total time to boot the server"
+      - "The length of the database password"
+      - "The number of CPU cores"
+    correct_index: 0
+    explanation: "TTL specifies the countdown expiration duration, ensuring stale cached data is purged automatically."
+  - question: "What is the purpose of 'Rate Limiting' on public API endpoints?"
+    options:
+      - "Restricting the number of requests a client or IP can execute in a given timeframe to prevent abuse and DDoS attacks"
+      - "Slowing down all user connections permanently"
+      - "Restricting database tables to 10 rows"
+      - "Forcing users to solve captchas on every page"
+    correct_index: 0
+    explanation: "Rate limiting throttles excessive requests, protecting servers from malicious flooding and scraper bots."
+  - question: "Why is Redis able to achieve sub-millisecond read and write latency?"
+    options:
+      - "It stores all data structures directly in RAM (memory) rather than reading from disk"
+      - "It disables data encryption"
+      - "It requires fiber optic cables"
+      - "It converts all data to binary audio"
+    correct_index: 0
+    explanation: "Because Redis operates in-memory, operations avoid disk I/O bottlenecks and execute in microseconds."
+  - question: "What is 'Cache Invalidation' and why is it important?"
+    options:
+      - "Deleting or updating stale cached data when underlying database records change to ensure users receive accurate state"
+      - "Deleting the entire database"
+      - "Turning off the Redis server"
+      - "Compressing image files"
+    correct_index: 0
+    explanation: "Cache invalidation ensures cached copies remain synchronized with persistent database updates."
+  - question: "What does the Redis 'INCR' command do?"
+    options:
+      - "Atomically increments the integer value of a key by one"
+      - "Increases the server RAM size"
+      - "Deletes all keys starting with 'I'"
+      - "Encrypts the key"
+    correct_index: 0
+    explanation: "INCR performs an atomic integer increment, making it ideal for hit counters and rate limiters."
+  - question: "What is a 'Cache Stampede' (Thundering Herd) problem?"
+    options:
+      - "When a popular cached key expires, and thousands of concurrent requests hit the database simultaneously to recompute it"
+      - "When Redis runs out of memory"
+      - "When network cables disconnect"
+      - "When multiple servers have conflicting hostnames"
+    correct_index: 0
+    explanation: "A cache stampede occurs when high concurrency overwhelms databases upon the expiration of a frequently accessed cache key."
+  - question: "What data structure in Redis is most effective for sliding-window rate limiters?"
+    options:
+      - "Sorted Sets (ZSET), storing request timestamps as scores"
+      - "Linked Lists"
+      - "Bitmaps"
+      - "JSON arrays"
+    correct_index: 0
+    explanation: "Sorted sets allow pruning expired timestamps with ZREMRANGEBYSCORE and counting current window requests with ZCARD."

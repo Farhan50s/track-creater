@@ -1,0 +1,132 @@
+node_id: fullstack-ts__backend.data-storage.relational-modeling
+name: Relational Schema Modeling & Normalization
+title: Relational Schema Modeling & Normalization
+track_id: fullstack-ts
+classification: required
+recommended_depth: practical
+estimated_time_minutes: 90
+estimated_minutes: 90
+reviewed: true
+content_version: 1
+
+metadata:
+  reviewed: true
+  content_version: 1
+  generated_at: "2026-09-02T10:00:00Z"
+  generator_version: "gemini-1.5-pro"
+  prompt_version: "1.0.0"
+  model: "gemini-1.5-pro"
+
+one_sentence_definition: >-
+  Relational data modeling designs normalized schema architectures, entity relationships, integrity constraints, and primary/foreign key hierarchies.
+
+why_it_matters: >-
+  Poorly modeled database schemas lead to data anomalies, orphan records, and costly redesigns. Proper normalization and cascading foreign key rules ensure referential consistency and eliminate redundancy across database lifecycles.
+
+quick_overview: >-
+  Relational database modeling structures structured enterprise data into tables comprising rows and columns with explicit constraints. Entity-relationship modeling establishes 1-to-1, 1-to-many, and many-to-many relationships using Primary Keys for row identity and Foreign Keys for relational integrity. Database normalization guidelines (First, Second, and Third Normal Form) eliminate update, insertion, and deletion anomalies by ensuring non-key attributes depend exclusively on primary keys. Defining referential integrity rules (CASCADE, SET NULL, RESTRICT) guarantees database engines maintain relational truth automatically.
+
+deep_dive: >-
+  Relational modeling forms the permanent foundation of application state persistence:
+
+  1. Entity Relationships:
+  - One-to-One (1:1): A user has one user profile. Foreign key placed on child table with a UNIQUE constraint.
+  - One-to-Many (1:N): A track has multiple pillars. The `pillars` table contains `track_id` referencing `tracks.track_id`.
+  - Many-to-Many (M:N): Users and roles. Requires an intermediate junction / join table (`user_roles`) with composite primary keys (`user_id`, `role_id`).
+
+  2. Database Normalization Stages:
+  - 1NF (Atomic Values): Every column contains atomic (indivisible) values, and each record is uniquely identified by a primary key.
+  - 2NF (No Partial Dependencies): Table is in 1NF, and all non-key columns depend on the entire primary key (relevant for composite keys).
+  - 3NF (No Transitive Dependencies): Table is in 2NF, and non-key columns depend solely on the primary key without intermediary dependencies (e.g., storing customer zip code without duplicating city/state if zip determines city).
+
+  3. Referential Actions on Deletion/Update:
+  Foreign key constraints define behavior when a parent row is deleted:
+  - `ON DELETE CASCADE`: Automatically deletes child records (e.g., deleting a quiz question deletes its answers).
+  - `ON DELETE RESTRICT`: Blocks parent deletion if child references exist.
+  - `ON DELETE SET NULL`: Sets child foreign key to NULL if allowed.
+
+  4. Database Constraints:
+  - `PRIMARY KEY`: Unique, non-null row identifier.
+  - `UNIQUE`: Prevents duplicate entries (e.g., user email).
+  - `CHECK`: Enforces domain rules (e.g., `CHECK (score >= 0 AND score <= 100)`).
+  - `NOT NULL`: Guarantees mandatory data presence.
+
+resources:
+  - title: PostgreSQL Official Documentation - Data Definition & Constraints
+    url: https://www.postgresql.org/docs/current/ddl-constraints.html
+    type: documentation
+    tag: start_here
+    why: The official guide to relational constraints, foreign keys, and check rules in PostgreSQL.
+    order_index: 1
+  - title: Database Design Fundamentals - 3NF Normalization
+    url: https://www.guru99.com/database-normalization.html
+    type: tutorial
+    tag: reference
+    why: Clear walkthroughs of 1NF, 2NF, and 3NF normalization with practical examples.
+    order_index: 2
+
+quiz_pool:
+  - question: "What does Third Normal Form (3NF) mandate in database schema design?"
+    options:
+      - "All non-key attributes must depend directly and solely on the primary key, eliminating transitive dependencies"
+      - "Every table must have at least 3 foreign keys"
+      - "All data must be stored in JSONB columns"
+      - "No table may exceed 3 columns"
+    correct_index: 0
+    explanation: "3NF requires a table to be in 2NF and have no transitive functional dependencies among non-key attributes."
+  - question: "How are Many-to-Many (M:N) relationships implemented in relational databases?"
+    options:
+      - "By creating a junction (join) table containing foreign keys referencing both primary tables"
+      - "By storing comma-separated strings in a text column"
+      - "By duplicating the parent table"
+      - "By creating a single JSON array column"
+    correct_index: 0
+    explanation: "A junction table links two entities using foreign keys and composite primary keys to represent many-to-many associations."
+  - question: "What is the behavior of the foreign key rule 'ON DELETE CASCADE'?"
+    options:
+      - "Deleting the parent row automatically deletes all corresponding child rows referencing it"
+      - "It prevents the parent row from being deleted"
+      - "It sets the child foreign key column to NULL"
+      - "It disables the foreign key constraint"
+    correct_index: 0
+    explanation: "ON DELETE CASCADE cascades parent deletions down to all dependent child records automatically."
+  - question: "What does First Normal Form (1NF) require?"
+    options:
+      - "Columns must hold atomic (indivisible) values, and rows must be uniquely identified by a primary key"
+      - "All tables must have only 1 row"
+      - "Foreign keys cannot be used"
+      - "All columns must be integers"
+    correct_index: 0
+    explanation: "1NF eliminates repeating groups and ensures every column holds single atomic values."
+  - question: "What is the purpose of a database 'CHECK' constraint?"
+    options:
+      - "To enforce domain-specific validation rules on column values at the database engine level (e.g. price > 0)"
+      - "To verify user passwords"
+      - "To check database disk space"
+      - "To run unit tests"
+    correct_index: 0
+    explanation: "CHECK constraints validate that boolean expressions on column values evaluate to true before allowing inserts or updates."
+  - question: "Why is storing comma-separated lists of IDs in a single text column considered an anti-pattern in relational databases?"
+    options:
+      - "It violates 1NF, prevents foreign key integrity checks, and makes querying/indexing individual items extremely inefficient"
+      - "PostgreSQL rejects text columns"
+      - "It encrypts the entire database"
+      - "It prevents tables from having primary keys"
+    correct_index: 0
+    explanation: "Un-normalized multi-value columns destroy relational integrity, prevent indexing, and complicate joins."
+  - question: "What does the 'ON DELETE RESTRICT' action do when attempting to delete a parent row?"
+    options:
+      - "It blocks the deletion and raises an error if any child rows reference that parent row"
+      - "It deletes the database"
+      - "It cascades the delete to the parent table"
+      - "It deletes child rows silently"
+    correct_index: 0
+    explanation: "ON DELETE RESTRICT prevents parent record deletion as long as dependent child rows exist."
+  - question: "What constraint ensures that no two rows have the same value in a specific column (such as email)?"
+    options:
+      - "UNIQUE"
+      - "CHECK"
+      - "FOREIGN KEY"
+      - "DEFAULT"
+    correct_index: 0
+    explanation: "The UNIQUE constraint guarantees uniqueness of column values across all rows in the table."

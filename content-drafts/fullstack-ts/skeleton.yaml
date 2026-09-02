@@ -1,0 +1,412 @@
+track_id: fullstack-ts
+name: Full-Stack TypeScript Developer
+title: Full-Stack TypeScript Developer
+description: A complete, verified curriculum covering modern frontend reactive UI, backend API engineering, relational database modeling, Next.js full-stack architecture, and cloud deployment pipelines.
+pillars:
+  # =========================================================================
+  # PILLAR 1: Modern Frontend & Reactive UI (9 Nodes)
+  # =========================================================================
+  - pillar_id: fullstack-ts__frontend
+    name: Modern Frontend & Reactive UI
+    title: Modern Frontend & Reactive UI
+    description: DOM primitives, CSS layout geometry, static TypeScript typing, declarative React component lifecycles, and reactive client state stores.
+    order: 1
+    order_index: 1
+    topics:
+      - topic_id: fullstack-ts__frontend.web-standards
+        name: Web Standards & Layout Geometry
+        title: Web Standards & Layout Geometry
+        order: 1
+        order_index: 1
+        subtopics:
+          - subtopic_id: fullstack-ts__frontend.web-standards.html-css
+            name: Semantic HTML & Modern CSS
+            title: Semantic HTML & Modern CSS
+            order: 1
+            order_index: 1
+            skill_nodes:
+              - node_id: fullstack-ts__frontend.web-standards.semantic-html
+                name: Semantic HTML5 & Accessibility Landmarks
+                title: Semantic HTML5 & Accessibility Landmarks
+                classification: required
+                recommended_depth: practical
+                estimated_time_minutes: 60
+                estimated_minutes: 60
+                order: 1
+                order_index: 1
+                prerequisites: []
+              - node_id: fullstack-ts__frontend.web-standards.css-box-flexbox
+                name: CSS Box Model & Flexbox Layouts
+                title: CSS Box Model & Flexbox Layouts
+                classification: required
+                recommended_depth: practical
+                estimated_time_minutes: 90
+                estimated_minutes: 90
+                order: 2
+                order_index: 2
+                prerequisites:
+                  - fullstack-ts__frontend.web-standards.semantic-html
+              - node_id: fullstack-ts__frontend.web-standards.css-grid
+                name: Two-Dimensional Layouts with CSS Grid
+                title: Two-Dimensional Layouts with CSS Grid
+                classification: required
+                recommended_depth: practical
+                estimated_time_minutes: 90
+                estimated_minutes: 90
+                order: 3
+                order_index: 3
+                prerequisites:
+                  - fullstack-ts__frontend.web-standards.css-box-flexbox
+
+      - topic_id: fullstack-ts__frontend.typescript-core
+        name: Static Typing & Language Foundations
+        title: Static Typing & Language Foundations
+        order: 2
+        order_index: 2
+        subtopics:
+          - subtopic_id: fullstack-ts__frontend.typescript-core.types
+            name: TypeScript Core Systems
+            title: TypeScript Core Systems
+            order: 1
+            order_index: 1
+            skill_nodes:
+              - node_id: fullstack-ts__frontend.typescript-core.primitives-interfaces
+                name: TypeScript Primitives, Interfaces & Types
+                title: TypeScript Primitives, Interfaces & Types
+                classification: required
+                recommended_depth: practical
+                estimated_time_minutes: 90
+                estimated_minutes: 90
+                order: 1
+                order_index: 1
+                prerequisites:
+                  - fullstack-ts__frontend.web-standards.semantic-html
+              - node_id: fullstack-ts__frontend.typescript-core.unions-generics
+                name: Discriminated Unions & Generics
+                title: Discriminated Unions & Generics
+                classification: required
+                recommended_depth: implementation
+                estimated_time_minutes: 120
+                estimated_minutes: 120
+                order: 2
+                order_index: 2
+                prerequisites:
+                  - fullstack-ts__frontend.typescript-core.primitives-interfaces
+
+      - topic_id: fullstack-ts__frontend.react-architecture
+        name: Declarative View Frameworks & State
+        title: Declarative View Frameworks & State
+        order: 3
+        order_index: 3
+        subtopics:
+          - subtopic_id: fullstack-ts__frontend.react-architecture.core
+            name: React Component Architecture
+            title: React Component Architecture
+            order: 1
+            order_index: 1
+            skill_nodes:
+              - node_id: fullstack-ts__frontend.react-architecture.components-jsx
+                name: React Components, Props & Reconciliation
+                title: React Components, Props & Reconciliation
+                classification: required
+                recommended_depth: practical
+                estimated_time_minutes: 90
+                estimated_minutes: 90
+                order: 1
+                order_index: 1
+                prerequisites:
+                  - fullstack-ts__frontend.typescript-core.unions-generics
+              - node_id: fullstack-ts__frontend.react-architecture.hooks-lifecycle
+                name: React Hooks & Lifecycle Synchronization
+                title: React Hooks & Lifecycle Synchronization
+                classification: required
+                recommended_depth: implementation
+                estimated_time_minutes: 120
+                estimated_minutes: 120
+                order: 2
+                order_index: 2
+                prerequisites:
+                  - fullstack-ts__frontend.react-architecture.components-jsx
+
+          - subtopic_id: fullstack-ts__frontend.react-architecture.state
+            name: Application State Management & Styling
+            title: Application State Management & Styling
+            order: 2
+            order_index: 2
+            skill_nodes:
+              - node_id: fullstack-ts__frontend.react-architecture.state-stores
+                name: Client State Stores with Zustand
+                title: Client State Stores with Zustand
+                classification: required
+                recommended_depth: practical
+                estimated_time_minutes: 90
+                estimated_minutes: 90
+                order: 1
+                order_index: 1
+                prerequisites:
+                  - fullstack-ts__frontend.react-architecture.hooks-lifecycle
+              - node_id: fullstack-ts__frontend.react-architecture.tailwind-styling
+                name: Utility-First Styling with Tailwind CSS
+                title: Utility-First Styling with Tailwind CSS
+                classification: required
+                recommended_depth: practical
+                estimated_time_minutes: 60
+                estimated_minutes: 60
+                order: 2
+                order_index: 2
+                prerequisites:
+                  - fullstack-ts__frontend.react-architecture.components-jsx
+
+  # =========================================================================
+  # PILLAR 2: Backend Architecture, APIs, and Databases (7 Nodes)
+  # =========================================================================
+  - pillar_id: fullstack-ts__backend
+    name: Backend Architecture, APIs & Databases
+    title: Backend Architecture, APIs & Databases
+    description: Server runtimes, Express middleware architecture, REST API design, PostgreSQL data modeling, type-safe ORMs, and cryptographic security.
+    order: 2
+    order_index: 2
+    topics:
+      - topic_id: fullstack-ts__backend.runtime-apis
+        name: Server Runtimes & API Contracts
+        title: Server Runtimes & API Contracts
+        order: 1
+        order_index: 1
+        subtopics:
+          - subtopic_id: fullstack-ts__backend.runtime-apis.express
+            name: Asynchronous I/O & Express Runtimes
+            title: Asynchronous I/O & Express Runtimes
+            order: 1
+            order_index: 1
+            skill_nodes:
+              - node_id: fullstack-ts__backend.runtime-apis.nodejs-eventloop
+                name: Node.js Event Loop & Express Middleware
+                title: Node.js Event Loop & Express Middleware
+                classification: required
+                recommended_depth: implementation
+                estimated_time_minutes: 120
+                estimated_minutes: 120
+                order: 1
+                order_index: 1
+                prerequisites:
+                  - fullstack-ts__frontend.typescript-core.primitives-interfaces
+              - node_id: fullstack-ts__backend.runtime-apis.rest-zod-validation
+                name: RESTful API Design & Zod Schema Validation
+                title: RESTful API Design & Zod Schema Validation
+                classification: required
+                recommended_depth: practical
+                estimated_time_minutes: 90
+                estimated_minutes: 90
+                order: 2
+                order_index: 2
+                prerequisites:
+                  - fullstack-ts__backend.runtime-apis.nodejs-eventloop
+
+      - topic_id: fullstack-ts__backend.data-storage
+        name: Relational Persistence & Query Engineering
+        title: Relational Persistence & Query Engineering
+        order: 2
+        order_index: 2
+        subtopics:
+          - subtopic_id: fullstack-ts__backend.data-storage.postgresql
+            name: Relational Modeling & PostgreSQL
+            title: Relational Modeling & PostgreSQL
+            order: 1
+            order_index: 1
+            skill_nodes:
+              - node_id: fullstack-ts__backend.data-storage.relational-modeling
+                name: Relational Schema Modeling & Normalization
+                title: Relational Schema Modeling & Normalization
+                classification: required
+                recommended_depth: practical
+                estimated_time_minutes: 90
+                estimated_minutes: 90
+                order: 1
+                order_index: 1
+                prerequisites:
+                  - fullstack-ts__backend.runtime-apis.rest-zod-validation
+              - node_id: fullstack-ts__backend.data-storage.sql-indexing
+                name: Declarative SQL Queries, Joins & Indexes
+                title: Declarative SQL Queries, Joins & Indexes
+                classification: required
+                recommended_depth: implementation
+                estimated_time_minutes: 120
+                estimated_minutes: 120
+                order: 2
+                order_index: 2
+                prerequisites:
+                  - fullstack-ts__backend.data-storage.relational-modeling
+              - node_id: fullstack-ts__backend.data-storage.prisma-drizzle
+                name: Type-Safe ORMs with Prisma and Drizzle
+                title: Type-Safe ORMs with Prisma and Drizzle
+                classification: required
+                recommended_depth: practical
+                estimated_time_minutes: 90
+                estimated_minutes: 90
+                order: 3
+                order_index: 3
+                prerequisites:
+                  - fullstack-ts__backend.data-storage.sql-indexing
+
+      - topic_id: fullstack-ts__backend.security
+        name: Identity & Web Security
+        title: Identity & Web Security
+        order: 3
+        order_index: 3
+        subtopics:
+          - subtopic_id: fullstack-ts__backend.security.auth
+            name: Authentication & Access Control
+            title: Authentication & Access Control
+            order: 1
+            order_index: 1
+            skill_nodes:
+              - node_id: fullstack-ts__backend.security.auth-hashing
+                name: Password Hashing & Cookie-Based Sessions
+                title: Password Hashing & Cookie-Based Sessions
+                classification: required
+                recommended_depth: implementation
+                estimated_time_minutes: 90
+                estimated_minutes: 90
+                order: 1
+                order_index: 1
+                prerequisites:
+                  - fullstack-ts__backend.data-storage.prisma-drizzle
+              - node_id: fullstack-ts__backend.security.jwt-rbac
+                name: JWT Token Pairs & Role-Based Access Control
+                title: JWT Token Pairs & Role-Based Access Control
+                classification: required
+                recommended_depth: implementation
+                estimated_time_minutes: 90
+                estimated_minutes: 90
+                order: 2
+                order_index: 2
+                prerequisites:
+                  - fullstack-ts__backend.security.auth-hashing
+
+  # =========================================================================
+  # PILLAR 3: Full-Stack Integration, DevOps, and Deployment (7 Nodes)
+  # =========================================================================
+  - pillar_id: fullstack-ts__infrastructure
+    name: Full-Stack Integration & DevOps
+    title: Full-Stack Integration & DevOps
+    description: Next.js full-stack frameworks, Docker containerization, automated testing suites, CI/CD delivery pipelines, and distributed Redis infrastructure.
+    order: 3
+    order_index: 3
+    topics:
+      - topic_id: fullstack-ts__infrastructure.meta-frameworks
+        name: Unified Full-Stack Frameworks
+        title: Unified Full-Stack Frameworks
+        order: 1
+        order_index: 1
+        subtopics:
+          - subtopic_id: fullstack-ts__infrastructure.meta-frameworks.nextjs
+            name: Next.js App Router Architecture
+            title: Next.js App Router Architecture
+            order: 1
+            order_index: 1
+            skill_nodes:
+              - node_id: fullstack-ts__infrastructure.meta-frameworks.nextjs-rsc
+                name: React Server Components & Streaming
+                title: React Server Components & Streaming
+                classification: required
+                recommended_depth: implementation
+                estimated_time_minutes: 120
+                estimated_minutes: 120
+                order: 1
+                order_index: 1
+                prerequisites:
+                  - fullstack-ts__frontend.react-architecture.state-stores
+                  - fullstack-ts__backend.security.jwt-rbac
+              - node_id: fullstack-ts__infrastructure.meta-frameworks.server-actions
+                name: Server Actions & Cache Revalidation
+                title: Server Actions & Cache Revalidation
+                classification: required
+                recommended_depth: implementation
+                estimated_time_minutes: 90
+                estimated_minutes: 90
+                order: 2
+                order_index: 2
+                prerequisites:
+                  - fullstack-ts__infrastructure.meta-frameworks.nextjs-rsc
+
+      - topic_id: fullstack-ts__infrastructure.devops-testing
+        name: Virtualization, Testing & Pipelines
+        title: Virtualization, Testing & Pipelines
+        order: 2
+        order_index: 2
+        subtopics:
+          - subtopic_id: fullstack-ts__infrastructure.devops-testing.containers
+            name: System Virtualization & Containers
+            title: System Virtualization & Containers
+            order: 1
+            order_index: 1
+            skill_nodes:
+              - node_id: fullstack-ts__infrastructure.devops-testing.docker-containers
+                name: Multi-Stage Docker Builds & Compose
+                title: Multi-Stage Docker Builds & Compose
+                classification: required
+                recommended_depth: practical
+                estimated_time_minutes: 90
+                estimated_minutes: 90
+                order: 1
+                order_index: 1
+                prerequisites:
+                  - fullstack-ts__backend.runtime-apis.nodejs-eventloop
+              - node_id: fullstack-ts__infrastructure.devops-testing.automated-testing
+                name: Unit, Integration & E2E Testing (Vitest & Playwright)
+                title: Unit, Integration & E2E Testing (Vitest & Playwright)
+                classification: required
+                recommended_depth: implementation
+                estimated_time_minutes: 120
+                estimated_minutes: 120
+                order: 2
+                order_index: 2
+                prerequisites:
+                  - fullstack-ts__infrastructure.meta-frameworks.server-actions
+                  - fullstack-ts__infrastructure.devops-testing.docker-containers
+              - node_id: fullstack-ts__infrastructure.devops-testing.github-actions
+                name: Automated CI/CD with GitHub Actions
+                title: Automated CI/CD with GitHub Actions
+                classification: required
+                recommended_depth: practical
+                estimated_time_minutes: 90
+                estimated_minutes: 90
+                order: 3
+                order_index: 3
+                prerequisites:
+                  - fullstack-ts__infrastructure.devops-testing.automated-testing
+
+      - topic_id: fullstack-ts__infrastructure.distributed-systems
+        name: Scalability & Asynchronous Jobs
+        title: Scalability & Asynchronous Jobs
+        order: 3
+        order_index: 3
+        subtopics:
+          - subtopic_id: fullstack-ts__infrastructure.distributed-systems.redis-queues
+            name: Caching & Background Queues
+            title: Caching & Background Queues
+            order: 1
+            order_index: 1
+            skill_nodes:
+              - node_id: fullstack-ts__infrastructure.distributed-systems.redis-caching
+                name: In-Memory Caching & Rate Limiting with Redis
+                title: In-Memory Caching & Rate Limiting with Redis
+                classification: recommended
+                recommended_depth: practical
+                estimated_time_minutes: 90
+                estimated_minutes: 90
+                order: 1
+                order_index: 1
+                prerequisites:
+                  - fullstack-ts__infrastructure.devops-testing.github-actions
+              - node_id: fullstack-ts__infrastructure.distributed-systems.bullmq-jobs
+                name: Asynchronous Job Queues with BullMQ
+                title: Asynchronous Job Queues with BullMQ
+                classification: optional
+                recommended_depth: practical
+                estimated_time_minutes: 90
+                estimated_minutes: 90
+                order: 2
+                order_index: 2
+                prerequisites:
+                  - fullstack-ts__infrastructure.distributed-systems.redis-caching

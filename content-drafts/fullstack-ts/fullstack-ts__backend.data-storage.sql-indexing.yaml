@@ -1,0 +1,131 @@
+node_id: fullstack-ts__backend.data-storage.sql-indexing
+name: Declarative SQL Queries, Joins & Indexes
+title: Declarative SQL Queries, Joins & Indexes
+track_id: fullstack-ts
+classification: required
+recommended_depth: implementation
+estimated_time_minutes: 120
+estimated_minutes: 120
+reviewed: true
+content_version: 1
+
+metadata:
+  reviewed: true
+  content_version: 1
+  generated_at: "2026-09-02T10:00:00Z"
+  generator_version: "gemini-1.5-pro"
+  prompt_version: "1.0.0"
+  model: "gemini-1.5-pro"
+
+one_sentence_definition: >-
+  SQL queries execute relational joins, aggregations, and subqueries, while B-Tree and GIN indexes accelerate query performance with logarithmic lookups.
+
+why_it_matters: >-
+  As databases scale to millions of rows, unindexed queries trigger costly full table sequential scans that bottleneck application servers. Understanding join algorithms and index structures transforms slow multi-second queries into sub-millisecond lookups.
+
+quick_overview: >-
+  Structured Query Language (SQL) is the standard declarative interface for relational data retrieval and manipulation. Core query operations include multi-table relational joins (INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN), grouping aggregations (GROUP BY, HAVING, COUNT, SUM, AVG), window functions, and Common Table Expressions (WITH queries). Indexing structures—such as B-Tree for equality and range filters, GIN for full-text search and JSONB arrays, and composite indexes for multi-column conditions—optimize disk page lookups. Analyzing query execution plans via EXPLAIN ANALYZE identifies sequential scans, hash joins, and cost bottlenecks.
+
+deep_dive: >-
+  Optimizing relational database performance requires mastering SQL query construction and index mechanics:
+
+  1. Relational Joins & Execution Strategies:
+  - `INNER JOIN`: Returns rows where join condition matches in both tables.
+  - `LEFT JOIN`: Returns all left table rows, with NULLs for unmatched right rows.
+  - PostgreSQL join algorithms:
+    - Nested Loop: Efficient when joining small sets with indexed inner tables.
+    - Hash Join: Computes in-memory hash tables for large unsorted joins.
+    - Merge Join: Efficient when both join inputs are pre-sorted by index.
+
+  2. Common Table Expressions (CTEs) & Window Functions:
+  CTEs (`WITH cte_name AS (...)`) structure complex multi-step queries into readable logical units. Window functions (`ROW_NUMBER() OVER (PARTITION BY ... ORDER BY ...)`) compute running totals and rankings without collapsing result rows.
+
+  3. Index Data Structures:
+  - B-Tree Indexes: The default PostgreSQL index. Provides O(log N) lookups for equality (`=`) and range (`<`, `>`, `BETWEEN`) operations on sorted data.
+  - Composite Indexes: Indexed across multiple columns (`CREATE INDEX idx_user_status ON users (tenant_id, status)`). Adheres to the leftmost prefix rule: accelerates filters on `(tenant_id)` or `(tenant_id, status)`, but not `(status)` alone.
+  - GIN (Generalized Inverted Index): Optimized for composite data types like JSONB keys and array containment (`@>`).
+
+  4. Query Plan Analysis with `EXPLAIN (ANALYZE, BUFFERS)`:
+  Running `EXPLAIN ANALYZE` executes the query and returns actual runtime, disk buffer hits, and node costs:
+  - Sequential Scan (`Seq Scan`): Scans every table page on disk. Flag for index addition on large tables.
+  - Index Scan (`Index Scan` / `Bitmap Index Scan`): Traverses B-tree to retrieve matching row pointers directly.
+
+resources:
+  - title: PostgreSQL Documentation - Indexes & EXPLAIN
+    url: https://www.postgresql.org/docs/current/using-explain.html
+    type: documentation
+    tag: start_here
+    why: The official guide to reading query execution plans and understanding cost metrics.
+    order_index: 1
+  - title: Use The Index, Luke! - SQL Indexing Guide
+    url: https://use-the-index-luke.com/
+    type: tutorial
+    tag: reference
+    why: The definitive developer resource for B-Tree indexes, composite keys, and join performance.
+    order_index: 2
+
+quiz_pool:
+  - question: "What does 'EXPLAIN ANALYZE' do in PostgreSQL?"
+    options:
+      - "Executes the SQL query and displays the actual execution plan, node timings, and buffer usage"
+      - "Deletes corrupted database records"
+      - "Simulates query execution without running it"
+      - "Automatically adds missing indexes"
+    correct_index: 0
+    explanation: "EXPLAIN ANALYZE executes the statement and outputs real runtime measurements and execution step details."
+  - question: "Why are B-Tree indexes the default index type in PostgreSQL?"
+    options:
+      - "They provide logarithmic O(log N) lookup time for equality and range queries on sorted data"
+      - "They use zero megabytes of disk space"
+      - "They only work on primary keys"
+      - "They convert SQL into binary"
+    correct_index: 0
+    explanation: "B-Tree indexes maintain sorted tree structures that deliver balanced O(log N) search and range scan performance."
+  - question: "What does the 'leftmost prefix rule' dictate for composite indexes on columns (A, B, C)?"
+    options:
+      - "Queries must filter on column A (the leftmost column) to utilize the composite index"
+      - "The index only sorts column C"
+      - "Column A must always be a string"
+      - "The database scans from right to left"
+    correct_index: 0
+    explanation: "Composite B-trees can only be traversed if query filters include the leading (leftmost) indexed columns."
+  - question: "Which index type is best suited for searching keys and tags inside PostgreSQL JSONB columns?"
+    options:
+      - "GIN (Generalized Inverted Index)"
+      - "B-Tree index"
+      - "Hash index"
+      - "BRIN index"
+    correct_index: 0
+    explanation: "GIN indexes excel at indexing multi-value composite types like JSONB objects and arrays."
+  - question: "What is a 'Sequential Scan' (Seq Scan) in a query plan?"
+    options:
+      - "The database engine reads every page of the table from disk to find matching rows"
+      - "The database reads rows backwards"
+      - "The database scans only index files"
+      - "The query executes instantly in cache"
+    correct_index: 0
+    explanation: "A Seq Scan reads the entire table sequentially from disk, which causes performance issues on large datasets."
+  - question: "What is the difference between 'INNER JOIN' and 'LEFT JOIN'?"
+    options:
+      - "INNER JOIN returns only rows with matches in both tables, whereas LEFT JOIN returns all rows from the left table with NULLs for unmatched right rows"
+      - "LEFT JOIN deletes unmatched rows"
+      - "INNER JOIN only works on text columns"
+      - "There is no functional difference"
+    correct_index: 0
+    explanation: "LEFT JOIN preserves all rows from the primary left table regardless of whether a matching right row exists."
+  - question: "What is a Common Table Expression (CTE) in SQL?"
+    options:
+      - "A temporary named result set defined within a query using the WITH clause"
+      - "A permanent database view stored on disk"
+      - "An external database connection"
+      - "A custom SQL data type"
+    correct_index: 0
+    explanation: "CTEs create temporary modular result sets using the WITH keyword to improve readability and query structure."
+  - question: "What does a Window Function (such as ROW_NUMBER() OVER (...)) do?"
+    options:
+      - "Performs calculations across a set of table rows related to the current row without collapsing rows into a single output"
+      - "Opens a new browser popup window"
+      - "Calculates database uptime"
+      - "Deletes old log files"
+    correct_index: 0
+    explanation: "Window functions compute aggregations and rankings over partitions while preserving individual row granularity."

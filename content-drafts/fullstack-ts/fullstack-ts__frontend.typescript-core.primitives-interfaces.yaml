@@ -1,0 +1,140 @@
+node_id: fullstack-ts__frontend.typescript-core.primitives-interfaces
+name: TypeScript Primitives, Interfaces & Types
+title: TypeScript Primitives, Interfaces & Types
+track_id: fullstack-ts
+classification: required
+recommended_depth: practical
+estimated_time_minutes: 90
+estimated_minutes: 90
+reviewed: true
+content_version: 1
+
+metadata:
+  reviewed: true
+  content_version: 1
+  generated_at: "2026-09-02T10:00:00Z"
+  generator_version: "gemini-1.5-pro"
+  prompt_version: "1.0.0"
+  model: "gemini-1.5-pro"
+
+one_sentence_definition: >-
+  TypeScript static type systems declare domain data shapes, primitive boundaries, interfaces, and composable type aliases at compile time.
+
+why_it_matters: >-
+  Static typing catches runtime reference errors, typos, and incompatible data assignments before code reaches production environments. Interfaces and type aliases structure maintainable API contracts across full-stack repositories.
+
+quick_overview: >-
+  TypeScript enhances JavaScript by introducing a compile-time static type system. Core primitives (string, number, boolean, null, undefined, symbol, bigint) form the base tier. Object data structures are modeled through Interfaces and Type Aliases. Interfaces provide extensible, mergeable object definitions suited for OOP and public library APIs, while Type Aliases enable primitives, unions, tuples, and intersections. Enabling strict compiler settings—especially strictNullChecks and noImplicitAny in tsconfig.json—ensures comprehensive type coverage and eliminates null pointer exceptions at runtime.
+
+deep_dive: >-
+  Understanding static type definitions in TypeScript requires mastering the foundational type primitives and structural typing mechanisms:
+
+  1. Structural Typing vs Nominal Typing:
+  TypeScript uses a structural type system (duck typing). Two types are considered compatible if they share the same internal shape, regardless of their explicit declaration names.
+
+  2. Interfaces vs Type Aliases:
+  - Interfaces:
+    Support declaration merging and interface inheritance (`interface Admin extends User`). They are ideal for modeling public APIs, object shapes, and classes.
+    ```ts
+    interface User {
+      id: string;
+      email: string;
+      createdAt: Date;
+    }
+    ```
+  - Type Aliases:
+    Cannot be reopened for declaration merging, but can define unions, primitives, tuples, function signatures, and intersection types:
+    ```ts
+    type Role = 'admin' | 'member' | 'guest';
+    type UserWithRole = User & { role: Role };
+    ```
+
+  3. Type Modifiers:
+  - `readonly`: Marks object properties or arrays as immutable, preventing accidental reassignment.
+  - `?` (Optional): Allows properties to be undefined.
+  - Index Signatures: Defines types for dynamic dictionary keys (`[key: string]: string`).
+
+  4. Top & Bottom Types:
+  - `unknown`: The type-safe counterpart to `any`. Operations cannot be performed on an `unknown` value without explicit type narrowing or type assertions (`typeof`, `instanceof`).
+  - `any`: Disables type checking entirely; should be avoided in production codebases.
+  - `never`: Represents values that never occur (e.g., functions that throw or exhaustive switch branch fallthroughs).
+
+resources:
+  - title: TypeScript Handbook - Everyday Types & Interfaces
+    url: https://www.typescriptlang.org/docs/handbook/2/everyday-types.html
+    type: documentation
+    tag: start_here
+    why: The official guide to primitive types, type annotations, and object interfaces.
+    order_index: 1
+  - title: Total TypeScript - TypeScript Fundamentals
+    url: https://www.totaltypescript.com/tutorials
+    type: tutorial
+    tag: reference
+    why: Interactive tutorials on type aliases, interfaces, and compiler flags.
+    order_index: 2
+
+quiz_pool:
+  - question: "What is the primary difference between TypeScript interfaces and type aliases?"
+    options:
+      - "Interfaces support declaration merging across multiple declarations, whereas type aliases cannot be reopened"
+      - "Type aliases only work with numbers"
+      - "Interfaces generate runtime JavaScript objects"
+      - "Type aliases cannot be exported from modules"
+    correct_index: 0
+    explanation: "Interfaces can be declared multiple times and automatically merge into a unified definition, while type aliases are immutable once defined."
+  - question: "What does 'structural typing' (duck typing) mean in TypeScript?"
+    options:
+      - "Type compatibility is determined by the shape and properties of the object rather than its nominal class name"
+      - "Types must be explicitly cast using the as keyword"
+      - "All variables must be strings"
+      - "Classes cannot implement interfaces"
+    correct_index: 0
+    explanation: "In structural typing, if two types share the same required properties and types, TypeScript treats them as compatible."
+  - question: "What is the key difference between the 'unknown' type and the 'any' type?"
+    options:
+      - "unknown requires type checking or narrowing before properties or methods can be accessed, whereas any bypasses all checks"
+      - "unknown converts values to undefined"
+      - "any is more type-safe than unknown"
+      - "unknown cannot be used in function return types"
+    correct_index: 0
+    explanation: "unknown is a type-safe top type that enforces explicit type verification before operations can be invoked on it."
+  - question: "What does the 'readonly' property modifier prevent?"
+    options:
+      - "Reassigning the property value after object creation"
+      - "Reading the property from external files"
+      - "Printing the property to console"
+      - "Exporting the interface"
+    correct_index: 0
+    explanation: "The readonly modifier prevents direct mutation of the property after initialization."
+  - question: "What does enabling 'strictNullChecks' in tsconfig.json enforce?"
+    options:
+      - "null and undefined are distinct types and cannot be assigned to other types unless explicitly included in a union"
+      - "Null values are converted to 0"
+      - "All functions must return null"
+      - "Disables optional chaining (?.)"
+    correct_index: 0
+    explanation: "strictNullChecks prevents null/undefined from being silently assigned to string, number, or object types."
+  - question: "What does the 'never' type signify in TypeScript?"
+    options:
+      - "A type representing values that never occur, such as a function that always throws an error or an unreachable code branch"
+      - "A variable that has not been initialized"
+      - "An alias for void"
+      - "A deprecated interface"
+    correct_index: 0
+    explanation: "The never type represents unreachable states, used in exhaustive type checking and non-returning functions."
+  - question: "How is an intersection type declared in TypeScript?"
+    options:
+      - "Using the '&' operator (e.g., TypeA & TypeB)"
+      - "Using the '|' operator"
+      - "Using the '+' operator"
+      - "Using the 'extends' keyword only"
+    correct_index: 0
+    explanation: "The ampersand '&' operator combines multiple types into a single intersection type containing all combined properties."
+  - question: "What happens if you compile TypeScript with 'noImplicitAny: true'?"
+    options:
+      - "The compiler throws an error whenever a variable or parameter lacks an explicit type and cannot be automatically inferred"
+      - "Any types are automatically converted to strings"
+      - "All types are erased at runtime"
+      - "TypeScript allows untyped variables without warning"
+    correct_index: 0
+    explanation: "noImplicitAny forces developers to provide explicit types when TypeScript cannot safely infer them, preventing accidental 'any' leakages."

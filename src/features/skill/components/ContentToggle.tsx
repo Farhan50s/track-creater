@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { MarkdownRenderer } from '../../../components/MarkdownRenderer';
 
 interface ContentToggleProps {
   quickOverview: string;
@@ -35,13 +36,17 @@ export function ContentToggle({ quickOverview, deepDive }: ContentToggleProps) {
 
       <div style={styles.quickOverviewSection}>
         <h3 style={styles.subHeading}>Quick Overview</h3>
-        <div style={styles.contentBody}>{quickOverview}</div>
+        <div style={styles.contentBody}>
+          <MarkdownRenderer content={quickOverview} />
+        </div>
       </div>
 
       {hasDeepDive && isDeepDiveExpanded && (
         <div id="skill-deep-dive-section" style={styles.deepDiveSection}>
           <h3 style={styles.subHeading}>Deep Dive</h3>
-          <div style={styles.contentBody}>{deepDive}</div>
+          <div style={styles.contentBody}>
+            <MarkdownRenderer content={deepDive!} />
+          </div>
         </div>
       )}
     </div>
@@ -98,16 +103,15 @@ const styles: Record<string, React.CSSProperties> = {
   },
   subHeading: {
     fontSize: '13px',
-    fontWeight: '600',
-    color: 'var(--text-secondary)',
+    fontWeight: '700',
+    color: 'var(--text-muted)',
     textTransform: 'uppercase',
-    letterSpacing: '0.03em',
+    letterSpacing: '0.05em',
     margin: 0,
   },
   contentBody: {
     fontSize: '15px',
-    color: 'var(--text-primary)',
-    lineHeight: '1.7',
-    whiteSpace: 'pre-wrap',
+    color: 'var(--text-secondary)',
+    lineHeight: '1.6',
   },
 };

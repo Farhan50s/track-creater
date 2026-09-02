@@ -1,0 +1,137 @@
+node_id: fullstack-ts__frontend.web-standards.css-box-flexbox
+name: CSS Box Model & Flexbox Layouts
+title: CSS Box Model & Flexbox Layouts
+track_id: fullstack-ts
+classification: required
+recommended_depth: practical
+estimated_time_minutes: 90
+estimated_minutes: 90
+reviewed: true
+content_version: 1
+
+metadata:
+  reviewed: true
+  content_version: 1
+  generated_at: "2026-09-02T10:00:00Z"
+  generator_version: "gemini-1.5-pro"
+  prompt_version: "1.0.0"
+  model: "gemini-1.5-pro"
+
+one_sentence_definition: >-
+  The CSS Box Model and Flexible Box Layout govern element dimensions, spacing equilibrium, and one-dimensional alignment along rows and columns.
+
+why_it_matters: >-
+  Setting border-box sizing prevents layout overflows across responsive viewports. Mastering Flexbox properties enables clean component alignment, dynamic distribution, and responsive reordering without fragile floats or absolute positioning.
+
+quick_overview: >-
+  The CSS Box Model conceptualizes every HTML element as a rectangular box comprising content, padding, border, and margin areas. Applying box-sizing: border-box ensures specified element dimensions encompass padding and borders, preventing horizontal scroll bugs. Flexible Box Layout (Flexbox) provides a one-dimensional layout system optimized for distributing space and aligning items along a main axis and cross axis. Flex container properties (flex-direction, justify-content, align-items, flex-wrap, gap) combined with flex item properties (flex-grow, flex-shrink, flex-basis, align-self) allow interfaces to adapt smoothly to varying screen widths and dynamic text lengths.
+
+deep_dive: >-
+  Modern responsive interface design relies on precise comprehension of the CSS Box Model and one-dimensional flexographic distribution:
+
+  1. The Box Model:
+  By default (content-box), setting an element's width to 100% with 20px padding causes it to exceed its container width by 40px. The universal reset:
+  ```css
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  ```
+  absorbs padding and border into the calculated width and height, establishing predictable geometry across all elements.
+
+  2. Flexbox Architecture:
+  Flexbox establishes two perpendicular axes:
+  - Main Axis: Defined by flex-direction (row, row-reverse, column, column-reverse).
+  - Cross Axis: Perpendicular to the main axis.
+
+  Key container alignment properties:
+  - `justify-content`: Distributes items along the main axis (flex-start, center, flex-end, space-between, space-around, space-evenly).
+  - `align-items`: Aligns items along the cross axis (stretch, center, flex-start, flex-end, baseline).
+  - `gap`: Establishes clean gutters between flex children without requiring margin-collapse workarounds.
+
+  3. Flex Item Dynamics:
+  The `flex` shorthand combines three critical sizing properties: `flex: <flex-grow> <flex-shrink> <flex-basis>`.
+  - `flex-grow`: Dictates what proportion of remaining positive free space the item absorbs (default: 0).
+  - `flex-shrink`: Dictates how the item shrinks when container space is negative (default: 1). Setting flex-shrink: 0 prevents avatar icons or action buttons from squishing when sibling text expands.
+  - `flex-basis`: Defines the default ideal size before free space is distributed (e.g., auto, 250px, 0).
+
+  Combining flex-wrap: wrap with flex-basis and flex-grow creates self-wrapping responsive toolbars and card grids that adapt without explicit media queries.
+
+resources:
+  - title: MDN Web Docs - The Box Model
+    url: https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Box_model
+    type: documentation
+    tag: start_here
+    why: Authoritative guide to CSS box geometry and sizing models.
+    order_index: 1
+  - title: CSS-Tricks - A Complete Guide to Flexbox
+    url: https://css-tricks.com/snippets/css/a-guide-to-flexbox/
+    type: tutorial
+    tag: reference
+    why: Comprehensive visual cheat sheet for all Flexbox container and item properties.
+    order_index: 2
+
+quiz_pool:
+  - question: "What does setting 'box-sizing: border-box' ensure in CSS?"
+    options:
+      - "Padding and border are included within the element total specified width and height"
+      - "Padding is added outside the specified width"
+      - "Margins collapse horizontally"
+      - "Elements cannot have borders"
+    correct_index: 0
+    explanation: "Under border-box, the width and height properties include content, padding, and border, preventing unexpected layout overflows."
+  - question: "Which Flexbox property controls the alignment of items along the main axis?"
+    options:
+      - "justify-content"
+      - "align-items"
+      - "align-content"
+      - "flex-direction"
+    correct_index: 0
+    explanation: "justify-content distributes items along the main axis (row or column direction)."
+  - question: "How can you prevent a fixed-size icon from shrinking inside a flex container with expanding text?"
+    options:
+      - "Set 'flex-shrink: 0' on the icon element"
+      - "Set 'flex-grow: 1' on the icon"
+      - "Set 'display: block' on the container"
+      - "Set 'margin: auto' on the icon"
+    correct_index: 0
+    explanation: "flex-shrink: 0 prevents the item from shrinking below its specified basis or content width when space is tight."
+  - question: "What does 'justify-content: space-between' do in a flex row container?"
+    options:
+      - "Distributes items evenly, with the first item on the start edge and the last item on the end edge"
+      - "Centers all items in the middle with equal padding"
+      - "Puts equal space around all items including the outer edges"
+      - "Stacks items vertically"
+    correct_index: 0
+    explanation: "space-between places the first child at the start, the last child at the end, and distributes remaining space equally in between."
+  - question: "What is the effect of setting 'flex: 1' on a flex item?"
+    options:
+      - "It expands flex-grow: 1, flex-shrink: 1, flex-basis: 0%, allowing the item to fill available free space proportionally"
+      - "It sets the item width to exactly 1 pixel"
+      - "It disables flex wrapping"
+      - "It freezes the element position"
+    correct_index: 0
+    explanation: "flex: 1 is shorthand for flex: 1 1 0%, letting the item grow and shrink to absorb equal shares of available space."
+  - question: "Which property sets gutters between flex items without applying outer margins?"
+    options:
+      - "gap"
+      - "margin-between"
+      - "padding-inline"
+      - "border-spacing"
+    correct_index: 0
+    explanation: "The 'gap' property defines gutters between adjacent flex and grid children without bleeding into container edges."
+  - question: "If 'flex-direction: column' is set on a container, which property aligns items horizontally across the container?"
+    options:
+      - "align-items"
+      - "justify-content"
+      - "flex-wrap"
+      - "text-align"
+    correct_index: 0
+    explanation: "In column direction, the cross axis is horizontal, so align-items controls horizontal alignment."
+  - question: "What is the difference between margin and padding in the CSS box model?"
+    options:
+      - "Padding is space inside the element border, while margin is space outside the element border"
+      - "Padding only applies to text elements"
+      - "Margins are always colored green"
+      - "There is no difference between padding and margin"
+    correct_index: 0
+    explanation: "Padding adds interior clearance between content and border, whereas margin creates exterior clearance outside the border."

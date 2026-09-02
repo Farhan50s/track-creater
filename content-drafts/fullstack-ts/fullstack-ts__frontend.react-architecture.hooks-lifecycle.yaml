@@ -1,0 +1,136 @@
+node_id: fullstack-ts__frontend.react-architecture.hooks-lifecycle
+name: React Hooks & Lifecycle Synchronization
+title: React Hooks & Lifecycle Synchronization
+track_id: fullstack-ts
+classification: required
+recommended_depth: implementation
+estimated_time_minutes: 120
+estimated_minutes: 120
+reviewed: true
+content_version: 1
+
+metadata:
+  reviewed: true
+  content_version: 1
+  generated_at: "2026-09-02T10:00:00Z"
+  generator_version: "gemini-1.5-pro"
+  prompt_version: "1.0.0"
+  model: "gemini-1.5-pro"
+
+one_sentence_definition: >-
+  React hooks manage state lifecycles, side-effect synchronization, memoized computations, and mutable references within functional components.
+
+why_it_matters: >-
+  Mastering React hooks is essential for stateful interface engineering. Understanding hook execution lifecycles, effect cleanups, and dependency arrays prevents memory leaks, infinite re-render loops, and stale closures.
+
+quick_overview: >-
+  React Hooks provide functional components with access to state and lifecycle synchronization primitives. The standard hook library includes useState for local state, useReducer for complex multi-action state machines, useEffect for side-effect synchronization with external systems, useLayoutEffect for synchronous DOM measurements before paint, useMemo for caching expensive computations, useCallback for preserving callback referential stability, and useRef for persistent mutable containers that do not trigger re-renders. Understanding the Rules of Hooks and composing custom hooks encapsulates complex stateful workflows into modular, testable units.
+
+deep_dive: >-
+  React functional components execute repeatedly upon state and prop changes. Hooks allow components to retain persistent state between render passes:
+
+  1. The Rules of Hooks:
+  - Call hooks only at the top level (never inside conditionals, loops, or nested functions).
+  - Call hooks only from React function components or custom hooks.
+  These constraints ensure React can rely on fixed invocation order to match internal state cells to hook calls.
+
+  2. Effect Synchronization & Cleanups:
+  `useEffect` coordinates external subscriptions, event listeners, or timers:
+  ```tsx
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+  ```
+  The cleanup function executes before the effect re-runs and during component unmounting, preventing memory leaks.
+
+  3. Stale Closures & Dependency Arrays:
+  Every render captures its own props and state in closure scope. Omitting variables from dependency arrays causes effects or callbacks to read outdated values from previous render cycles. Utilizing functional state updaters (`setCount(prev => prev + 1)`) decouples state mutations from current closure values.
+
+  4. Performance Optimization Primitives:
+  - `useMemo`: Caches complex calculations: `const result = useMemo(() => heavyCalculation(data), [data])`.
+  - `useCallback`: Returns a referentially stable callback instance across renders: `const handleClick = useCallback(() => ..., [deps])`.
+  - `useRef`: Stores mutable references (`ref.current`) without scheduling renders, used for direct DOM references and tracking previous values.
+
+resources:
+  - title: React Official Documentation - State & Effects
+    url: https://react.dev/reference/react/hooks
+    type: documentation
+    tag: start_here
+    why: The definitive reference for all built-in React hooks and execution lifecycles.
+    order_index: 1
+  - title: Overreacted - A Complete Guide to useEffect
+    url: https://overreacted.io/a-complete-guide-to-useeffect/
+    type: article
+    tag: reference
+    why: Deep conceptual explanation of closures, synchronization, and dependency arrays in useEffect.
+    order_index: 2
+
+quiz_pool:
+  - question: "Why must React hooks never be called inside conditionals or loops?"
+    options:
+      - "React tracks hook state based on the exact call order across renders; branching disrupts the hook array index mapping"
+      - "JavaScript throws a syntax error"
+      - "It causes CSS animations to freeze"
+      - "Conditional hooks are deprecated in React 18"
+    correct_index: 0
+    explanation: "React relies on a stable, predictable call order of hooks on every render to correctly associate state with each hook."
+  - question: "When does the cleanup function returned by a useEffect hook run?"
+    options:
+      - "Before the effect re-runs on dependency changes, and when the component unmounts"
+      - "Only when the browser window closes"
+      - "Immediately before the component initial render"
+      - "Once per minute"
+    correct_index: 0
+    explanation: "Cleanup functions execute immediately prior to subsequent effect executions and upon component unmounting."
+  - question: "What is a 'stale closure' in the context of React hooks?"
+    options:
+      - "A callback or effect capturing an outdated variable value from a previous render because the dependency was omitted from the dependency array"
+      - "A closed network connection"
+      - "A memory leak in the browser V8 engine"
+      - "A syntax error in TypeScript"
+    correct_index: 0
+    explanation: "Stale closures occur when an asynchronous callback captures a variable from an earlier render pass due to missing dependencies."
+  - question: "What is the primary difference between useRef and useState?"
+    options:
+      - "Mutating ref.current does not trigger a re-render, whereas calling a state setter schedules a component re-render"
+      - "useRef can only store strings"
+      - "useState is only for class components"
+      - "useRef resets to null on every render"
+    correct_index: 0
+    explanation: "useRef provides a mutable container that persists across renders without triggering a new render cycle upon modification."
+  - question: "How does 'useCallback(fn, deps)' optimize child component rendering?"
+    options:
+      - "It preserves referential equality of the function across renders, preventing memoized children (React.memo) from re-rendering unnecessarily"
+      - "It runs the function in a background Web Worker"
+      - "It converts the function to WebAssembly"
+      - "It executes the function before the DOM is created"
+    correct_index: 0
+    explanation: "useCallback caches function instances, maintaining stable object references needed by React.memo child components."
+  - question: "Why should functional state updates like 'setCount(c => c + 1)' be used when updating state based on previous state?"
+    options:
+      - "It guarantees access to the latest pending state value without needing to include the state variable in closure dependency arrays"
+      - "It makes the update run synchronously"
+      - "It prevents TypeScript type errors"
+      - "It saves 100 bytes of memory"
+    correct_index: 0
+    explanation: "Functional updaters pass the most up-to-date state as an argument, eliminating stale closure dependencies."
+  - question: "When does 'useLayoutEffect' execute compared to 'useEffect'?"
+    options:
+      - "Synchronously immediately after DOM mutations, before the browser paints the screen"
+      - "Asynchronously 5 seconds after paint"
+      - "Only on server-rendered components"
+      - "Only in development mode"
+    correct_index: 0
+    explanation: "useLayoutEffect fires synchronously after all DOM mutations and before visual paint, ideal for measuring DOM layout."
+  - question: "What should custom hook names always start with in React?"
+    options:
+      - "use (e.g., useLocalStorage)"
+      - "get (e.g., getLocalStorage)"
+      - "create (e.g., createHook)"
+      - "handle (e.g., handleState)"
+    correct_index: 0
+    explanation: "The 'use' prefix enables React linting rules and the compiler to enforce the Rules of Hooks on custom hooks."

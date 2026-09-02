@@ -1,0 +1,160 @@
+node_id: fullstack-ts__infrastructure.distributed-systems.bullmq-jobs
+name: Asynchronous Job Queues with BullMQ
+title: Asynchronous Job Queues with BullMQ
+track_id: fullstack-ts
+classification: optional
+recommended_depth: practical
+estimated_time_minutes: 90
+estimated_minutes: 90
+reviewed: true
+content_version: 1
+
+metadata:
+  reviewed: true
+  content_version: 1
+  generated_at: "2026-09-02T10:00:00Z"
+  generator_version: "gemini-1.5-pro"
+  prompt_version: "1.0.0"
+  model: "gemini-1.5-pro"
+
+one_sentence_definition: >-
+  BullMQ manages distributed asynchronous background job processing, worker scheduling, exponential backoff retries, and dead-letter queues on Redis.
+
+why_it_matters: >-
+  Executing long-running tasks (such as sending transactional emails, generating PDFs, or video processing) inside synchronous HTTP handlers blocks client responses and leads to timeouts. Background job queues decouple heavy tasks, guaranteeing reliable retry and execution.
+
+quick_overview: >-
+  BullMQ is a robust TypeScript message queue and background job processor built on top of Redis streams and atomic Lua scripts. Applications push serializable job payloads to named queues during HTTP request handling, allowing endpoints to respond immediately (<100ms). Independent worker processes consume jobs asynchronously, executing tasks with configurable concurrency limits, rate limits, and priority scheduling. BullMQ provides automatic exponential backoff retries on failure, cron-like recurring job scheduling, and Dead-Letter Queues (DLQ) for inspecting and replaying failed job payloads.
+
+deep_dive: >-
+  Architecting decoupled background worker pipelines with BullMQ and Redis:
+
+  1. Queue Producer & Job Dispatch:
+  HTTP endpoints dispatch jobs without waiting for execution:
+  ```ts
+  import { Queue } from 'bullmq';
+  import { redisConnection } from '@/lib/redis';
+
+  export const emailQueue = new Queue('emailQueue', { connection: redisConnection });
+
+  // Express or Server Action Handler: Returns immediately
+  export async function triggerWelcomeEmail(userId: string, email: string) {
+    await emailQueue.add(
+      'sendWelcome',
+      { userId, email },
+      {
+        attempts: 5,
+        backoff: {
+          type: 'exponential',
+          delay: 2000, // 2s, 4s, 8s, 16s, 32s
+        },
+        removeOnComplete: true,
+      }
+    );
+  }
+  ```
+
+  2. Dedicated Worker Processing:
+  Worker processes run in separate Node.js containers or background services:
+  ```ts
+  import { Worker, Job } from 'bullmq';
+  import { sendEmailService } from '@/services/email';
+
+  const worker = new Worker(
+    'emailQueue',
+    async (job: Job) => {
+      console.log(`[Processing Job ${job.id}]:`, job.name);
+      if (job.name === 'sendWelcome') {
+        await sendEmailService(job.data.email, job.data.userId);
+      }
+    },
+    { connection: redisConnection, concurrency: 10 }
+  );
+
+  worker.on('failed', (job, err) => {
+    console.error(`[Job Failed]: ${job?.id} - ${err.message}`);
+  });
+  ```
+
+  3. Dead-Letter Queues (DLQ) & Observability:
+  Jobs that exhaust all configured retry attempts are moved to the Failed set (DLQ). Engineers can inspect failure stack traces, fix underlying bugs or downstream service outages, and trigger mass retries via BullMQ APIs or dashboards like Bull-Board.
+
+resources:
+  - title: BullMQ Official Documentation - Getting Started
+    url: https://docs.bullmq.io/
+    type: documentation
+    tag: start_here
+    why: The official guide to BullMQ queues, workers, job options, and Redis configuration.
+    order_index: 1
+  - title: BullMQ Patterns - Error Handling & Retries
+    url: https://docs.bullmq.io/patterns/error-handling
+    type: tutorial
+    tag: reference
+    why: Best practices for exponential backoff retries, dead-letter queues, and worker concurrency.
+    order_index: 2
+
+quiz_pool:
+  - question: "Why should long-running operations like sending emails or generating reports be pushed to a background job queue (e.g. BullMQ)?"
+    options:
+      - "To prevent blocking the synchronous HTTP response cycle, ensuring fast client responses and resilient retry handling"
+      - "Because Node.js cannot send HTTP requests"
+      - "Because message queues eliminate internet requirements"
+      - "Because PDFs can only be created in Redis"
+    correct_index: 0
+    explanation: "Delegating heavy tasks to queues enables fast HTTP responses and isolates failure retries from user requests."
+  - question: "What is a 'Dead-Letter Queue' (DLQ) in background job architectures?"
+    options:
+      - "A queue where jobs that have exhausted all retry attempts are stored for inspection and debugging without blocking the queue"
+      - "A queue that deletes all incoming messages"
+      - "An email spam filter"
+      - "A server error log"
+    correct_index: 0
+    explanation: "A DLQ holds failed job payloads after all retries fail, allowing developers to inspect failure reasons and replay jobs."
+  - question: "What does 'exponential backoff' accomplish when retrying failed background jobs?"
+    options:
+      - "It progressively increases the delay between successive retry attempts (e.g., 2s, 4s, 8s) to avoid overwhelming recovering downstream services"
+      - "It retries the job 1000 times per second"
+      - "It terminates the worker process immediately"
+      - "It deletes the database records"
+    correct_index: 0
+    explanation: "Exponential backoff widens retry spacing, giving failing third-party APIs or databases time to recover."
+  - question: "What backing data store does BullMQ rely on for queue and state persistence?"
+    options:
+      - "Redis"
+      - "MongoDB"
+      - "SQLite file on client"
+      - "AWS S3"
+    correct_index: 0
+    explanation: "BullMQ uses Redis data structures (streams, hashes, sorted sets) and atomic Lua scripts for job queuing."
+  - question: "What does the 'concurrency' option configure on a BullMQ Worker instance?"
+    options:
+      - "The maximum number of jobs the worker process can execute simultaneously in parallel"
+      - "The total number of CPU cores in the server"
+      - "The maximum number of users on the website"
+      - "The database connection timeout in seconds"
+    correct_index: 0
+    explanation: "Worker concurrency dictates how many jobs are processed concurrently by that worker process."
+  - question: "Can BullMQ execute recurring jobs on a cron schedule?"
+    options:
+      - "Yes; using the 'repeat' option with standard cron expressions (e.g., '0 * * * *')"
+      - "No; cron jobs must be run with Linux crontab only"
+      - "Only in Python"
+      - "Only if the server is restarted every hour"
+    correct_index: 0
+    explanation: "BullMQ supports repeating jobs with standard 5-field cron syntax or fixed millisecond intervals."
+  - question: "Why must job payloads passed to BullMQ queues be JSON-serializable?"
+    options:
+      - "Because Redis stores job payloads as serialized strings across network boundaries"
+      - "Because JavaScript requires all variables to be JSON"
+      - "To convert numbers to strings"
+      - "To prevent TypeScript compile errors"
+    correct_index: 0
+    explanation: "Job data is serialized to JSON before being stored in Redis, meaning functions or circular references cannot be passed."
+  - question: "What UI dashboard tool is commonly used to inspect and monitor BullMQ job queues in Node.js?"
+    options:
+      - "Bull-Board"
+      - "pgAdmin"
+      - "Postman"
+      - "Wireshark"
+    correct_index: 0
+    explanation: "Bull-Board is a popular dashboard package that plugs into Express/Next.js to visualize active, completed, and failed BullMQ jobs."

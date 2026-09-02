@@ -1,9 +1,46 @@
-import { NavLink, Link, Outlet, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { NavLink, Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../features/auth/hooks/useAuth';
+import { supabase } from '../lib/supabase';
 
 export function AppShell() {
-  const { user, signOut, isLoading } = useAuth();
+  const { user, signOut, isLoading, hasActiveTrack } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const [activeTrackName, setActiveTrackName] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadActiveTrackName() {
+      if (!user) {
+        setActiveTrackName(null);
+        return;
+      }
+
+      try {
+        const { data } = await supabase
+          .from('user_active_track')
+          .select(`
+            track_id,
+            tracks:track_id (
+              name
+            )
+          `)
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (data && (data as any).tracks?.name) {
+          setActiveTrackName((data as any).tracks.name);
+        } else {
+          setActiveTrackName(null);
+        }
+      } catch (e) {
+        console.error('Error fetching active track name for header:', e);
+      }
+    }
+
+    loadActiveTrackName();
+  }, [user, hasActiveTrack, location.pathname]);
 
   const handleLogout = async () => {
     await signOut();
@@ -53,6 +90,18 @@ export function AppShell() {
             <>
               {user ? (
                 <div style={styles.userSection}>
+                  {activeTrackName && (
+                    <Link
+                      to="/onboarding/goal"
+                      style={styles.activeTrackPill}
+                      title={`Active Track: ${activeTrackName}. Click to switch.`}
+                      aria-label={`Current Track: ${activeTrackName}`}
+                    >
+                      <span style={styles.trackPillIcon}>🎯</span>
+                      <span style={styles.trackPillText}>{activeTrackName}</span>
+                    </Link>
+                  )}
+
                   <NavLink
                     to="/app/profile"
                     className={({ isActive }) =>
@@ -107,6 +156,29 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '12px',
     flexWrap: 'wrap',
   },
+  activeTrackPill: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px',
+    padding: '4px 10px',
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    border: '1px solid rgba(16, 185, 129, 0.25)',
+    borderRadius: '9999px',
+    textDecoration: 'none',
+    fontSize: '12px',
+    fontWeight: '600',
+    color: 'var(--accent-primary)',
+    transition: 'all 0.15s ease',
+    maxWidth: '220px',
+  },
+  trackPillIcon: {
+    fontSize: '11px',
+  },
+  trackPillText: {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
   profileLink: {
     display: 'inline-flex',
     alignItems: 'center',
@@ -143,18 +215,20 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     gap: '10px',
-    flexWrap: 'wrap',
   },
   authLinkBtn: {
     minHeight: '36px',
+    padding: '6px 16px',
+    fontSize: '13px',
+    fontWeight: '600',
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
   },
   signUpLink: {
     backgroundColor: 'var(--accent-primary)',
-    color: '#ffffff',
-    border: '1px solid var(--accent-primary)',
-    fontWeight: '600',
+    color: '#09090b',
+    border: 'none',
+    fontWeight: '700',
   },
 };

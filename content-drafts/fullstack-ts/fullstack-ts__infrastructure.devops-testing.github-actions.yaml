@@ -1,0 +1,162 @@
+node_id: fullstack-ts__infrastructure.devops-testing.github-actions
+name: Automated CI/CD with GitHub Actions
+title: Automated CI/CD with GitHub Actions
+track_id: fullstack-ts
+classification: required
+recommended_depth: practical
+estimated_time_minutes: 90
+estimated_minutes: 90
+reviewed: true
+content_version: 1
+
+metadata:
+  reviewed: true
+  content_version: 1
+  generated_at: "2026-09-02T10:00:00Z"
+  generator_version: "gemini-1.5-pro"
+  prompt_version: "1.0.0"
+  model: "gemini-1.5-pro"
+
+one_sentence_definition: >-
+  GitHub Actions configures declarative CI/CD pipelines to automate linting, type-checking, automated testing, container builds, and production deployments.
+
+why_it_matters: >-
+  Manual deployments and unverified merges cause broken production builds and deployment outages. GitHub Actions enforces strict branch protection gates and automates zero-downtime production rollouts on every pull request.
+
+quick_overview: >-
+  Continuous Integration and Continuous Deployment (CI/CD) automates software verification and delivery lifecycles. GitHub Actions is a declarative, event-driven automation platform built directly into GitHub. YAML workflow files (located in .github/workflows/) define jobs triggered on repository events (push, pull_request, release). Automated pipeline stages include dependency caching, static type analysis (tsc --noEmit), code linting (ESLint), unit and integration testing, Docker container image builds, security vulnerability scanning, and deployment to hosting environments (Vercel, AWS ECS, Fly.io).
+
+deep_dive: >-
+  Authoring robust CI/CD automation pipelines with GitHub Actions:
+
+  1. Declarative Workflow Architecture:
+  A production CI workflow `.github/workflows/ci.yml`:
+  ```yaml
+  name: CI Pipeline
+
+  on:
+    pull_request:
+      branches: [main]
+    push:
+      branches: [main]
+
+  jobs:
+    validate:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout Code
+          uses: actions/checkout@v4
+
+        - name: Setup Node.js
+          uses: actions/setup-node@v4
+          with:
+            node-version: 20
+            cache: 'npm'
+
+        - name: Install Dependencies
+          run: npm ci
+
+        - name: Static Type Check
+          run: npx tsc --noEmit
+
+        - name: Lint Code
+          run: npm run lint
+
+        - name: Execute Vitest Tests
+          run: npm run test:unit
+
+        - name: Build Application
+          run: npm run build
+  ```
+
+  2. Continuous Deployment & Secret Management:
+  Secrets (API keys, Supabase service keys, AWS tokens) are stored in repository encrypted secrets (`${{ secrets.PROD_API_KEY }}`) and injected into runner environments at execution time without appearing in commit histories.
+
+  3. Branch Protection Rules:
+  Production `main` branches enforce branch protection:
+  - Require status checks to pass before merging (`validate` job).
+  - Require pull request code reviews.
+  - Enforce linear git history and signed commits.
+
+  4. Deployment Strategies & Rollbacks:
+  Deployments tag Docker images with the commit SHA (`app:${{ github.sha }}`), enabling atomic blue-green traffic switching and instant rollback to previous healthy image tags if health checks fail.
+
+resources:
+  - title: GitHub Actions Official Documentation - Quickstart
+    url: https://docs.github.com/en/actions/quickstart
+    type: documentation
+    tag: start_here
+    why: The official guide to GitHub Actions workflow syntax, runners, triggers, and jobs.
+    order_index: 1
+  - title: GitHub Docs - Security Hardening for GitHub Actions
+    url: https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions
+    type: documentation
+    tag: reference
+    why: Security best practices for secrets management and third-party action pinning.
+    order_index: 2
+
+quiz_pool:
+  - question: "Why is 'npm ci' preferred over 'npm install' in automated CI/CD pipeline workflows?"
+    options:
+      - "npm ci strictly installs exact versions from package-lock.json without mutating the lockfile, ensuring deterministic builds"
+      - "npm ci downloads packages without internet access"
+      - "npm ci compiles JavaScript into C++"
+      - "npm ci only works on CSS files"
+    correct_index: 0
+    explanation: "npm ci guarantees deterministic, clean installations based on package-lock.json and fails if lockfile mismatches occur."
+  - question: "What is a 'Branch Protection Rule' in repository management?"
+    options:
+      - "A policy enforcing that all automated CI checks and code reviews must pass before pull requests can merge into protected branches"
+      - "A script that deletes stale Git branches"
+      - "An antivirus scan for Git commits"
+      - "A command that renames branches"
+    correct_index: 0
+    explanation: "Branch protection rules block direct unverified commits, ensuring all PRs pass automated tests before merging to main."
+  - question: "Where should sensitive production database credentials and API secret keys be configured for GitHub Actions workflows?"
+    options:
+      - "In GitHub Repository Encrypted Secrets, referenced via ${{ secrets.KEY_NAME }}"
+      - "Hardcoded directly in workflow YAML files"
+      - "Committed into public .env files"
+      - "Posted in pull request descriptions"
+    correct_index: 0
+    explanation: "Encrypted secrets store sensitive tokens securely and prevent accidental exposure in source control or job logs."
+  - question: "What does the 'actions/checkout@v4' action do in a workflow job?"
+    options:
+      - "Clones the repository code onto the virtual runner machine so subsequent steps can access project files"
+      - "Deploys code to production"
+      - "Purchases a domain name"
+      - "Runs unit tests"
+    correct_index: 0
+    explanation: "actions/checkout downloads the repository code to the runner workspace."
+  - question: "What is the difference between Continuous Integration (CI) and Continuous Deployment (CD)?"
+    options:
+      - "CI automates code building and testing on every commit, while CD automates deploying validated builds to target environments"
+      - "CI is for frontend and CD is for backend"
+      - "CI is written in Python and CD in TypeScript"
+      - "There is no difference"
+    correct_index: 0
+    explanation: "CI validates code quality through automated tests; CD delivers validated artifacts directly to production."
+  - question: "Why should container images built in CI/CD pipelines be tagged with git commit SHAs (e.g., app:commit_sha) rather than just 'latest'?"
+    options:
+      - "To provide immutable traceability between running deployments and source code, enabling instant rollbacks to known commits"
+      - "Because Docker disallows the latest tag"
+      - "To make image files 90% smaller"
+      - "To encrypt the container disk"
+    correct_index: 0
+    explanation: "Commit SHA tagging ensures reproducible, immutable artifact versioning and reliable rollback capabilities."
+  - question: "How can dependency caching optimize GitHub Actions workflow run durations?"
+    options:
+      - "By caching ~/.npm or node_modules across workflow runs, skipping redundant package downloads when package-lock.json is unchanged"
+      - "By skipping test execution"
+      - "By deleting old commits"
+      - "By compressing source files"
+    correct_index: 0
+    explanation: "Dependency caching preserves package manager caches between runs, slashing build execution times."
+  - question: "What triggers a GitHub Actions workflow defined with 'on: [pull_request]'?"
+    options:
+      - "Opening, synchronizing (pushing new commits), or reopening a pull request"
+      - "A user viewing the website in a browser"
+      - "A database query error"
+      - "A scheduled cron timer once per year"
+    correct_index: 0
+    explanation: "The pull_request event triggers workflow runs when PRs are opened or updated with new commits."

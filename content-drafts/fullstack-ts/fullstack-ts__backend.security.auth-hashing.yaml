@@ -1,0 +1,145 @@
+node_id: fullstack-ts__backend.security.auth-hashing
+name: Password Hashing & Cookie-Based Sessions
+title: Password Hashing & Cookie-Based Sessions
+track_id: fullstack-ts
+classification: required
+recommended_depth: implementation
+estimated_time_minutes: 90
+estimated_minutes: 90
+reviewed: true
+content_version: 1
+
+metadata:
+  reviewed: true
+  content_version: 1
+  generated_at: "2026-09-02T10:00:00Z"
+  generator_version: "gemini-1.5-pro"
+  prompt_version: "1.0.0"
+  model: "gemini-1.5-pro"
+
+one_sentence_definition: >-
+  Adaptive cryptographic hashing algorithms protect credentials at rest, while HttpOnly SameSite cookie sessions maintain secure server-side authentication state.
+
+why_it_matters: >-
+  Storing plaintext passwords or using outdated hash functions like MD5 or SHA-256 leaves user credentials vulnerable to hardware-accelerated rainbow table attacks. Salted adaptive hashing (Argon2id/bcrypt) and HttpOnly cookies prevent credential compromise and XSS session theft.
+
+quick_overview: >-
+  Authentication systems verify user identities through cryptographic credentials. Modern security standards mandate hashing passwords using memory-hard, computationally intensive algorithms like Argon2id or bcrypt. These algorithms use unique cryptographic salts per password and configurable cost parameters (work factors) to thwart offline GPU brute-force attacks. Stateful authentication manages login sessions via high-entropy session IDs stored in Redis or PostgreSQL and transmitted to browsers via secure, HttpOnly, SameSite cookies, mitigating Cross-Site Scripting (XSS) and Cross-Site Request Forgery (CSRF) vulnerabilities.
+
+deep_dive: >-
+  Implementing bulletproof password storage and stateful session authentication:
+
+  1. Adaptive Password Hashing:
+  Passwords must never be hashed with fast cryptographic hashes (e.g., SHA-256) which can compute billions of guesses per second on commodity GPUs. Adaptive algorithms incorporate:
+  - Cryptographic Salt: High-entropy random bytes generated per user to defeat precomputed rainbow tables.
+  - Work Factors: Configurable CPU, memory, and parallelism parameters (e.g., bcrypt cost $\ge 12$, Argon2id memory $\ge 64\text{MB}$).
+  ```ts
+  import * as argon2 from 'argon2';
+
+  export async function hashPassword(plainText: string): Promise<string> {
+    return argon2.hash(plainText, {
+      type: argon2.argon2id,
+      memoryCost: 2 ** 16, // 64 MB
+      timeCost: 3,
+      parallelism: 1,
+    });
+  }
+
+  export async function verifyPassword(plainText: string, hash: string): Promise<boolean> {
+    return argon2.verify(hash, plainText);
+  }
+  ```
+
+  2. Stateful Session Lifecycle:
+  - Generation: On login, the server generates a cryptographically random UUIDv4 or 32-byte hex token.
+  - Persistence: Stores `session_id -> { user_id, expires_at, created_at }` in Redis or PostgreSQL.
+  - Cookie Delivery:
+    ```ts
+    res.cookie('session_id', sessionId, {
+      httpOnly: true, // Prevents JavaScript document.cookie access (mitigates XSS)
+      secure: process.env.NODE_ENV === 'production', // Requires HTTPS
+      sameSite: 'lax', // Protects against cross-site request forgery (CSRF)
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+    ```
+  - Instant Revocation: Deleting the session key from the database instantly logs the user out across all client windows.
+
+resources:
+  - title: OWASP - Password Storage Cheat Sheet
+    url: https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html
+    type: article
+    tag: start_here
+    why: The industry standard guide for password hashing algorithms, salts, and work factors.
+    order_index: 1
+  - title: MDN Web Docs - Using HTTP Cookies
+    url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies
+    type: documentation
+    tag: reference
+    why: "Comprehensive documentation on cookie attributes: HttpOnly, Secure, SameSite."
+    order_index: 2
+
+quiz_pool:
+  - question: "Why must passwords be hashed using algorithms like Argon2id or bcrypt rather than fast hashes like SHA-256?"
+    options:
+      - "Argon2id and bcrypt are deliberately memory-hard and computationally slow, making offline GPU brute-force attacks infeasible"
+      - "SHA-256 cannot hash strings longer than 10 characters"
+      - "bcrypt compresses passwords to save disk space"
+      - "Node.js does not support SHA-256"
+    correct_index: 0
+    explanation: "Adaptive hashing algorithms consume configurable CPU and memory resources, neutralizing high-speed hardware brute-forcing."
+  - question: "What is the primary security advantage of the 'HttpOnly' cookie flag?"
+    options:
+      - "It prevents client-side JavaScript from accessing the cookie, protecting session tokens from theft via Cross-Site Scripting (XSS)"
+      - "It automatically encrypts the cookie on the client"
+      - "It removes the cookie expiration date"
+      - "It increases network bandwidth"
+    correct_index: 0
+    explanation: "HttpOnly prevents malicious scripts from reading document.cookie, stopping session hijacking in XSS attacks."
+  - question: "What does a cryptographic 'salt' accomplish in password hashing?"
+    options:
+      - "It ensures identical passwords produce completely different hashes, neutralizing precomputed rainbow table lookup attacks"
+      - "It encrypts the database connection"
+      - "It checks password complexity"
+      - "It compresses the hash string"
+    correct_index: 0
+    explanation: "A unique random salt per user prevents attackers from using rainbow tables to crack duplicate or common passwords in bulk."
+  - question: "What does the 'SameSite=Lax' cookie attribute protect against?"
+    options:
+      - "Cross-Site Request Forgery (CSRF) attacks"
+      - "SQL injection attacks"
+      - "Denial of Service attacks"
+      - "DNS spoofing"
+    correct_index: 0
+    explanation: "SameSite=Lax prevents cookies from being sent on cross-origin subrequests, mitigating CSRF exploitation."
+  - question: "Why is immediate session revocation straightforward in stateful database/Redis sessions?"
+    options:
+      - "Deleting the session record from the database immediately invalidates the session upon the next request"
+      - "The browser automatically closes"
+      - "The user password is changed"
+      - "The IP address is banned"
+    correct_index: 0
+    explanation: "Because the server checks the database/cache on each request, deleting the session record revokes access immediately."
+  - question: "What should the 'Secure' cookie attribute be set to in production web applications?"
+    options:
+      - "true (ensuring cookies are transmitted exclusively over encrypted HTTPS connections)"
+      - "false"
+      - "optional"
+      - "null"
+    correct_index: 0
+    explanation: "Setting Secure: true guarantees the browser never transmits the cookie over unencrypted plaintext HTTP."
+  - question: "What is an Argon2id 'memory cost' parameter?"
+    options:
+      - "The amount of RAM memory allocated to compute a single hash, defeating ASIC and GPU parallel cracking"
+      - "The price of cloud server RAM"
+      - "The length of the password string"
+      - "The size of the database table"
+    correct_index: 0
+    explanation: "Argon2id's memory hardness requires attackers to dedicate significant RAM per parallel cracking attempt, making GPU clusters ineffective."
+  - question: "Where should user passwords NEVER be logged or transmitted?"
+    options:
+      - "In plaintext server logs, error tracking tools (e.g. Sentry), or unencrypted HTTP query parameters"
+      - "In POST request bodies over HTTPS"
+      - "In password reset forms"
+      - "Inside cryptographic hash functions"
+    correct_index: 0
+    explanation: "Passwords must never appear in application logs, telemetry, or query strings where they could be logged by intermediaries."

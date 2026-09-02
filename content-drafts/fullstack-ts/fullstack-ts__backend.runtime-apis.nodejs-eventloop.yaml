@@ -1,0 +1,149 @@
+node_id: fullstack-ts__backend.runtime-apis.nodejs-eventloop
+name: Node.js Event Loop & Express Middleware
+title: Node.js Event Loop & Express Middleware
+track_id: fullstack-ts
+classification: required
+recommended_depth: implementation
+estimated_time_minutes: 120
+estimated_minutes: 120
+reviewed: true
+content_version: 1
+
+metadata:
+  reviewed: true
+  content_version: 1
+  generated_at: "2026-09-02T10:00:00Z"
+  generator_version: "gemini-1.5-pro"
+  prompt_version: "1.0.0"
+  model: "gemini-1.5-pro"
+
+one_sentence_definition: >-
+  Node.js executes asynchronous event-driven JavaScript via libuv, while Express coordinates composable middleware pipelines for HTTP request processing.
+
+why_it_matters: >-
+  Understanding the single-threaded event loop prevents server thread starvation and performance degradation under high concurrent request volumes. Express middleware chains structure logging, security headers, and request processing pipelines.
+
+quick_overview: >-
+  Node.js executes server-side JavaScript through the Google V8 engine coupled with libuv for non-blocking asynchronous I/O. Through its multi-phase event loop (timers, pending callbacks, poll, check, close), Node.js services thousands of concurrent network connections without allocating a thread per connection. Express.js builds upon Node's core http module, providing a minimalist web framework centered around composable middleware functions. Middleware intercept incoming requests, execute application logic, mutate request contexts, and pass control along the pipeline via next() or terminate by sending an HTTP response.
+
+deep_dive: >-
+  The Node.js runtime leverages an event-driven concurrency model to achieve high throughput:
+
+  1. The Event Loop Architecture:
+  While JavaScript executes on a single main thread, asynchronous I/O operations (file system, DNS, crypto, network sockets) are offloaded to libuv's thread pool or the operating system kernel:
+  - Timers: Executes callbacks scheduled by `setTimeout` and `setInterval`.
+  - Pending Callbacks: Executes deferred I/O callbacks.
+  - Poll: Retrieves new I/O events and executes their callbacks.
+  - Check: Executes `setImmediate` callbacks.
+  - Close Callbacks: Executes socket close handlers (`socket.on('close')`).
+  Crucially, `process.nextTick` and Promise microtasks execute immediately after the current synchronous operation finishes, prior to advancing to the next event loop phase.
+
+  2. Express Middleware Pipeline:
+  Express structures server logic through ordered middleware functions:
+  ```ts
+  import express, { Request, Response, NextFunction } from 'express';
+  import helmet from 'helmet';
+  import cors from 'cors';
+
+  const app = express();
+  app.use(helmet());
+  app.use(cors());
+  app.use(express.json({ limit: '1mb' }));
+
+  // Custom Authentication Middleware
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: 'Unauthorized' });
+    next();
+  });
+  ```
+
+  3. Global Error Handling Middleware:
+  Express designates 4-parameter functions as global error handlers:
+  ```ts
+  app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    console.error('[Unhandled Error]:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error', message: err.message });
+  });
+  ```
+  Placing error middleware at the very end of the pipeline ensures uncaught exceptions and rejected promises routed via `next(err)` are captured gracefully.
+
+resources:
+  - title: Node.js Documentation - The Node.js Event Loop
+    url: https://nodejs.org/en/learn/asynchronous-work/event-loop-timers-and-nexttick
+    type: documentation
+    tag: start_here
+    why: The official guide to the Node.js event loop phases, microtasks, and libuv.
+    order_index: 1
+  - title: Express.js Official Documentation - Using Middleware
+    url: https://expressjs.com/en/guide/using-middleware.html
+    type: documentation
+    tag: reference
+    why: Comprehensive patterns for authoring route, router, and error-handling middleware.
+    order_index: 2
+
+quiz_pool:
+  - question: "How does Node.js handle high concurrency using a single main thread?"
+    options:
+      - "By delegating asynchronous I/O operations to libuv and the OS kernel while the main thread processes event callbacks"
+      - "By launching a new OS process for every incoming HTTP request"
+      - "By compiling JavaScript into multithreaded binary code"
+      - "By disabling promise execution"
+    correct_index: 0
+    explanation: "Node.js relies on non-blocking I/O and libuv to offload operations, executing callbacks as events resolve."
+  - question: "How does Express identify a global error-handling middleware function?"
+    options:
+      - "By declaring exactly 4 parameters in the function signature: (err, req, res, next)"
+      - "By naming the function errorHandler"
+      - "By decorating the route with @Catch"
+      - "By returning false from the middleware"
+    correct_index: 0
+    explanation: "Express inspects function arity; functions with exactly 4 parameters are treated as error-handling middleware."
+  - question: "What is the consequence of forgetting to call next() or send a response in an Express middleware?"
+    options:
+      - "The client request hangs indefinitely until a network timeout occurs"
+      - "The server automatically redirects the user"
+      - "Express throws an immediate syntax error"
+      - "The database rolls back"
+    correct_index: 0
+    explanation: "Failing to terminate the response or call next() halts the middleware chain, leaving the client waiting."
+  - question: "When do Promise microtasks and process.nextTick callbacks execute in Node.js?"
+    options:
+      - "Immediately after the current synchronous call stack finishes, before the event loop advances to the next phase"
+      - "Only at the end of the entire event loop cycle"
+      - "Once per minute"
+      - "In a background worker thread"
+    correct_index: 0
+    explanation: "Microtasks have priority and drain immediately upon completion of current synchronous execution."
+  - question: "What is the primary function of the 'helmet' middleware package in Express?"
+    options:
+      - "It sets essential HTTP security headers (such as CSP, HSTS, and X-Content-Type-Options) to protect against common web attacks"
+      - "It compresses response bodies with Gzip"
+      - "It manages database transactions"
+      - "It compiles TypeScript on the fly"
+    correct_index: 0
+    explanation: "Helmet automatically configures crucial HTTP response security headers."
+  - question: "Which Node.js function schedules a callback to run during the Check phase of the event loop?"
+    options:
+      - "setImmediate()"
+      - "setTimeout()"
+      - "process.nextTick()"
+      - "queueMicrotask()"
+    correct_index: 0
+    explanation: "setImmediate callbacks are queued and executed specifically during the Check phase."
+  - question: "Why should synchronous CPU-intensive computations (e.g., large synchronous JSON parsing) be avoided on the main Node.js thread?"
+    options:
+      - "They block the single JavaScript execution thread, freezing the event loop for all concurrent HTTP requests"
+      - "They cause the CPU to overheat"
+      - "V8 limits function execution to 5 milliseconds"
+      - "Node.js only supports asynchronous math"
+    correct_index: 0
+    explanation: "Synchronous CPU work blocks the main thread, delaying all incoming requests and pending I/O callbacks."
+  - question: "What is the purpose of CORS middleware in Express?"
+    options:
+      - "To configure HTTP headers that dictate which external origins are allowed to make cross-origin requests to the API"
+      - "To encrypt database passwords"
+      - "To minify HTML responses"
+      - "To convert JSON payloads to XML"
+    correct_index: 0
+    explanation: "CORS headers control browser permissions for cross-origin API requests from foreign web domains."
