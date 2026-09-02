@@ -4,8 +4,9 @@ import { supabase } from '../../../lib/supabase';
 import { useAuth } from '../../auth/hooks/useAuth';
 import { NodeStatus } from '../../track/types/track.types';
 import { isNodeLocked } from '../../track/utils/progression';
-import { QuizAttemptResult, QuizLifecycleState, QuizQuestion, QuizSkillContext } from '../types/quiz.types';
+import { QuizAttemptResult, QuizLifecycleState, QuizQuestion, QuizSkillContext, QuestionReviewItem } from '../types/quiz.types';
 import { sampleQuestions } from '../utils/sampling';
+import { explanationsCatalog } from '../utils/explanationsCatalog';
 
 export interface UseQuizResult {
   state: QuizLifecycleState;
@@ -256,8 +257,39 @@ export function useQuiz(nodeId: string | undefined): UseQuizResult {
 
       if (rpcErr) throw rpcErr;
 
+      // Extract or construct review items
+      let reviewList: QuestionReviewItem[] = [];
+      if (data?.review && Array.isArray(data.review) && data.review.length === 5) {
+        reviewList = data.review;
+      } else {
+        reviewList = servedQuestions.map((q, idx) => {
+          const selectedIdx = answerIndices[idx] ?? 0;
+          const catEntry = explanationsCatalog[q.question_text.trim()];
+          const correctIdx = catEntry ? catEntry.correct_index : 0;
+          const explanation = catEntry ? catEntry.explanation : '';
+          return {
+            question_id: q.question_id,
+            question_text: q.question_text,
+            options: q.options,
+            selected_index: selectedIdx,
+            correct_index: correctIdx,
+            is_correct: selectedIdx === correctIdx,
+            explanation: explanation,
+          };
+        });
+      }
+
+      const finalResult: QuizAttemptResult = {
+        attempt_id: data.attempt_id,
+        score: data.score,
+        passed: data.passed,
+        status: data.status,
+        total_questions: data.total_questions || 5,
+        review: reviewList,
+      };
+
       if (isMounted.current) {
-        setResult(data as QuizAttemptResult);
+        setResult(finalResult);
         setState('result');
       }
     } catch (err: any) {

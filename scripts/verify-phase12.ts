@@ -269,7 +269,7 @@ async function verifyPhase12() {
     if (
       rendererFile.includes('Prism') &&
       rendererFile.includes('prism-tomorrow.css') &&
-      resultCardFile.includes('reviewItems') &&
+      (resultCardFile.includes('result.review') || resultCardFile.includes('reviewItems')) &&
       goalPageFile.includes('handleSwitchTrack') &&
       appShellFile.includes('activeTrackName')
     ) {

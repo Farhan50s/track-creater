@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { QuizAttemptResult, QuizSkillContext } from '../types/quiz.types';
 
@@ -10,12 +9,9 @@ interface QuizResultCardProps {
 
 export function QuizResultCard({ result, skillContext, onRetry }: QuizResultCardProps) {
   const isPassed = result.passed; // score >= 4
-  const [showReview, setShowReview] = useState(!isPassed); // Default open on fail, closed on pass
   const nextTargetUrl = skillContext.nextNodeId
     ? `/app/node/${encodeURIComponent(skillContext.nextNodeId)}`
     : `/app/track/${encodeURIComponent(skillContext.pillarId)}`;
-
-  const reviewItems = result.review || [];
 
   return (
     <div style={styles.card}>
@@ -95,85 +91,124 @@ export function QuizResultCard({ result, skillContext, onRetry }: QuizResultCard
         </>
       )}
 
-      {/* Post-Quiz Explanation Review Section */}
-      {reviewItems.length > 0 && (
-        <div style={styles.reviewWrapper}>
-          <button
-            type="button"
-            onClick={() => setShowReview((prev) => !prev)}
-            style={styles.reviewToggleBtn}
-          >
-            <span>{showReview ? '▼' : '►'} Question-by-Question Review & Explanations ({reviewItems.length})</span>
-            <span style={styles.reviewToggleBadge}>
-              {result.score} / 5 Correct
+      {/* Post-Quiz Question Review & Explanations */}
+      {result.review && result.review.length > 0 ? (
+        <div className="mt-8 border-t border-slate-800 pt-6 text-left" style={styles.reviewContainer}>
+          <div className="flex items-center justify-between mb-4" style={styles.reviewHeaderRow}>
+            <h3 className="text-lg font-semibold text-slate-100" style={styles.reviewHeading}>
+              Question Review & Explanations
+            </h3>
+            <span className="text-xs text-slate-400 bg-slate-800/60 px-2 py-1 rounded" style={styles.reviewBadge}>
+              {result.review.filter((r) => r.is_correct).length} of {result.review.length} Correct
             </span>
-          </button>
+          </div>
 
-          {showReview && (
-            <div style={styles.reviewList}>
-              {reviewItems.map((item, qIdx) => {
-                const isCorrect = item.is_correct;
-                return (
-                  <div key={item.question_id || qIdx} style={styles.reviewItemCard}>
-                    <div style={styles.reviewItemHeader}>
-                      <span style={isCorrect ? styles.qStatusCorrect : styles.qStatusIncorrect}>
-                        {isCorrect ? '✓ Correct' : '✗ Missed'}
-                      </span>
-                      <span style={styles.qNumber}>Question {qIdx + 1} of 5</span>
-                    </div>
+          <div className="space-y-6" style={styles.reviewList}>
+            {result.review.map((item, idx) => (
+              <div
+                key={item.question_id || idx}
+                className={`p-4 rounded-lg border ${
+                  item.is_correct
+                    ? 'bg-emerald-950/20 border-emerald-800/40'
+                    : 'bg-rose-950/20 border-rose-800/40'
+                }`}
+                style={{
+                  ...styles.reviewCard,
+                  borderColor: item.is_correct ? 'rgba(16, 185, 129, 0.35)' : 'rgba(244, 63, 94, 0.35)',
+                  backgroundColor: item.is_correct ? 'rgba(6, 78, 59, 0.18)' : 'rgba(136, 19, 55, 0.18)',
+                }}
+              >
+                <div className="flex items-start gap-2 mb-3" style={styles.qTitleRow}>
+                  <span
+                    className={`text-xs font-bold px-2 py-0.5 rounded mt-0.5 ${
+                      item.is_correct ? 'bg-emerald-800 text-emerald-100' : 'bg-rose-800 text-rose-100'
+                    }`}
+                    style={{
+                      ...styles.qTag,
+                      backgroundColor: item.is_correct ? '#065f46' : '#9f1239',
+                      color: item.is_correct ? '#d1fae5' : '#ffe4e6',
+                    }}
+                  >
+                    Q{idx + 1}
+                  </span>
+                  <p className="text-sm font-medium text-slate-200" style={styles.qText}>
+                    {item.question_text}
+                  </p>
+                </div>
 
-                    <p style={styles.reviewQuestionText}>{item.question_text}</p>
+                <div className="space-y-1.5 pl-6" style={styles.optionsList}>
+                  {item.options.map((opt, optIdx) => {
+                    const isSelected = item.selected_index === optIdx;
+                    const isCorrect = item.correct_index === optIdx;
 
-                    <div style={styles.reviewOptionsList}>
-                      {item.options.map((optText, optIdx) => {
-                        const isUserChoice = optIdx === item.selected_index;
-                        const isActualCorrect = optIdx === item.correct_index;
+                    let optionStyle = 'border-slate-800 bg-slate-900/40 text-slate-400';
+                    let badge = null;
+                    let inlineOptionStyle: React.CSSProperties = { ...styles.optionItemNeutral };
 
-                        let optStyle = styles.reviewOptionNeutral;
-                        let badgeText: string | null = null;
-                        let badgeStyle = styles.optBadgeNeutral;
+                    if (isCorrect) {
+                      optionStyle = 'border-emerald-500/60 bg-emerald-900/30 text-emerald-200 font-medium';
+                      badge = (
+                        <span className="text-xs text-emerald-400 font-semibold ml-auto" style={styles.correctBadge}>
+                          ✓ Correct Answer
+                        </span>
+                      );
+                      inlineOptionStyle = {
+                        ...styles.optionItemNeutral,
+                        borderColor: 'rgba(16, 185, 129, 0.6)',
+                        backgroundColor: 'rgba(6, 78, 59, 0.35)',
+                        color: '#a7f3d0',
+                        fontWeight: '600',
+                      };
+                    } else if (isSelected && !isCorrect) {
+                      optionStyle = 'border-rose-500/60 bg-rose-900/30 text-rose-200';
+                      badge = (
+                        <span className="text-xs text-rose-400 font-semibold ml-auto" style={styles.incorrectBadge}>
+                          ✗ Your Choice
+                        </span>
+                      );
+                      inlineOptionStyle = {
+                        ...styles.optionItemNeutral,
+                        borderColor: 'rgba(244, 63, 94, 0.6)',
+                        backgroundColor: 'rgba(136, 19, 55, 0.35)',
+                        color: '#fecdd3',
+                        fontWeight: '600',
+                      };
+                    }
 
-                        if (isUserChoice && isActualCorrect) {
-                          optStyle = styles.reviewOptionCorrect;
-                          badgeText = 'Your Choice (Correct)';
-                          badgeStyle = styles.optBadgeSuccess;
-                        } else if (isUserChoice && !isActualCorrect) {
-                          optStyle = styles.reviewOptionIncorrect;
-                          badgeText = 'Your Choice (Incorrect)';
-                          badgeStyle = styles.optBadgeDanger;
-                        } else if (!isUserChoice && isActualCorrect) {
-                          optStyle = styles.reviewOptionCorrectAnswer;
-                          badgeText = 'Correct Answer';
-                          badgeStyle = styles.optBadgeSuccess;
-                        }
-
-                        return (
-                          <div key={optIdx} style={optStyle}>
-                            <div style={styles.optionContentRow}>
-                              <span style={styles.optionLetter}>
-                                {String.fromCharCode(65 + optIdx)}.
-                              </span>
-                              <span style={styles.optionText}>{optText}</span>
-                            </div>
-                            {badgeText && (
-                              <span style={badgeStyle}>{badgeText}</span>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                    {item.explanation && (
-                      <div style={styles.explanationBox}>
-                        <div style={styles.explanationHeader}>💡 Explanation:</div>
-                        <div style={styles.explanationText}>{item.explanation}</div>
+                    return (
+                      <div
+                        key={optIdx}
+                        className={`flex items-center text-xs p-2.5 rounded border ${optionStyle}`}
+                        style={inlineOptionStyle}
+                      >
+                        <span style={styles.optionLabel}>{opt}</span>
+                        {badge}
                       </div>
-                    )}
+                    );
+                  })}
+                </div>
+
+                {item.explanation && (
+                  <div
+                    className="mt-3 ml-6 p-3 rounded bg-slate-900/80 border border-slate-800 text-xs text-slate-300"
+                    style={styles.explanationBox}
+                  >
+                    <span className="font-semibold text-amber-400" style={styles.explanationPrefix}>
+                      💡 Explanation:{' '}
+                    </span>
+                    <span style={styles.explanationContent}>{item.explanation}</span>
                   </div>
-                );
-              })}
-            </div>
-          )}
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div
+          className="mt-6 p-3 bg-amber-950/30 border border-amber-800/50 rounded text-xs text-amber-300"
+          style={styles.noReviewFallback}
+        >
+          Review data not available for this attempt.
         </div>
       )}
     </div>
@@ -362,192 +397,131 @@ const styles: Record<string, React.CSSProperties> = {
     transition: 'all 0.2s ease',
   },
 
-  // Review Sheet Styles
-  reviewWrapper: {
+  // Review Styles
+  reviewContainer: {
     width: '100%',
     borderTop: '1px solid var(--border-color)',
     paddingTop: '24px',
     textAlign: 'left',
   },
-  reviewToggleBtn: {
-    width: '100%',
+  reviewHeaderRow: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '12px 16px',
-    backgroundColor: 'rgba(255, 255, 255, 0.03)',
-    border: '1px solid var(--border-color)',
-    borderRadius: 'var(--radius-md)',
-    color: 'var(--text-primary)',
-    fontWeight: '700',
-    fontSize: '15px',
-    cursor: 'pointer',
-    textAlign: 'left',
+    marginBottom: '16px',
   },
-  reviewToggleBadge: {
-    fontSize: '13px',
+  reviewHeading: {
+    fontSize: '18px',
+    fontWeight: '700',
+    color: 'var(--text-primary)',
+    margin: 0,
+  },
+  reviewBadge: {
+    fontSize: '12px',
     fontWeight: '600',
-    color: 'var(--text-muted)',
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    padding: '2px 8px',
-    borderRadius: '9999px',
+    color: 'var(--text-secondary)',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    padding: '4px 10px',
+    borderRadius: 'var(--radius-sm)',
   },
   reviewList: {
     display: 'flex',
     flexDirection: 'column',
     gap: '20px',
-    marginTop: '16px',
   },
-  reviewItemCard: {
+  reviewCard: {
+    padding: '18px',
+    borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--border-color)',
     display: 'flex',
     flexDirection: 'column',
     gap: '12px',
-    padding: '18px 20px',
-    backgroundColor: 'rgba(255, 255, 255, 0.02)',
-    border: '1px solid var(--border-color)',
-    borderRadius: 'var(--radius-md)',
   },
-  reviewItemHeader: {
+  qTitleRow: {
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: '10px',
   },
-  qStatusCorrect: {
+  qTag: {
     fontSize: '12px',
     fontWeight: '700',
-    color: '#10b981',
-    backgroundColor: 'rgba(16, 185, 129, 0.15)',
     padding: '2px 8px',
     borderRadius: '4px',
-    textTransform: 'uppercase',
+    flexShrink: 0,
+    marginTop: '2px',
   },
-  qStatusIncorrect: {
-    fontSize: '12px',
-    fontWeight: '700',
-    color: '#ef4444',
-    backgroundColor: 'rgba(239, 68, 68, 0.15)',
-    padding: '2px 8px',
-    borderRadius: '4px',
-    textTransform: 'uppercase',
-  },
-  qNumber: {
-    fontSize: '12px',
-    color: 'var(--text-muted)',
-    fontWeight: '600',
-  },
-  reviewQuestionText: {
-    fontSize: '15px',
+  qText: {
+    fontSize: '14.5px',
     fontWeight: '600',
     color: 'var(--text-primary)',
     lineHeight: '1.5',
-    margin: '4px 0 8px 0',
+    margin: 0,
+    textAlign: 'left',
   },
-  reviewOptionsList: {
+  optionsList: {
     display: 'flex',
     flexDirection: 'column',
     gap: '8px',
+    paddingLeft: '28px',
   },
-  reviewOptionNeutral: {
+  optionItemNeutral: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    fontSize: '13px',
     padding: '10px 14px',
     borderRadius: 'var(--radius-sm)',
-    backgroundColor: 'rgba(255, 255, 255, 0.02)',
-    border: '1px solid rgba(255, 255, 255, 0.08)',
-    fontSize: '14px',
+    border: '1px solid var(--border-color)',
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
     color: 'var(--text-secondary)',
   },
-  reviewOptionCorrect: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: '10px 14px',
-    borderRadius: 'var(--radius-sm)',
-    backgroundColor: 'rgba(16, 185, 129, 0.12)',
-    border: '1px solid #10b981',
-    fontSize: '14px',
-    color: '#10b981',
-    fontWeight: '600',
-  },
-  reviewOptionIncorrect: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: '10px 14px',
-    borderRadius: 'var(--radius-sm)',
-    backgroundColor: 'rgba(239, 68, 68, 0.12)',
-    border: '1px solid #ef4444',
-    fontSize: '14px',
-    color: '#ef4444',
-    fontWeight: '600',
-  },
-  reviewOptionCorrectAnswer: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: '10px 14px',
-    borderRadius: 'var(--radius-sm)',
-    backgroundColor: 'rgba(16, 185, 129, 0.06)',
-    border: '1px dashed #10b981',
-    fontSize: '14px',
-    color: '#10b981',
-    fontWeight: '500',
-  },
-  optionContentRow: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    gap: '8px',
-  },
-  optionLetter: {
-    fontWeight: '700',
-    color: 'inherit',
-    opacity: 0.8,
-  },
-  optionText: {
-    color: 'inherit',
+  optionLabel: {
+    textAlign: 'left',
     lineHeight: '1.4',
   },
-  optBadgeNeutral: {
-    fontSize: '11px',
-    color: 'var(--text-muted)',
-  },
-  optBadgeSuccess: {
-    fontSize: '11px',
+  correctBadge: {
+    fontSize: '12px',
     fontWeight: '700',
-    color: '#10b981',
-    backgroundColor: 'rgba(16, 185, 129, 0.2)',
-    padding: '2px 6px',
-    borderRadius: '4px',
+    color: '#34d399',
+    marginLeft: 'auto',
+    paddingLeft: '8px',
     whiteSpace: 'nowrap',
-    marginLeft: '8px',
   },
-  optBadgeDanger: {
-    fontSize: '11px',
+  incorrectBadge: {
+    fontSize: '12px',
     fontWeight: '700',
-    color: '#ef4444',
-    backgroundColor: 'rgba(239, 68, 68, 0.2)',
-    padding: '2px 6px',
-    borderRadius: '4px',
+    color: '#fb7185',
+    marginLeft: 'auto',
+    paddingLeft: '8px',
     whiteSpace: 'nowrap',
-    marginLeft: '8px',
   },
   explanationBox: {
-    marginTop: '6px',
+    marginTop: '4px',
+    marginLeft: '28px',
     padding: '12px 14px',
-    backgroundColor: 'rgba(15, 23, 42, 0.7)',
-    border: '1px solid rgba(51, 65, 85, 0.6)',
     borderRadius: 'var(--radius-sm)',
+    backgroundColor: 'rgba(15, 23, 42, 0.75)',
+    border: '1px solid rgba(51, 65, 85, 0.7)',
     fontSize: '13px',
     color: '#cbd5e1',
+    textAlign: 'left',
     lineHeight: '1.5',
   },
-  explanationHeader: {
+  explanationPrefix: {
     fontWeight: '700',
-    color: '#38bdf8',
-    marginBottom: '4px',
+    color: '#fbbf24',
   },
-  explanationText: {
-    color: '#94a3b8',
+  explanationContent: {
+    color: '#cbd5e1',
+  },
+  noReviewFallback: {
+    marginTop: '20px',
+    padding: '12px 16px',
+    backgroundColor: 'rgba(69, 26, 3, 0.3)',
+    border: '1px solid rgba(146, 64, 14, 0.5)',
+    borderRadius: 'var(--radius-sm)',
+    fontSize: '13px',
+    color: '#fcd34d',
+    width: '100%',
   },
 };
