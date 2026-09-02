@@ -7,6 +7,7 @@ import { ContentToggle } from '../components/ContentToggle';
 import { PrerequisitesList } from '../components/PrerequisitesList';
 import { ResourceSection } from '../components/ResourceSection';
 import { QuizActionButton } from '../components/QuizActionButton';
+import { ExplorerBreadcrumb } from '../../../components/ExplorerBreadcrumb';
 import { LoadingFallback } from '../../../components/LoadingFallback';
 
 export function SkillDetailPage() {
@@ -46,30 +47,16 @@ export function SkillDetailPage() {
 
   return (
     <div style={styles.container}>
-      {/* 1. Breadcrumbs */}
-      <nav aria-label="Breadcrumb" style={styles.breadcrumbNav}>
-        <ol style={styles.breadcrumbList}>
-          <li style={styles.breadcrumbItem}>
-            <Link to="/app/track" style={styles.breadcrumbLink}>
-              Track Overview
-            </Link>
-          </li>
-          <li style={styles.breadcrumbSeparator} aria-hidden="true">
-            /
-          </li>
-          <li style={styles.breadcrumbItem}>
-            <Link to={`/app/track/${encodeURIComponent(node.pillar_id)}`} style={styles.breadcrumbLink}>
-              {node.pillar_name || 'Pillar'}
-            </Link>
-          </li>
-          <li style={styles.breadcrumbSeparator} aria-hidden="true">
-            /
-          </li>
-          <li style={{ ...styles.breadcrumbItem, ...styles.breadcrumbCurrent }} aria-current="page">
-            {node.name}
-          </li>
-        </ol>
-      </nav>
+      {/* 1. Level 1–4 Hierarchical Explorer Breadcrumbs */}
+      <ExplorerBreadcrumb
+        pillarId={node.pillar_id}
+        pillarName={node.pillar_name}
+        topicName={node.topic_name}
+        subtopicName={node.subtopic_name}
+        nodeId={node.node_id}
+        nodeName={node.name}
+        currentPageType="skill"
+      />
 
       {/* 2. Skill Header */}
       <SkillHeader

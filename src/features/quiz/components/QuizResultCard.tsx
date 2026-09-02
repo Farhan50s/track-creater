@@ -13,6 +13,9 @@ export function QuizResultCard({ result, skillContext, onRetry }: QuizResultCard
     ? `/app/node/${encodeURIComponent(skillContext.nextNodeId)}`
     : `/app/track/${encodeURIComponent(skillContext.pillarId)}`;
 
+  const reviewItems = result.review || [];
+  const correctCount = reviewItems.filter((r) => r.is_correct).length;
+
   return (
     <div style={styles.card}>
       {isPassed ? (
@@ -65,7 +68,7 @@ export function QuizResultCard({ result, skillContext, onRetry }: QuizResultCard
             <span style={styles.failIcon}>💡</span>
             <h1 style={styles.failedTitle}>Keep Learning</h1>
             <p style={styles.failedSubtitle}>
-              You scored <strong>{result.score} / 5</strong>. A score of 4 or 5 is required to earn completion. Review the material and try again—retries are unlimited!
+              You scored <strong>{result.score} / 5</strong>. A score of 4 or 5 is required to earn completion. Review guided cues below—correct answers remain locked until mastery!
             </p>
           </div>
 
@@ -91,128 +94,187 @@ export function QuizResultCard({ result, skillContext, onRetry }: QuizResultCard
         </>
       )}
 
-      {/* Post-Quiz Question Review & Explanations */}
-      {result.review && result.review.length > 0 ? (
-        <div className="mt-8 border-t border-slate-800 pt-6 text-left" style={styles.reviewContainer}>
-          <div className="flex items-center justify-between mb-4" style={styles.reviewHeaderRow}>
-            <h3 className="text-lg font-semibold text-slate-100" style={styles.reviewHeading}>
-              Question Review & Explanations
-            </h3>
-            <span className="text-xs text-slate-400 bg-slate-800/60 px-2 py-1 rounded" style={styles.reviewBadge}>
-              {result.review.filter((r) => r.is_correct).length} of {result.review.length} Correct
+      {/* Review Section */}
+      {reviewItems.length > 0 ? (
+        <div style={styles.reviewContainer}>
+          <div style={styles.reviewHeaderRow}>
+            <div>
+              <h3 style={styles.reviewHeading}>
+                {isPassed ? 'Question Review & Explanations' : 'Guided Remediation Review'}
+              </h3>
+              <p style={styles.reviewSubhead}>
+                {isPassed
+                  ? 'All explanation cards and answer keys unlocked.'
+                  : 'Answers are hidden to foster active recall. Review guided cues before retrying.'}
+              </p>
+            </div>
+            <span style={styles.reviewBadge}>
+              {correctCount} of {reviewItems.length} Correct
             </span>
           </div>
 
-          <div className="space-y-6" style={styles.reviewList}>
-            {result.review.map((item, idx) => (
-              <div
-                key={item.question_id || idx}
-                className={`p-4 rounded-lg border ${
-                  item.is_correct
-                    ? 'bg-emerald-950/20 border-emerald-800/40'
-                    : 'bg-rose-950/20 border-rose-800/40'
-                }`}
-                style={{
-                  ...styles.reviewCard,
-                  borderColor: item.is_correct ? 'rgba(16, 185, 129, 0.35)' : 'rgba(244, 63, 94, 0.35)',
-                  backgroundColor: item.is_correct ? 'rgba(6, 78, 59, 0.18)' : 'rgba(136, 19, 55, 0.18)',
-                }}
-              >
-                <div className="flex items-start gap-2 mb-3" style={styles.qTitleRow}>
-                  <span
-                    className={`text-xs font-bold px-2 py-0.5 rounded mt-0.5 ${
-                      item.is_correct ? 'bg-emerald-800 text-emerald-100' : 'bg-rose-800 text-rose-100'
-                    }`}
-                    style={{
-                      ...styles.qTag,
-                      backgroundColor: item.is_correct ? '#065f46' : '#9f1239',
-                      color: item.is_correct ? '#d1fae5' : '#ffe4e6',
-                    }}
-                  >
-                    Q{idx + 1}
-                  </span>
-                  <p className="text-sm font-medium text-slate-200" style={styles.qText}>
-                    {item.question_text}
-                  </p>
-                </div>
+          <div style={styles.reviewList}>
+            {reviewItems.map((item, idx) => {
+              const isItemCorrect = item.is_correct;
 
-                <div className="space-y-1.5 pl-6" style={styles.optionsList}>
-                  {item.options.map((opt, optIdx) => {
-                    const isSelected = item.selected_index === optIdx;
-                    const isCorrect = item.correct_index === optIdx;
-
-                    let optionStyle = 'border-slate-800 bg-slate-900/40 text-slate-400';
-                    let badge = null;
-                    let inlineOptionStyle: React.CSSProperties = { ...styles.optionItemNeutral };
-
-                    if (isCorrect) {
-                      optionStyle = 'border-emerald-500/60 bg-emerald-900/30 text-emerald-200 font-medium';
-                      badge = (
-                        <span className="text-xs text-emerald-400 font-semibold ml-auto" style={styles.correctBadge}>
-                          ✓ Correct Answer
-                        </span>
-                      );
-                      inlineOptionStyle = {
-                        ...styles.optionItemNeutral,
-                        borderColor: 'rgba(16, 185, 129, 0.6)',
-                        backgroundColor: 'rgba(6, 78, 59, 0.35)',
-                        color: '#a7f3d0',
-                        fontWeight: '600',
-                      };
-                    } else if (isSelected && !isCorrect) {
-                      optionStyle = 'border-rose-500/60 bg-rose-900/30 text-rose-200';
-                      badge = (
-                        <span className="text-xs text-rose-400 font-semibold ml-auto" style={styles.incorrectBadge}>
-                          ✗ Your Choice
-                        </span>
-                      );
-                      inlineOptionStyle = {
-                        ...styles.optionItemNeutral,
-                        borderColor: 'rgba(244, 63, 94, 0.6)',
-                        backgroundColor: 'rgba(136, 19, 55, 0.35)',
-                        color: '#fecdd3',
-                        fontWeight: '600',
-                      };
-                    }
-
-                    return (
-                      <div
-                        key={optIdx}
-                        className={`flex items-center text-xs p-2.5 rounded border ${optionStyle}`}
-                        style={inlineOptionStyle}
-                      >
-                        <span style={styles.optionLabel}>{opt}</span>
-                        {badge}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {item.explanation && (
-                  <div
-                    className="mt-3 ml-6 p-3 rounded bg-slate-900/80 border border-slate-800 text-xs text-slate-300"
-                    style={styles.explanationBox}
-                  >
-                    <span className="font-semibold text-amber-400" style={styles.explanationPrefix}>
-                      💡 Explanation:{' '}
+              return (
+                <div
+                  key={item.question_id || idx}
+                  style={{
+                    ...styles.reviewCard,
+                    borderColor: isItemCorrect
+                      ? 'rgba(16, 185, 129, 0.35)'
+                      : 'rgba(244, 63, 94, 0.35)',
+                    backgroundColor: isItemCorrect
+                      ? 'rgba(6, 78, 59, 0.18)'
+                      : 'rgba(136, 19, 55, 0.18)',
+                  }}
+                >
+                  <div style={styles.qTitleRow}>
+                    <span
+                      style={{
+                        ...styles.qTag,
+                        backgroundColor: isItemCorrect ? '#065f46' : '#9f1239',
+                        color: isItemCorrect ? '#d1fae5' : '#ffe4e6',
+                      }}
+                    >
+                      Q{idx + 1}
                     </span>
-                    <span style={styles.explanationContent}>{item.explanation}</span>
+                    <p style={styles.qText}>{item.question_text}</p>
                   </div>
-                )}
-              </div>
-            ))}
+
+                  <div style={styles.optionsList}>
+                    {item.options.map((opt, optIdx) => {
+                      const isUserChoice = item.selected_index === optIdx;
+                      const isActualCorrect = item.correct_index === optIdx;
+
+                      let badge = null;
+                      let optionItemStyle = { ...styles.optionItemNeutral };
+
+                      if (isPassed) {
+                        // PASSED STATE: Full Answer Key Unlocked
+                        if (isActualCorrect) {
+                          badge = (
+                            <span style={styles.correctBadge}>✓ Correct Answer</span>
+                          );
+                          optionItemStyle = {
+                            ...styles.optionItemNeutral,
+                            borderColor: 'rgba(16, 185, 129, 0.6)',
+                            backgroundColor: 'rgba(6, 78, 59, 0.35)',
+                            color: '#a7f3d0',
+                            fontWeight: '600',
+                          };
+                        } else if (isUserChoice && !isActualCorrect) {
+                          badge = (
+                            <span style={styles.incorrectBadge}>✗ Your Choice</span>
+                          );
+                          optionItemStyle = {
+                            ...styles.optionItemNeutral,
+                            borderColor: 'rgba(244, 63, 94, 0.6)',
+                            backgroundColor: 'rgba(136, 19, 55, 0.35)',
+                            color: '#fecdd3',
+                            fontWeight: '600',
+                          };
+                        }
+                      } else {
+                        // FAILED / REMEDIATION STATE: No Answer Spoiling
+                        if (isItemCorrect && isUserChoice) {
+                          badge = (
+                            <span style={styles.correctBadge}>✓ Correct</span>
+                          );
+                          optionItemStyle = {
+                            ...styles.optionItemNeutral,
+                            borderColor: 'rgba(16, 185, 129, 0.6)',
+                            backgroundColor: 'rgba(6, 78, 59, 0.35)',
+                            color: '#a7f3d0',
+                            fontWeight: '600',
+                          };
+                        } else if (!isItemCorrect && isUserChoice) {
+                          // Flag ONLY the user's incorrect choice in rose
+                          badge = (
+                            <span style={styles.incorrectBadge}>✗ Your Choice</span>
+                          );
+                          optionItemStyle = {
+                            ...styles.optionItemNeutral,
+                            borderColor: 'rgba(244, 63, 94, 0.6)',
+                            backgroundColor: 'rgba(136, 19, 55, 0.35)',
+                            color: '#fecdd3',
+                            fontWeight: '600',
+                          };
+                        }
+                        // Other options remain completely neutral with NO green badge!
+                      }
+
+                      return (
+                        <div key={optIdx} style={optionItemStyle}>
+                          <span style={styles.optionLabel}>{opt}</span>
+                          {badge}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Feedback / Remediation Box */}
+                  {isPassed ? (
+                    /* UNLOCKED FULL EXPLANATION */
+                    item.explanation && (
+                      <div style={styles.explanationBox}>
+                        <span style={styles.explanationPrefix}>💡 Explanation: </span>
+                        <span style={styles.explanationContent}>{item.explanation}</span>
+                      </div>
+                    )
+                  ) : (
+                    /* GUIDED REMEDIATION BOX (NO SPOILERS) */
+                    !isItemCorrect && (
+                      <div style={styles.remediationBox}>
+                        <div style={styles.remediationHeader}>
+                          <span style={styles.remediationIcon}>🔍</span>
+                          <span style={styles.remediationTitle}>
+                            Concept to Review:{' '}
+                            <strong style={styles.remediationConcept}>
+                              {extractConceptHint(item.question_text, skillContext.name)}
+                            </strong>
+                          </span>
+                        </div>
+                        <p style={styles.remediationDescription}>
+                          Revisit the definitions, code examples, and architecture guidelines in the lesson before re-attempting this checkpoint.
+                        </p>
+                        <div style={styles.remediationActionRow}>
+                          <Link
+                            to={`/app/node/${encodeURIComponent(skillContext.nodeId)}`}
+                            style={styles.remediationLink}
+                          >
+                            Jump to Lesson Section →
+                          </Link>
+                        </div>
+                      </div>
+                    )
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       ) : (
-        <div
-          className="mt-6 p-3 bg-amber-950/30 border border-amber-800/50 rounded text-xs text-amber-300"
-          style={styles.noReviewFallback}
-        >
+        <div style={styles.noReviewFallback}>
           Review data not available for this attempt.
         </div>
       )}
     </div>
   );
+}
+
+function extractConceptHint(questionText: string, skillName: string): string {
+  const clean = questionText.trim();
+  // Remove common question prefixes
+  const stripped = clean
+    .replace(/^(which of the following|what is the primary|what is the purpose of|how does|why is|what does|in|when using)\s+/i, '')
+    .replace(/\?$/, '');
+
+  if (stripped.length > 0 && stripped.length < 80) {
+    return stripped.charAt(0).toUpperCase() + stripped.slice(1);
+  }
+  return `${skillName} Core Principles`;
 }
 
 const styles: Record<string, React.CSSProperties> = {
@@ -406,15 +468,22 @@ const styles: Record<string, React.CSSProperties> = {
   },
   reviewHeaderRow: {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
     marginBottom: '16px',
+    gap: '12px',
+    flexWrap: 'wrap',
   },
   reviewHeading: {
     fontSize: '18px',
     fontWeight: '700',
     color: 'var(--text-primary)',
     margin: 0,
+  },
+  reviewSubhead: {
+    fontSize: '13px',
+    color: 'var(--text-secondary)',
+    margin: '4px 0 0 0',
   },
   reviewBadge: {
     fontSize: '12px',
@@ -423,6 +492,7 @@ const styles: Record<string, React.CSSProperties> = {
     backgroundColor: 'rgba(255, 255, 255, 0.08)',
     padding: '4px 10px',
     borderRadius: 'var(--radius-sm)',
+    whiteSpace: 'nowrap',
   },
   reviewList: {
     display: 'flex',
@@ -495,6 +565,8 @@ const styles: Record<string, React.CSSProperties> = {
     paddingLeft: '8px',
     whiteSpace: 'nowrap',
   },
+
+  // Explanation Box (Passed state)
   explanationBox: {
     marginTop: '4px',
     marginLeft: '28px',
@@ -514,6 +586,58 @@ const styles: Record<string, React.CSSProperties> = {
   explanationContent: {
     color: '#cbd5e1',
   },
+
+  // Remediation Guide Box (Failed state)
+  remediationBox: {
+    marginTop: '4px',
+    marginLeft: '28px',
+    padding: '14px 16px',
+    borderRadius: 'var(--radius-sm)',
+    backgroundColor: 'rgba(30, 41, 59, 0.7)',
+    border: '1px solid rgba(71, 85, 105, 0.6)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+    textAlign: 'left',
+  },
+  remediationHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    fontSize: '13px',
+  },
+  remediationIcon: {
+    fontSize: '14px',
+  },
+  remediationTitle: {
+    color: '#94a3b8',
+  },
+  remediationConcept: {
+    color: '#38bdf8',
+    fontWeight: '700',
+  },
+  remediationDescription: {
+    fontSize: '12.5px',
+    color: '#cbd5e1',
+    lineHeight: '1.4',
+    margin: 0,
+  },
+  remediationActionRow: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    marginTop: '2px',
+  },
+  remediationLink: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '4px',
+    fontSize: '12.5px',
+    fontWeight: '700',
+    color: 'var(--accent-primary)',
+    textDecoration: 'none',
+    transition: 'all 0.15s ease',
+  },
+
   noReviewFallback: {
     marginTop: '20px',
     padding: '12px 16px',

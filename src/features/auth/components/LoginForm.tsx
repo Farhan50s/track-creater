@@ -66,6 +66,39 @@ export function LoginForm() {
     }
   };
 
+  const handleDevQuickLogin = async (devEmail?: string, devPassword?: string) => {
+    const targetEmail = devEmail || import.meta.env.VITE_DEV_USER_EMAIL || 'test@example.com';
+    const targetPassword = devPassword || import.meta.env.VITE_DEV_USER_PASSWORD || 'password123';
+
+    setEmail(targetEmail);
+    setPassword(targetPassword);
+    setServerError(null);
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await signIn(targetEmail.trim(), targetPassword);
+
+      if (error) {
+        setServerError(error.message || 'Dev quick login failed. Please verify the test user exists.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Safe navigation after login
+      const requestedRedirect = searchParams.get('redirectTo');
+      if (requestedRedirect) {
+        navigate(getSafeRedirectPath(requestedRedirect, '/app'), { replace: true });
+      } else if (!hasActiveTrack) {
+        navigate('/onboarding/goal', { replace: true });
+      } else {
+        navigate('/app', { replace: true });
+      }
+    } catch (err: any) {
+      setServerError('An unexpected error occurred during dev quick sign in.');
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <AuthLayout
       title="Welcome Back"
@@ -158,6 +191,23 @@ export function LoginForm() {
         >
           {isSubmitting ? 'Signing in...' : 'Sign In'}
         </button>
+
+        {import.meta.env.DEV && (
+          <div style={styles.devSection}>
+            <button
+              type="button"
+              disabled={isSubmitting}
+              onClick={async () => {
+                const devEmail = import.meta.env.VITE_DEV_USER_EMAIL || 'test@example.com';
+                const devPassword = import.meta.env.VITE_DEV_USER_PASSWORD || 'password123';
+                await handleDevQuickLogin(devEmail, devPassword);
+              }}
+              style={styles.devButton}
+            >
+              ⚡ Dev Quick Login (1-Click)
+            </button>
+          </div>
+        )}
       </form>
     </AuthLayout>
   );
@@ -224,5 +274,26 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 'var(--radius-md)',
     marginTop: '8px',
     transition: 'background-color 0.15s ease',
+  },
+  devSection: {
+    marginTop: '8px',
+    paddingTop: '16px',
+    borderTop: '1px solid var(--border-color)',
+  },
+  devButton: {
+    width: '100%',
+    padding: '10px 14px',
+    fontSize: '13px',
+    fontWeight: '600',
+    color: '#fcd34d',
+    backgroundColor: 'rgba(245, 158, 11, 0.12)',
+    border: '1px solid rgba(245, 158, 11, 0.35)',
+    borderRadius: 'var(--radius-md)',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+    transition: 'all 0.15s ease',
   },
 };

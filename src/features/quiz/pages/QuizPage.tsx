@@ -3,6 +3,7 @@ import { useQuiz } from '../hooks/useQuiz';
 import { QuizStartCard } from '../components/QuizStartCard';
 import { QuizQuestionCard } from '../components/QuizQuestionCard';
 import { QuizResultCard } from '../components/QuizResultCard';
+import { ExplorerBreadcrumb } from '../../../components/ExplorerBreadcrumb';
 import { LoadingFallback } from '../../../components/LoadingFallback';
 
 export function QuizPage() {
@@ -47,44 +48,16 @@ export function QuizPage() {
 
   return (
     <div style={styles.container}>
-      {/* Breadcrumbs */}
-      <nav aria-label="Breadcrumb" style={styles.breadcrumbNav}>
-        <ol style={styles.breadcrumbList}>
-          <li style={styles.breadcrumbItem}>
-            <Link to="/app/track" style={styles.breadcrumbLink}>
-              Track Overview
-            </Link>
-          </li>
-          <li style={styles.breadcrumbSeparator} aria-hidden="true">
-            /
-          </li>
-          <li style={styles.breadcrumbItem}>
-            <Link
-              to={`/app/track/${encodeURIComponent(skillContext.pillarId)}`}
-              style={styles.breadcrumbLink}
-            >
-              {skillContext.pillarName || 'Pillar'}
-            </Link>
-          </li>
-          <li style={styles.breadcrumbSeparator} aria-hidden="true">
-            /
-          </li>
-          <li style={styles.breadcrumbItem}>
-            <Link
-              to={`/app/node/${encodeURIComponent(skillContext.nodeId)}`}
-              style={styles.breadcrumbLink}
-            >
-              {skillContext.name}
-            </Link>
-          </li>
-          <li style={styles.breadcrumbSeparator} aria-hidden="true">
-            /
-          </li>
-          <li style={{ ...styles.breadcrumbItem, ...styles.breadcrumbCurrent }} aria-current="page">
-            Quiz Checkpoint
-          </li>
-        </ol>
-      </nav>
+      {/* 1. Level 1–4 Hierarchical Explorer Breadcrumbs */}
+      <ExplorerBreadcrumb
+        pillarId={skillContext.pillarId}
+        pillarName={skillContext.pillarName}
+        topicName={skillContext.topicName}
+        subtopicName={skillContext.subtopicName}
+        nodeId={skillContext.nodeId}
+        nodeName={skillContext.name}
+        currentPageType="quiz"
+      />
 
       {/* Content based on lifecycle state */}
       {state === 'idle' && (

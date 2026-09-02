@@ -117,12 +117,19 @@ export function useQuiz(nodeId: string | undefined): UseQuizResult {
       const nodeAny = nodeRes.data as any;
       let pillarId = '';
       let pillarName = '';
+      let topicName = '';
+      let subtopicName: string | null = null;
+
       if (nodeAny.subtopics?.topics?.pillars) {
         pillarId = nodeAny.subtopics.topics.pillars.pillar_id;
         pillarName = nodeAny.subtopics.topics.pillars.name;
+        topicName = nodeAny.subtopics.topics.name;
+        subtopicName = nodeAny.subtopics.name || null;
       } else if (nodeAny.topics?.pillars) {
         pillarId = nodeAny.topics.pillars.pillar_id;
         pillarName = nodeAny.topics.pillars.name;
+        topicName = nodeAny.topics.name;
+        subtopicName = null;
       }
 
       // 2. Fetch question pool (ZERO correct_index leak: selecting only public question text and options)
@@ -188,6 +195,8 @@ export function useQuiz(nodeId: string | undefined): UseQuizResult {
           name: nodeRes.data.name,
           pillarId,
           pillarName,
+          topicName,
+          subtopicName,
           nextNodeId,
           nextNodeName,
         });

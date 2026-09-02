@@ -84,20 +84,23 @@ export function useSkillDetail(nodeId: string | undefined): UseSkillDetailResult
         throw new Error(`Skill node '${nodeId}' not found.`);
       }
 
-      // Extract pillar and topic details
+      // Extract pillar, topic, and subtopic details
       let pillarId = '';
       let pillarName = '';
       let topicName = '';
+      let subtopicName: string | null = null;
 
       const nodeAny = nodeData as any;
       if (nodeAny.subtopics?.topics?.pillars) {
         pillarId = nodeAny.subtopics.topics.pillars.pillar_id;
         pillarName = nodeAny.subtopics.topics.pillars.name;
         topicName = nodeAny.subtopics.topics.name;
+        subtopicName = nodeAny.subtopics.name || null;
       } else if (nodeAny.topics?.pillars) {
         pillarId = nodeAny.topics.pillars.pillar_id;
         pillarName = nodeAny.topics.pillars.name;
         topicName = nodeAny.topics.name;
+        subtopicName = null;
       }
 
       const formattedNode: SkillNodeDetail = {
@@ -117,6 +120,7 @@ export function useSkillDetail(nodeId: string | undefined): UseSkillDetailResult
         pillar_id: pillarId,
         pillar_name: pillarName,
         topic_name: topicName,
+        subtopic_name: subtopicName,
       };
 
       setNode(formattedNode);

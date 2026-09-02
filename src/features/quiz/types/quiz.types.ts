@@ -49,6 +49,8 @@ export interface QuizSkillContext {
   name: string;
   pillarId: string;
   pillarName: string;
+  topicName?: string;
+  subtopicName?: string | null;
   nextNodeId: string | null;
   nextNodeName: string | null;
 }

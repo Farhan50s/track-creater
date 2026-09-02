@@ -37,6 +37,7 @@ export interface SkillNodeDetail {
   pillar_id: string;
   pillar_name: string;
   topic_name: string;
+  subtopic_name?: string | null;
 }
 
 export interface SkillDetailState {
