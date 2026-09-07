@@ -44,6 +44,17 @@ export type QuizLifecycleState =
   | 'result'
   | 'error';
 
+export interface DiagnosticSubmissionResult {
+  topic_id: string;
+  score: number;
+  total_questions: number;
+  passed: boolean;
+  threshold: number;
+  unlocked_node_count: number;
+  unlocked_nodes: string[];
+  review?: QuestionReviewItem[];
+}
+
 export interface QuizSkillContext {
   nodeId: string;
   name: string;
@@ -54,3 +65,4 @@ export interface QuizSkillContext {
   nextNodeId: string | null;
   nextNodeName: string | null;
 }
+

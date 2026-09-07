@@ -29,8 +29,12 @@ Track Creator is a role-aligned skill tracking web application built on progress
 | **Phase 12** | Ergonomics & Review Suite | `PASS` | Migration 0009 authored, post-quiz explanation review card, PrismJS markdown syntax highlighter, in-app track switching on `/onboarding/goal` and header active track pill |
 | **Learning Loop Upgrade** | Guided Remediation & Explorer Breadcrumbs | `PASS` | Anti-spoiler guided remediation on fail with Concept to Review box and Jump to Lesson links; Level 1–4 color-coded hierarchical ExplorerBreadcrumb across SkillDetailPage and QuizPage |
 | **Visual Tree & Depth Theming** | Visual Branching Tree, Connectors & Depth Tokens | `PASS` | Centralized 4-tier DEPTH_THEMES palette, L2 Topic emerald styling + continuous rail, L3 Subtopic amber styling + elbow connector, L4 Skill violet borders + hover glow + L4 pill, 1-Click Dev Quick Login |
+| **Phase 13** | Diagnostic Placement & Topic Test-Out Engine | `PASS` | Migration 0010 authored, 10-question stratified sampling across topic child nodes, 80% pass threshold (8/10), unidirectional bulk unlock, non-degrading retakes, `/app/diagnostic/:topicId` route, L2 Topic "⚡ Test Out" header action |
+| **Phase 14** | In-Node Interactive Code Playground & Workspace | `PASS` | Zero-latency browser sandboxing (`runJavaScriptSandbox`, `buildHtmlPreviewSrc`), node-keyed localStorage persistence (`skillmap_code_`, `skillmap_notes_`), Document/Split/Playground view modes in SkillDetailPage |
 
 ---
+
+
 
 ## 3. Production Tracks Catalog
 1. **AI & Machine Learning Engineer** (`ai-engineer`): 3 Pillars · 10 Skills · 80 Quiz Questions

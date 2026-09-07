@@ -15,6 +15,7 @@ import { TrackOverviewPage } from '../features/track/pages/TrackOverviewPage';
 import { PillarViewPage } from '../features/track/pages/PillarViewPage';
 import { SkillDetailPage } from '../features/skill/pages/SkillDetailPage';
 import { QuizPage } from '../features/quiz/pages/QuizPage';
+import { DiagnosticPage } from '../features/quiz/pages/DiagnosticPage';
 
 import { LandingPage } from '../features/landing/pages/LandingPage';
 import { ProfilePage } from '../features/profile/pages/ProfilePage';
@@ -105,9 +106,14 @@ export const routes: RouteObject[] = [
             ],
           },
           {
+            path: 'diagnostic/:topicId',
+            element: <DiagnosticPage />,
+          },
+          {
             path: 'profile',
             element: <ProfilePage />,
           },
+
         ],
       },
       {

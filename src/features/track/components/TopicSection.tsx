@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { TopicWithHierarchy } from '../types/track.types';
 import { SubtopicSection } from './SubtopicSection';
 import { NodeCard } from './NodeCard';
@@ -21,42 +22,57 @@ export function TopicSection({
 }: TopicSectionProps) {
   const completedNodesCount = topic.all_nodes.filter((n) => n.status === 'completed').length;
   const totalNodesCount = topic.all_nodes.length;
+  const isAllCompleted = completedNodesCount === totalNodesCount && totalNodesCount > 0;
   const theme = DEPTH_THEMES[2];
 
   return (
     <div style={styles.container}>
-      <button
-        type="button"
-        onClick={onToggle}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            onToggle();
-          }
-        }}
-        style={styles.headerButton}
-        aria-expanded={isExpanded}
-        aria-controls={`topic-content-${topic.topic_id}`}
-        aria-label={`${topic.name} topic, ${completedNodesCount} of ${totalNodesCount} completed, ${isExpanded ? 'expanded' : 'collapsed'}`}
-      >
-        <div style={styles.titleGroup}>
-          <span style={styles.chevron} aria-hidden="true">{isExpanded ? '▼' : '▶'}</span>
-          <span style={styles.folderIcon} aria-hidden="true">{isExpanded ? '📂' : '📁'}</span>
-          <span
-            className={`${theme.badgeBg} ${theme.badgeText} ${theme.badgeBorder} border rounded px-2 py-0.5 text-xs font-mono font-semibold flex items-center gap-1`}
-            style={styles.levelBadge}
-          >
-            L2 Topic
-          </span>
-          <h2 style={styles.title}>{topic.name}</h2>
-        </div>
+      <div style={styles.headerRow}>
+        <button
+          type="button"
+          onClick={onToggle}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onToggle();
+            }
+          }}
+          style={styles.headerButton}
+          aria-expanded={isExpanded}
+          aria-controls={`topic-content-${topic.topic_id}`}
+          aria-label={`${topic.name} topic, ${completedNodesCount} of ${totalNodesCount} completed, ${isExpanded ? 'expanded' : 'collapsed'}`}
+        >
+          <div style={styles.titleGroup}>
+            <span style={styles.chevron} aria-hidden="true">{isExpanded ? '▼' : '▶'}</span>
+            <span style={styles.folderIcon} aria-hidden="true">{isExpanded ? '📂' : '📁'}</span>
+            <span
+              className={`${theme.badgeBg} ${theme.badgeText} ${theme.badgeBorder} border rounded px-2 py-0.5 text-xs font-mono font-semibold flex items-center gap-1`}
+              style={styles.levelBadge}
+            >
+              L2 Topic
+            </span>
+            <h2 style={styles.title}>{topic.name}</h2>
+          </div>
+        </button>
 
         <div style={styles.metaGroup}>
           <span style={styles.progressText}>
             {completedNodesCount}/{totalNodesCount} completed
           </span>
+          {isAllCompleted ? (
+            <span style={styles.masteredBadge}>✓ Mastered</span>
+          ) : (
+            <Link
+              to={`/app/diagnostic/${encodeURIComponent(topic.topic_id)}`}
+              style={styles.testOutButton}
+              title={`Test out of ${topic.name} via 10-question diagnostic exam`}
+              aria-label={`Test out of ${topic.name}`}
+            >
+              ⚡ Test Out
+            </Link>
+          )}
         </div>
-      </button>
+      </div>
 
       {isExpanded && (
         <div
@@ -107,20 +123,28 @@ const styles: Record<string, React.CSSProperties> = {
     backgroundColor: 'var(--bg-surface)',
     overflow: 'hidden',
   },
-  headerButton: {
+  headerRow: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
     minHeight: '50px',
-    padding: '16px 20px',
+    padding: '14px 20px',
     backgroundColor: 'var(--bg-surface)',
+    gap: '12px',
+    flexWrap: 'wrap',
+  },
+  headerButton: {
+    display: 'flex',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
     border: 'none',
-    width: '100%',
     cursor: 'pointer',
     textAlign: 'left',
     color: 'var(--text-primary)',
-    transition: 'background-color 0.15s ease',
+    padding: 0,
     gap: '12px',
+    flex: 1,
+    minWidth: '200px',
   },
   titleGroup: {
     display: 'flex',
@@ -169,6 +193,35 @@ const styles: Record<string, React.CSSProperties> = {
     color: 'var(--text-secondary)',
     whiteSpace: 'nowrap',
   },
+  testOutButton: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '4px',
+    padding: '4px 10px',
+    borderRadius: '6px',
+    fontSize: '12px',
+    fontWeight: '700',
+    backgroundColor: 'rgba(245, 158, 11, 0.15)',
+    color: '#fbbf24',
+    border: '1px solid rgba(245, 158, 11, 0.4)',
+    textDecoration: 'none',
+    transition: 'all 0.15s ease',
+    whiteSpace: 'nowrap',
+  },
+  masteredBadge: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '4px',
+    padding: '3px 8px',
+    borderRadius: '6px',
+    fontSize: '11.5px',
+    fontWeight: '700',
+    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+    color: '#34d399',
+    border: '1px solid rgba(16, 185, 129, 0.3)',
+    whiteSpace: 'nowrap',
+  },
+
   content: {
     display: 'flex',
     flexDirection: 'column',
