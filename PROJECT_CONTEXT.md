@@ -28,6 +28,7 @@ Track Creator is a role-aligned skill tracking web application built on progress
 | **Canonical Track 2** | Full-Stack TypeScript Developer (`fullstack-ts`) | `PASS` | Canonical 23-node DAG authored (3 pillars, 9 topics, 10 subtopics, 23 skill nodes, 184 quiz questions, 46 resources), Kahn's DAG acyclicity verified, seeded into Supabase, verified with live onboarding & quiz progression |
 | **Phase 12** | Ergonomics & Review Suite | `PASS` | Migration 0009 authored, post-quiz explanation review card, PrismJS markdown syntax highlighter, in-app track switching on `/onboarding/goal` and header active track pill |
 | **Learning Loop Upgrade** | Guided Remediation & Explorer Breadcrumbs | `PASS` | Anti-spoiler guided remediation on fail with Concept to Review box and Jump to Lesson links; Level 1–4 color-coded hierarchical ExplorerBreadcrumb across SkillDetailPage and QuizPage |
+| **Visual Tree & Depth Theming** | Visual Branching Tree, Connectors & Depth Tokens | `PASS` | Centralized 4-tier DEPTH_THEMES palette, L2 Topic emerald styling + continuous rail, L3 Subtopic amber styling + elbow connector, L4 Skill violet borders + hover glow + L4 pill, 1-Click Dev Quick Login |
 
 ---
 

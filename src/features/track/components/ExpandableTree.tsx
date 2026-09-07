@@ -57,7 +57,10 @@ export function ExpandableTree({ topics }: ExpandableTreeProps) {
   return (
     <div style={styles.container}>
       <div style={styles.controlsRow}>
-        <span style={styles.controlsLabel}>Topics & Skills</span>
+        <div style={styles.controlsTitleGroup}>
+          <span style={styles.treeIcon} aria-hidden="true">🌲</span>
+          <span style={styles.controlsLabel}>Topics & Skill Tree</span>
+        </div>
         <div style={styles.buttonGroup}>
           <button type="button" onClick={handleExpandAll} style={styles.controlButton}>
             Expand All
@@ -97,6 +100,14 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingBottom: '8px',
+  },
+  controlsTitleGroup: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  },
+  treeIcon: {
+    fontSize: '15px',
   },
   controlsLabel: {
     fontSize: '14px',

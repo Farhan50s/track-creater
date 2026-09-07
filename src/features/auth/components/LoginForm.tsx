@@ -193,7 +193,7 @@ export function LoginForm() {
         </button>
 
         {import.meta.env.DEV && (
-          <div style={styles.devSection}>
+          <div className="mt-6 pt-4 border-t border-slate-800" style={styles.devSection}>
             <button
               type="button"
               disabled={isSubmitting}
@@ -202,6 +202,7 @@ export function LoginForm() {
                 const devPassword = import.meta.env.VITE_DEV_USER_PASSWORD || 'password123';
                 await handleDevQuickLogin(devEmail, devPassword);
               }}
+              className="w-full py-2 px-3 bg-amber-500/10 border border-amber-500/30 text-amber-300 rounded hover:bg-amber-500/20 text-xs font-semibold flex items-center justify-center gap-2 transition-colors"
               style={styles.devButton}
             >
               ⚡ Dev Quick Login (1-Click)

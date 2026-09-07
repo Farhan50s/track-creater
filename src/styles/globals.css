@@ -302,3 +302,98 @@ a:hover {
     padding: 16px;
   }
 }
+
+/* ==========================================================================
+   Visual Directory Tree & Hierarchy Depth Theming
+   ========================================================================== */
+
+/* Level Badges */
+.bg-blue-950\/40 { background-color: rgba(30, 58, 138, 0.4); }
+.text-blue-300 { color: #93c5fd; }
+.border-blue-800\/50 { border-color: rgba(30, 64, 175, 0.5); }
+.border-blue-900\/40 { border-color: rgba(30, 58, 138, 0.4); }
+
+.bg-emerald-950\/40 { background-color: rgba(6, 78, 59, 0.4); }
+.text-emerald-300 { color: #6ee7b7; }
+.border-emerald-800\/50 { border-color: rgba(6, 95, 70, 0.5); }
+.border-emerald-900\/40 { border-color: rgba(6, 78, 59, 0.4); }
+
+.bg-amber-950\/40 { background-color: rgba(120, 53, 15, 0.4); }
+.text-amber-300 { color: #fcd34d; }
+.border-amber-800\/50 { border-color: rgba(146, 64, 14, 0.5); }
+.border-amber-900\/40 { border-color: rgba(120, 53, 15, 0.4); }
+
+.bg-purple-950\/40 { background-color: rgba(88, 28, 135, 0.4); }
+.text-purple-300 { color: #d8b4fe; }
+.border-purple-800\/50 { border-color: rgba(107, 33, 168, 0.5); }
+.border-purple-900\/40 { border-color: rgba(88, 28, 135, 0.4); }
+
+/* Tree Rails & Connector Elbows */
+.tree-topic-rail {
+  border-left: 2px solid rgba(51, 65, 85, 0.7);
+  margin-left: 16px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tree-subtopic-container {
+  position: relative;
+  padding-left: 20px;
+}
+
+.tree-subtopic-container::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 22px;
+  width: 20px;
+  height: 2px;
+  background-color: rgba(245, 158, 11, 0.45);
+}
+
+.tree-nodes-rail {
+  border-left: 2px solid rgba(71, 85, 105, 0.5);
+  margin-left: 12px;
+  padding-left: 20px;
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tree-node-wrapper {
+  position: relative;
+}
+
+.tree-node-wrapper::before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: 50%;
+  width: 20px;
+  height: 2px;
+  background-color: rgba(168, 85, 247, 0.45);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* Node card glowing hover effects */
+.node-card-l4 {
+  background-color: rgba(2, 6, 23, 0.75) !important;
+  border: 1px solid rgba(88, 28, 135, 0.4) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.node-card-l4:hover {
+  border-color: rgba(168, 85, 247, 0.8) !important;
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.2) !important;
+  background-color: rgba(15, 23, 42, 0.9) !important;
+}
+
+/* Dev Quick Login */
+.bg-amber-500\/10 { background-color: rgba(245, 158, 11, 0.1); }
+.border-amber-500\/30 { border-color: rgba(245, 158, 11, 0.3); }
+.hover\:bg-amber-500\/20:hover { background-color: rgba(245, 158, 11, 0.2); }
+
